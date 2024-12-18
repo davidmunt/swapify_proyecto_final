@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
@@ -26,12 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
               child: CircularProgressIndicator(),
             );
           } else if (state.errorMessage == null) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Bienvenido a la Home Screen"),
-                  Text("Nombre de usuario"),
+                  const Text("Bienvenido a la Home Screen"),
+                  Text(state.email ?? 'email_desconocido'),
                 ],
               ),
             );

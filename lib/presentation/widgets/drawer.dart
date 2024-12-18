@@ -19,7 +19,6 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    //Text('Usuario, ${state.user!.username}'),
                     const SizedBox(height: 16),
                     TextButton(
                       onPressed: () {

@@ -19,7 +19,6 @@ class _AlertLogoutState extends State<AlertLogout> {
     return SingleChildScrollView(
       child: BlocConsumer<UserBloc, UserState>(
         listener: (context, state) {
-          // Puedes manejar el estado aquí si es necesario
         },
         builder: (context, state) {
           return Padding(

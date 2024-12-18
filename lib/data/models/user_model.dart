@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:swapify/domain/entities/user.dart';
 import 'package:swapify/domain/entities/user.dart';
 
 class UserModel {
@@ -17,6 +15,6 @@ class UserModel {
   }
 
   UserEntity toEntity() {
-    return UserEntity(email: email);
+    return UserEntity(email: email, id: id);
   }
 }

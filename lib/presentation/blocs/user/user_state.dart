@@ -1,12 +1,13 @@
-//No extendemos a equatable para que siempre se considere un estado distinto de otro. Simplemente para poder mostrar el
 class UserState {
   final bool isLoading;
   final String? email;
+  final String? id;
   final String? errorMessage;
 
   const UserState({
     this.isLoading = false,
     this.email,
+    this.id,
     this.errorMessage,
   });
 
@@ -14,11 +15,13 @@ class UserState {
   UserState copyWith({
     bool? isLoading,
     String? email,
+    String? id,
     String? errorMessage,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
       email: email ?? this.email,
+      id: id ?? this.id,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -28,11 +31,9 @@ class UserState {
 
   factory UserState.loading() => const UserState(isLoading: true);
 
-  factory UserState.success(String email) => UserState(email: email);
+  factory UserState.success([String? email, String? id]) {
+    return UserState(email: email, id: id);
+  }
 
-  factory UserState.failure(String errorMessage) =>
-      UserState(errorMessage: errorMessage);
-
-  // @override
-  // List<Object?> get props => [isLoading, email, errorMessage];
+  factory UserState.failure(String errorMessage) => UserState(errorMessage: errorMessage);
 }

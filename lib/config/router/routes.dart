@@ -5,7 +5,7 @@ import 'package:swapify/presentation/screens/home_screen.dart';
 import 'package:swapify/presentation/screens/login_screen.dart';
 import 'package:swapify/domain/repositories/user_repository.dart';
 import 'package:swapify/presentation/screens/create_acount_screen.dart';
-import 'package:swapify/presentation/screens/recover_password_screen.dart';
+import 'package:swapify/presentation/screens/reset_password_screen.dart';
 final GoRouter router = GoRouter(
   initialLocation: '/login',
   routes: [
@@ -22,9 +22,9 @@ final GoRouter router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/recover_password',
+      path: '/reset_password',
       builder: (BuildContext context, GoRouterState state) {
-        return const RecoverPasswordScreen();
+        return const ResetPasswordScreen();
       },
     ),
     GoRoute(
@@ -34,26 +34,13 @@ final GoRouter router = GoRouter(
       },
     ),
   ],
-  // redirect: (context, state) async {
-  //   try {
-  //     final isLoggedIn = await sl<UserRepository>().isLoggedIn();
-  //     return isLoggedIn.fold(
-  //       (_) => '/login',
-  //       (loggedIn) => loggedIn == "NO_USER" && !state.matchedLocation.contains("/login") ? "/login" : null,
-  //     );
-  //   } catch (e) {
-  //     print('Error in redirect: $e');
-  //     return '/login';
-  //   }
-  // },
-
   redirect: (context, state) async {
     try {
       final isLoggedIn = await sl<UserRepository>().isLoggedIn();
       return isLoggedIn.fold(
         (_) => '/login',
         (loggedIn) {
-          final rutaccesosinlogg = ['/login', '/create_acount', '/recover_password'];
+          final rutaccesosinlogg = ['/login', '/create_acount', '/reset_password'];
           if (loggedIn == "NO_USER" && !rutaccesosinlogg.contains(state.matchedLocation)) {
             return '/login';
           }
@@ -61,9 +48,7 @@ final GoRouter router = GoRouter(
         },
       );
     } catch (e) {
-      print('Error in redirect: $e');
       return '/login';
     }
   },
-
 );

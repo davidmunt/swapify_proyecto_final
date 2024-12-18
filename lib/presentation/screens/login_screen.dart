@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
-import 'package:swapify/presentation/screens/home_screen.dart';
 import 'package:swapify/presentation/widgets/widget_texto_formulario.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -74,10 +73,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        context.go('/recover_password');
+                        context.go('/reset_password');
                       },
                       child: const Text(
-                        "Clica aquí",
+                        "Clica aqui",
                         style: TextStyle(color: Color.fromARGB(255, 10, 185, 121)),
                       ),
                     ),
@@ -88,23 +87,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     final email = emailController.text.trim();
                     final password = passwordController.text.trim();
-                    if (email.length < 4 || password.length < 4 || !email.contains("@") || email.startsWith('@') || email.endsWith('@')) {
-                      if (email.length < 4) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('El email es demasiado corto')),
-                        );
-                        return;
-                      } else if (!email.contains("@") || email.startsWith('@') || email.endsWith('@')) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('El formato del email no es correcto')),
-                        );
-                        return;
-                      } else if (password.length < 4) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('La contraseña es demasiado corta')),
-                        );
-                        return;
-                      }
+                    if (email.length < 4) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El email es demasiado corto')));
+                      return;
+                    } else if (!email.contains("@") || email.startsWith('@') || email.endsWith('@')) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El formato del email no es correcto')));
+                      return;
+                    } else if (password.length < 4) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('La contraseña es demasiado corta')));
+                      return;
                     }
                     context.read<UserBloc>().add(LoginButtonPressed(email: email, password: password));
                   },
@@ -114,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: const Text(
-                    "Iniciar sesión",
+                    "Iniciar sesion",
                     style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -129,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: const Text(
-                    "Regístrate",
+                    "Registrate",
                     style: TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ),

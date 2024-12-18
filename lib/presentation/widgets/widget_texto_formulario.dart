@@ -40,10 +40,6 @@ class WidgetTextoFormulario extends StatelessWidget {
                 prefixIcon: iconoHint,
               ),
               obscureText: obscureText,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9@._]')),
-                LengthLimitingTextInputFormatter(100), // Limitar caracteres si es necesario
-              ],
             ),
           ),
           IconButton(onPressed: onPressed, icon: Icon(icon))

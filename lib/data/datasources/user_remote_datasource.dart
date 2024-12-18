@@ -1,21 +1,52 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swapify/data/models/user_model.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirebaseAuthDataSource {
   final FirebaseAuth auth;
+  final FirebaseFirestore firestore;
 
-  FirebaseAuthDataSource({required this.auth});
+  FirebaseAuthDataSource({required this.auth, required this.firestore});
 
   Future<UserModel> signIn(String email, String password) async {
     UserCredential userCredentials = await auth.signInWithEmailAndPassword(email: email, password: password);
     return UserModel.fromUserCredential(userCredentials);
+  }
+
+  Future<void> resetPassword(String email) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      debugPrint("Error al enviar el correo: $e");
+    }
+  }
+
+  Future<void> saveUserInfo({
+    required String uid,
+    required String name,
+    required String surname,
+    required String email,
+    required int telNumber,
+    required DateTime dateBirth,
+  }) async {
+    await firestore.collection('users').doc(uid).set({
+      'name': name,
+      'surname': surname,
+      'email': email,
+      'telNumber': telNumber,
+      'dateBirth': Timestamp.fromDate(dateBirth),
+    });
+  }
+
+  Future<void> signUp(String email, String password) async {
+    try {
+      await auth.createUserWithEmailAndPassword(email: email, password: password);
+    } catch (e) {
+      debugPrint("Error en el registro: $e");
+    }
   }
 
   Future<UserModel> signInWithGoogle() async {
