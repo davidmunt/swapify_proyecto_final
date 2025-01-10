@@ -12,11 +12,16 @@ dependencies:
   firebase_auth: ^5.3.4
   flutter:
     sdk: flutter
+  geocoding: ^2.0.0
+  geolocator: ^9.0.2
   get_it: ^8.0.2
-  google_fonts: ^5.1.0
+  google_fonts: ^4.0.4
   http: ^1.2.2
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 
 dev_dependencies:
+  carousel_slider: ^5.0.0
   dartz: ^0.10.1
   dotenv: ^4.2.0
   equatable: ^2.0.7
@@ -29,8 +34,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   go_router: ^14.6.2
+  google_maps_flutter: ^2.10.0
   google_sign_in: ^6.2.2
   image_picker: ^1.1.2
+  intl: ^0.17.0
   shared_preferences: ^2.3.3
 
 flutter:
