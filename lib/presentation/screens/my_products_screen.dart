@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_event.dart';
@@ -42,17 +42,17 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                 } else if (productState.products != null) {
                   final userProducts = productState.products!.where((product) => product.userId == userId).toList();
                   if (userProducts.isEmpty) {
-                    return const Center(
-                      child: Text('No tienes productos subidos.', style: TextStyle(fontSize: 16)),
+                    return Center(
+                      child: Text(AppLocalizations.of(context)!.youDontHaveProducts, style: const TextStyle(fontSize: 16)),
                     );
                   }
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text("Estos son tus productos", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(AppLocalizations.of(context)!.youreProducts, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         ),
                         const Divider(color: Color.fromARGB(255, 84, 84, 84)),
                         ListView.builder(
@@ -61,10 +61,9 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                           itemCount: userProducts.length,
                           itemBuilder: (context, index) {
                             final product = userProducts[index];
-                            final formattedDate = DateFormat('dd MMM yyyy').format(product.createdAt);
                             return GestureDetector(
                               onTap: () {
-                                context.go(
+                                context.push(
                                   '/create_modify_product',
                                   extra: {
                                     'productId': product.productId,
@@ -107,9 +106,9 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                                             const SizedBox(height: 8),
                                             Text(product.description, style: const TextStyle(fontSize: 14, color: Colors.black54), maxLines: 2, overflow: TextOverflow.ellipsis),
                                             const SizedBox(height: 8),
-                                            Text("${product.price}€", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.green)),
+                                            Text(AppLocalizations.of(context)!.productPrice(product.price), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.green)),
                                             const SizedBox(height: 8),
-                                            Text("Creado el: $formattedDate", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                            Text(AppLocalizations.of(context)!.dateCreated(product.createdAt), style: const TextStyle(fontSize: 12, color: Colors.grey)),
                                           ],
                                         ),
                                       ),
@@ -128,8 +127,8 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                     child: Text(productState.errorMessage!),
                   );
                 } else {
-                  return const Center(
-                    child: Text('No tienes productos subidos.'),
+                  return Center(
+                    child: Text(AppLocalizations.of(context)!.youDontHaveProducts),
                   );
                 }
               },
@@ -139,7 +138,7 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Ha habido un error: ${userState.errorMessage}, intentalo mas tarde"),
+                  Text(AppLocalizations.of(context)!.errorComeLater),
                 ],
               ),
             );
@@ -148,7 +147,7 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.go('/create_modify_product');
+          context.push('/create_modify_product');
         },
         child: const Icon(Icons.add),
       ),

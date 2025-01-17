@@ -8,6 +8,15 @@ abstract class ProductEvent extends Equatable {
 
 class GetProductsButtonPressed extends ProductEvent {}
 
+class GetProductButtonPressed extends ProductEvent {
+  final int productId;
+
+  GetProductButtonPressed({required this.productId});
+
+  @override
+  List<Object?> get props => [productId];
+}
+
 class DeleteProductButtonPressed extends ProductEvent {
   final int id;
 

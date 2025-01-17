@@ -3,6 +3,7 @@ import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/widget_text_form.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,20 +21,20 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Recuperar contraseña"),
+        title: Text(AppLocalizations.of(context)!.retrivePassword),
       ),
       body: SingleChildScrollView(
         child: BlocConsumer<UserBloc, UserState>(
           listener: (context, state) {
             if (state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.errorMessage ?? "Ha habido un error")),
+                SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.error)),
               );
             } else if (state.errorMessage == null && !state.isLoading) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Correo de restablecimiento enviado")),
+                SnackBar(content: Text(AppLocalizations.of(context)!.retrivePasswordSend)),
               );
-              context.go('/login');
+              context.push('/login');
             }
           },
           builder: (context, state) {
@@ -48,7 +49,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 ),
                 const SizedBox(height: 40),
                 WidgetTextoFormulario(
-                  texto: "Email",
+                  texto: AppLocalizations.of(context)!.email,
                   iconoHint: const Icon(Icons.alternate_email),
                   controller: emailController,
                 ),
@@ -59,10 +60,10 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     onPressed: () {
                     final email = emailController.text.trim();
                       if (email.length < 4) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El email es demasiado corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldEmailShort)));
                         return;
                       } else if (!email.contains("@") || email.startsWith('@') || email.endsWith('@')) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El formato del email no es correcto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldFormatEmail)));
                         return;
                       }
                       context.read<UserBloc>().add(ResetPasswordButtonPressed(email: email));
@@ -71,7 +72,7 @@ class ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         backgroundColor: const Color.fromARGB(255, 10, 185, 121),
                         minimumSize: const Size(double.infinity, 70),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                    child: const Text("Modificar contraseña", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                    child: Text(AppLocalizations.of(context)!.retrivePassword, style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_logout.dart';
@@ -16,15 +17,25 @@ class DrawerWidget extends StatefulWidget {
 class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   Widget build(BuildContext context) {
+    final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+
     return Drawer(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: BlocBuilder<UserBloc, UserState>(
+        child: BlocConsumer<UserBloc, UserState>(
+          listener: (context, state) {
+            if (state.errorMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.errorMessage!)),
+              );
+            }
+          },
           builder: (context, state) {
-            final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
-            if (state.user?.id != null && state.user?.email != null) {
-              print('${state.user?.linkAvatar}');
-              print('${state.user?.linkAvatar}');
+            if (state.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (state.user?.id != null && state.user?.email != null) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -42,36 +53,34 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       backgroundImage: AssetImage('assets/images/user_logo.png'),
                     ),
                   const SizedBox(height: 12),
-                  Text(state.user?.email ?? "email desconocido"),
+                  Text(state.user?.email ?? "Email desconocido"),
                   const SizedBox(height: 12),
-                  Text(state.user?.name ?? "nombre desconocido"),
+                  Text(state.user?.name ?? "Nombre desconocido"),
                   const SizedBox(height: 12),
-                  const Divider(
-                    color: Color.fromARGB(255, 84, 84, 84),
-                  ),
+                  const Divider(color: Color.fromARGB(255, 84, 84, 84)),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () {
-                      context.go('/profile');
+                      context.push('/profile');
                     },
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.person),
-                        SizedBox(width: 10),
-                        Text("Perfil"),
+                        const Icon(Icons.person),
+                        const SizedBox(width: 10),
+                        Text(AppLocalizations.of(context)!.profile),
                       ],
                     ),
                   ),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () {
-                      context.go('/config_and_privacy');
+                      context.push('/config_and_privacy');
                     },
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.lock),
-                        SizedBox(width: 10),
-                        Text("Configuracion y privacidad"),
+                        const Icon(Icons.lock),
+                        const SizedBox(width: 10),
+                        Text(AppLocalizations.of(context)!.settingsAndPrivacy),
                       ],
                     ),
                   ),
@@ -81,14 +90,14 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return const AlertDialog(
-                            title: Text("¿Estas seguro de cerrar sesion?"),
-                            content: AlertLogout(),
+                          return AlertDialog(
+                            title: Center(child: Text(AppLocalizations.of(context)!.areYouSureLogout, textAlign: TextAlign.center,)),
+                            content: const AlertLogout(),
                           );
                         },
                       );
                     },
-                    child: const Text("Logout"),
+                    child: Text(AppLocalizations.of(context)!.logout),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -104,19 +113,17 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     child: Image.asset("assets/images/logo_fin_img.png", fit: BoxFit.contain),
                   ),
                   const SizedBox(height: 12),
-                  const Divider(
-                    color: Color.fromARGB(255, 84, 84, 84),
-                  ),
+                  const Divider(color: Color.fromARGB(255, 84, 84, 84)),
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () {
-                      context.go('/login');
+                      context.push('/login');
                     },
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.person_3_outlined),
-                        SizedBox(width: 10),
-                        Text("Iniciar sesion"),
+                        const Icon(Icons.person_3_outlined),
+                        const SizedBox(width: 10),
+                        Text(AppLocalizations.of(context)!.login),
                       ],
                     ),
                   ),

@@ -24,6 +24,7 @@ import 'package:swapify/domain/usecases/get_current_user_usecase.dart';
 import 'package:swapify/domain/usecases/get_product_category_usecase.dart';
 import 'package:swapify/domain/usecases/get_product_sale_state_usecase.dart';
 import 'package:swapify/domain/usecases/get_product_state_usecase.dart';
+import 'package:swapify/domain/usecases/get_product_usecase.dart';
 import 'package:swapify/domain/usecases/get_products_usecase.dart';
 import 'package:swapify/domain/usecases/get_user_info_usecase.dart';
 import 'package:swapify/domain/usecases/like_product_usecase.dart';
@@ -37,6 +38,7 @@ import 'package:swapify/domain/usecases/unlike_product_usecase.dart';
 import 'package:swapify/domain/usecases/update_product_images_usecase.dart';
 import 'package:swapify/domain/usecases/update_product_usecase.dart';
 import 'package:swapify/domain/usecases/upload_product_images_usecase.dart';
+import 'package:swapify/presentation/blocs/language/language_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
@@ -67,7 +69,11 @@ Future<void> configureDependencies() async {
   );
 
   sl.registerFactory<ProductBloc>(
-    () => ProductBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    () => ProductBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+  );
+
+  sl.registerFactory<LanguageBloc>(
+    () => LanguageBloc(),
   );
 
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
@@ -188,5 +194,8 @@ Future<void> configureDependencies() async {
   );
   sl.registerLazySingleton<UnlikeProductUseCase>(
     () => UnlikeProductUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetProductUseCase>(
+    () => GetProductUseCase(sl()),
   );
 }

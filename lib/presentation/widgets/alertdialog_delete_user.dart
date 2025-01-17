@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
@@ -30,7 +31,7 @@ class _AlertDeleteAcountState extends State<AlertDeleteAcount> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Cancelar"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 TextButton(
                   onPressed: () {
@@ -39,14 +40,14 @@ class _AlertDeleteAcountState extends State<AlertDeleteAcount> {
                       context.read<UserBloc>().add(DeleteUserButtonPressed(id: userId));
                       context.read<UserBloc>().add(LogoutButtonPressed());
                       Navigator.of(context).pop();
-                      context.go('/login');
+                      context.push('/login');
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("No se pudo eliminar el usuario")),
+                        SnackBar(content: Text(AppLocalizations.of(context)!.errorDeleteUser)),
                       );
                     }
                   },
-                  child: const Text("Eliminar usuario"),
+                  child: Text(AppLocalizations.of(context)!.deleteUser),
                 ),
               ],
             ),

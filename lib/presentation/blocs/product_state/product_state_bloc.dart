@@ -15,7 +15,7 @@ class ProductStateBloc extends Bloc<ProductStateEvent, ProductStateState> {
         emit(ProductStateState.success(states));
       } catch (e) {
         emit(ProductStateState.failure("Fallo al obtener los estados del producto: $e"));
-      }
+      } 
     });
   }
 }

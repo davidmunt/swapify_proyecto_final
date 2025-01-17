@@ -133,4 +133,14 @@ class ProductRepositoryImpl implements ProductRepository {
       return Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, ProductEntity>> getProduct(int productId) async {
+    try {
+      final productModel = await dataSource.getProduct(productId);
+      return Right(productModel.toEntity());
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
 }

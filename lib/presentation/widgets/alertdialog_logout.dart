@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
@@ -30,15 +31,15 @@ class _AlertLogoutState extends State<AlertLogout> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Cancelar"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     context.read<UserBloc>().add(LogoutButtonPressed());
                     Navigator.of(context).pop();
-                    context.go('/login');
+                    context.push('/login');
                   },
-                  child: const Text("Cerrar Sesion"),
+                  child: Text(AppLocalizations.of(context)!.logout),
                 ),
               ],
             ),

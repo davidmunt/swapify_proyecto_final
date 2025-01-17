@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_delete_user.dart';
@@ -18,7 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Perfil"),
+        title: Text(AppLocalizations.of(context)!.profile),
         centerTitle: true,
       ),
       body: BlocBuilder<UserBloc, UserState>(
@@ -46,7 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       backgroundImage: AssetImage('assets/images/user_logo.png'),
                     ),
                     const SizedBox(height: 16),
-                    Text(state.user?.name ?? "Nombre"),
+                    Text(state.user?.name ?? AppLocalizations.of(context)!.name),
                     const SizedBox(height: 8),
                     const Divider(
                       color: Colors.grey,
@@ -55,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 16),
                     TextButton(
                       onPressed: () {
-                        context.go('/change_user_info');
+                        context.push('/change_user_info');
                       } ,
                       style: TextButton.styleFrom(
                         minimumSize: const Size(200, 40),
@@ -64,19 +65,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.edit),
-                          SizedBox(width: 8),
-                          Text("Cambiar datos del usuario"),
+                          const Icon(Icons.edit),
+                          const SizedBox(width: 8),
+                          Text(AppLocalizations.of(context)!.changeUserData),
                         ],
                       ),
                     ),
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: () {
-                        context.go('/change_user_avatar');
+                        context.push('/change_user_avatar');
                       } ,
                       style: TextButton.styleFrom(
                         minimumSize: const Size(200, 40),
@@ -85,12 +86,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.account_circle),
-                          SizedBox(width: 8),
-                          Text("Cambiar foto de perfil"),
+                          const Icon(Icons.account_circle),
+                          const SizedBox(width: 8),
+                          Text(AppLocalizations.of(context)!.changeUserAvatar),
                         ],
                       ),
                     ),
@@ -100,9 +101,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return const AlertDialog(
-                              title: Text("¿Estas seguro de eliminar la cuenta?"),
-                              content: AlertDeleteAcount(),
+                            return AlertDialog(
+                              title: Text(AppLocalizations.of(context)!.areYouSureDeleteUserAccount),
+                              content: const AlertDeleteAcount(),
                             );
                           },
                         );
@@ -114,12 +115,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         backgroundColor: Colors.red.withOpacity(0.1),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.delete, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text("Eliminar cuenta", style: TextStyle(fontSize: 16, color: Colors.red)),
+                          const Icon(Icons.delete, color: Colors.red),
+                          const SizedBox(width: 8),
+                          Text(AppLocalizations.of(context)!.deleteUserAcount, style: const TextStyle(fontSize: 16, color: Colors.red)),
                         ],
                       ),
                     ),
@@ -131,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Ha habido un error: ${state.errorMessage}, intentalo mas tarde",
+                    Text(AppLocalizations.of(context)!.errorComeLater,
                       textAlign: TextAlign.center,
                     ),
                   ],

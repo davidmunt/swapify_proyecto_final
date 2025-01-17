@@ -15,7 +15,7 @@ import 'package:swapify/presentation/screens/profile_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapify/presentation/screens/reset_password_screen.dart';
 final GoRouter router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/home',
   routes: [
     GoRoute(
       path: '/login',

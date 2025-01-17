@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
@@ -29,17 +30,17 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Crear cuenta"),
+        title: Text(AppLocalizations.of(context)!.createAcount),
       ),
       body: SingleChildScrollView(
         child: BlocConsumer<UserBloc, UserState>(
           listener: (context, state) {
             if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? "Ha habido un error")),
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.error)),
               );
             } else if (state.errorMessage == null && !state.isLoading) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Usuario creado")));
-              context.go('/home');
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.createdUser)));
+              context.push('/home');
             }
           },
           builder: (context, state) {
@@ -47,13 +48,13 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 40),
-                WidgetTextoFormulario(texto: "Nombre", iconoHint: const Icon(Icons.person), controller: nombreController),
+                WidgetTextoFormulario(texto: AppLocalizations.of(context)!.name, iconoHint: const Icon(Icons.person), controller: nombreController),
                 const SizedBox(height: 12),
-                WidgetTextoFormulario(texto: "Apellidos", iconoHint: const Icon(Icons.person), controller: apellidosController),
+                WidgetTextoFormulario(texto: AppLocalizations.of(context)!.surnames, iconoHint: const Icon(Icons.person), controller: apellidosController),
                 const SizedBox(height: 12),
-                WidgetTextoFormulario(texto: "Email", iconoHint: const Icon(Icons.alternate_email), controller: emailController),
+                WidgetTextoFormulario(texto: AppLocalizations.of(context)!.email, iconoHint: const Icon(Icons.alternate_email), controller: emailController),
                 const SizedBox(height: 12),
-                WidgetTextoFormulario(texto: "Telefono", iconoHint: const Icon(Icons.phone), controller: telefonoController),
+                WidgetTextoFormulario(texto: AppLocalizations.of(context)!.phone, iconoHint: const Icon(Icons.phone), controller: telefonoController),
                 const SizedBox(height: 12),
                 WidgetFechaNacimiento(
                   selectedDate: selectedDate,
@@ -65,7 +66,7 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
                 ),
                 const SizedBox(height: 12),
                 WidgetTextoFormulario(
-                  texto: "Contraseña",
+                  texto: AppLocalizations.of(context)!.password,
                   iconoHint: const Icon(Icons.lock),
                   onPressed: () {
                     setState(() {
@@ -78,7 +79,7 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
                 ),
                 const SizedBox(height: 12),
                 WidgetTextoFormulario(
-                  texto: "Confirma la Contraseña",
+                  texto: AppLocalizations.of(context)!.confirmPassword,
                   iconoHint: const Icon(Icons.lock),
                   onPressed: () {
                     setState(() {
@@ -102,43 +103,43 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
                       final password = contraController.text.trim();
                       final password2 = contra2Controller.text.trim();
                       if (name.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que rellenar el campo del nombre')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldName)));
                         return;
                       } else if (name.length < 2) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El nombre no puede ser tan corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldNameShort)));
                         return;
                       } else if (surname.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que rellenar el campo de apellidos')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldSurname)));
                         return;
                       } else if (surname.length < 2) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El apellido no puede ser tan corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldSurnameShort)));
                         return;
                       } else if (email.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que rellenar el campo de email')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldemail)));
                         return;
                       } else if (email.length < 4) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El email es demasiado corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldEmailShort)));
                         return;
                       } else if (!email.contains("@") || email.startsWith('@') || email.endsWith('@')) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El formato del email no es correcto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldFormatEmail)));
                         return;
                       } else if (telNumberParsed == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que introducir solo números en el campo de teléfono')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldPhone)));
                         return;
                       } else if (telNumber.length < 8) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El numero de telefono es demasiado corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldPhoneShort)));
                         return;
                       } else if (selectedDate == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que seleccionar la fecha de tu nacimiento')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldDatebirth)));
                         return;
                       } else if (password.length < 8 || password2.length < 8) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que introducir una contraseña')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.shortPassword)));
                         return;
                       } else if (password.isEmpty || password2.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('La contraseña es demasiado corta')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorPasswordRequired)));
                         return;
                       } else if (password != password2) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Las contraseñas no coinciden')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.notEqualsPasswords)));
                         return;
                       }
                       context.read<UserBloc>().add(SignUpButtonPressed(email: email, password: password, name: name, surname: surname, telNumber: telNumberParsed, dateBirth: selectedDate!));
@@ -148,9 +149,9 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
                       minimumSize: const Size(double.infinity, 70), 
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text(
-                      "Crear usuario y iniciar sesion",
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.createAcountAndLogin,
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

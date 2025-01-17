@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/injection.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
@@ -30,16 +31,16 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Modificar avatar del usuario"),
+        title: Text(AppLocalizations.of(context)!.changeUserAvatar),
       ),
       body: SingleChildScrollView(
         child: BlocConsumer<UserBloc, UserState>(
           listener: (context, state) {
             if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? "Ha habido un error")));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.error)));
             } else if (state.errorMessage == null && !state.isLoading) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Avatar del usuario modificado")));
-              context.go('/home');
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.userAvatarChanged)));
+              context.push('/home');
             }
           },
           builder: (context, state) {
@@ -57,7 +58,7 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: const Text("Selecciona la imagen del avatar", style: TextStyle(fontSize: 16, color: Color.fromARGB(255, 10, 185, 121), fontWeight: FontWeight.bold)),
+                    child: Text(AppLocalizations.of(context)!.selectImageUserAvatar, style: const TextStyle(fontSize: 16, color: Color.fromARGB(255, 10, 185, 121), fontWeight: FontWeight.bold)),
                   ),
                   const SizedBox(height: 30),
                   Padding(
@@ -65,7 +66,7 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
                     child: TextButton(
                       onPressed: () {
                         if (_selectedImage == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que seleccionar una imagen')));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorImageUserAvatarRequired)));
                           return;
                         }
                         final prefs = sl<SharedPreferences>();
@@ -74,7 +75,7 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
                           context.read<UserBloc>().add(ChangeUserAvatarButtonPressed(uid: id, image: _selectedImage!),
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No se encontro el ID del usuario')));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorUserIdNotFount)));
                         }
                       },
                       style: TextButton.styleFrom(
@@ -84,9 +85,9 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      child: const Text(
-                        "Guardar avatar del usuario",
-                        style: TextStyle(
+                      child: Text(
+                        AppLocalizations.of(context)!.saveUserAvatar,
+                        style: const TextStyle(
                           color: Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_event.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_state.dart';
@@ -41,25 +42,25 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Busqueda:"),
+            Text(AppLocalizations.of(context)!.search),
             TextField(
               controller: searchController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "Introduce un termino de busqueda",
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: AppLocalizations.of(context)!.enterSearchTerm,
               ),
             ),
             const SizedBox(height: 12),
-            const Text("Rango de precio:"),
+            Text(AppLocalizations.of(context)!.rangePrice),
             Row(
               children: [
                 Expanded(
                   child: TextField(
                     controller: minPriceController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Min.",
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: AppLocalizations.of(context)!.min,
                     ),
                   ),
                 ),
@@ -68,16 +69,16 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                   child: TextField(
                     controller: maxPriceController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: "Max.",
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: AppLocalizations.of(context)!.max,
                     ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-            const Text("Categoria del producto:"),
+            Text(AppLocalizations.of(context)!.productCategory),
             BlocBuilder<ProductCategoryBloc, ProductCategoryState>(
               builder: (context, state) {
                 if (state.isLoading) {
@@ -97,24 +98,24 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                         selectedCategoryId = value;
                       });
                     },
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Selecciona una categoria",
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      hintText: AppLocalizations.of(context)!.selectCategory,
                     ),
                   );
                 } else {
-                  return const Text("No se pudieron cargar las categorias.");
+                  return Text(AppLocalizations.of(context)!.failedChargeCategories);
                 }
               },
             ),
             const SizedBox(height: 12),
-            const Text("Rango de proximidad (km):"),
+            Text(AppLocalizations.of(context)!.rangeProximity),
             TextField(
               controller: proximityController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: "Proximidad",
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: AppLocalizations.of(context)!.proximity,
               ),
             ),
             const SizedBox(height: 12),
@@ -131,7 +132,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Cancelar"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 TextButton(
                   onPressed: () {
@@ -140,19 +141,19 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                     });
                     if (minPriceController.text.isNotEmpty && !_esNumero(minPriceController.text)) {
                       setState(() {
-                        errorMessage = "El precio mínimo debe ser un número positivo.";
+                        errorMessage = AppLocalizations.of(context)!.errorMinPricePositive;
                       });
                       return;
                     }
                     if (maxPriceController.text.isNotEmpty && !_esNumero(maxPriceController.text)) {
                       setState(() {
-                        errorMessage = "El precio maximo tiene que ser un numero (positivo).";
+                        errorMessage = AppLocalizations.of(context)!.errorMaxPricePositive;
                       });
                       return;
                     }
                     if (proximityController.text.isNotEmpty && !_esNumero(proximityController.text)) {
                       setState(() {
-                        errorMessage = "La proximidad debe ser un numero (positivo).";
+                        errorMessage = AppLocalizations.of(context)!.errorProximityPositive;
                       });
                       return;
                     }
@@ -161,7 +162,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                     final double? proximity = proximityController.text.isNotEmpty ? double.tryParse(proximityController.text) : null;
                     if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
                       setState(() {
-                        errorMessage = "El precio minimo no puede ser mayor al precio maximo.";
+                        errorMessage = AppLocalizations.of(context)!.errorPriceMinMoreMax;
                       });
                       return;
                     }
@@ -174,7 +175,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                     );
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Filtrar"),
+                  child: Text(AppLocalizations.of(context)!.filter),
                 ),
               ],
             ),

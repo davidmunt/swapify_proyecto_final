@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WidgetImagesSelector extends StatefulWidget {
   final List<File> selectedImages;
@@ -28,7 +29,7 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
         if (pickedFiles != null && pickedFiles.isNotEmpty) {
           if (pickedFiles.length + widget.selectedImages.length > 7) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Solo puedes seleccionar un máximo de 7 imágenes.")),
+              SnackBar(content: Text(AppLocalizations.of(context)!.errorMaxSevenImages)),
             );
             return;
           }
@@ -44,7 +45,7 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
         if (capturedFile != null) {
           if (widget.selectedImages.length >= 7) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Solo puedes seleccionar un máximo de 7 imágenes.")),
+              SnackBar(content: Text(AppLocalizations.of(context)!.errorMaxSevenImages)),
             );
             return;
           }
@@ -58,7 +59,7 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error al seleccionar imágenes: $e")),
+        SnackBar(content: Text(AppLocalizations.of(context)!.errorSelectingImages)),
       );
     }
   }
@@ -117,7 +118,7 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
             ElevatedButton.icon(
               onPressed: () => _pickImage(ImageSource.camera),
               icon: const Icon(Icons.camera),
-              label: const Text("Camara"),
+              label: Text(AppLocalizations.of(context)!.camera),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(150, 50),
                 shape: RoundedRectangleBorder(
@@ -128,7 +129,7 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
             ElevatedButton.icon(
               onPressed: () => _pickImage(ImageSource.gallery),
               icon: const Icon(Icons.photo_library),
-              label: const Text("Galeria"),
+              label: Text(AppLocalizations.of(context)!.gallery),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(150, 50),
                 shape: RoundedRectangleBorder(

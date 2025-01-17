@@ -1,6 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +9,7 @@ import 'package:swapify/domain/entities/product_category.dart';
 import 'package:swapify/domain/entities/product_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swapify/injection.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_event.dart';
 import 'package:swapify/presentation/blocs/product/product_state.dart';
@@ -73,7 +73,6 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
-    final formattedDate = DateFormat('dd MMM yyyy').format(widget.fecha);
     final prefs = sl<SharedPreferences>();
     final id = prefs.getString('id');
 
@@ -84,10 +83,10 @@ class _ProductScreenState extends State<ProductScreen> {
       body: BlocListener<ProductBloc, ProductState>(
         listener: (context, state) {
           if (state.purchaseSuccess == true) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("¡Compra realizada con éxito!")));
-            context.go('/home');
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
+            context.push('/home');
           } else if (state.errorMessage != null) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: ${state.errorMessage}")));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.notEnoughBalance)));
           }
         },
         child: SingleChildScrollView(
@@ -115,13 +114,11 @@ class _ProductScreenState extends State<ProductScreen> {
                       },
                     );
                     }).toList() : [
-                      const Center(
-                        child: Text("No hay imagenes disponibles"),
-                      ),
+                      Center(child: Text(AppLocalizations.of(context)!.noImagesAvailable)),
                     ],
                 ),
                 const SizedBox(height: 16),
-                Text("${widget.precio}€", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+                Text(AppLocalizations.of(context)!.productPrice(widget.precio), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
                 ),
                 const SizedBox(height: 20),
                 Text(widget.marca, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
@@ -141,11 +138,11 @@ class _ProductScreenState extends State<ProductScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.shopping_cart),
-                        Text("Comprar producto", style: TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
+                        const Icon(Icons.shopping_cart),
+                        Text(AppLocalizations.of(context)!.buyProduct, style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),
@@ -156,41 +153,41 @@ class _ProductScreenState extends State<ProductScreen> {
                 BlocBuilder<ProductCategoryBloc, ProductCategoryState>(
                   builder: (context, state) {
                     if (state.errorMessage != null) {
-                      return Text("Error: ${state.errorMessage}");
+                      return Text(AppLocalizations.of(context)!.error);
                     } else if (state.productCategories != null && state.productCategories!.isNotEmpty) {
                       final category = state.productCategories!.firstWhere(
                         (category) => category.idCategoryProduct == widget.categoria, orElse: () => ProductCategoryEntity(
                           idCategoryProduct: -1,
-                          name: 'Categoria no encontrada',
+                          name: AppLocalizations.of(context)!.categoryNotFound,
                           description: '',
                         ),
                       );
-                      return Text("Categoria: ${category.name}", style: const TextStyle(fontSize: 16));
+                      return Text(AppLocalizations.of(context)!.showCategory(category.name), style: const TextStyle(fontSize: 16));
                     }
-                    return const Text("No se encontraron categorias.");
+                    return Text(AppLocalizations.of(context)!.categoriesNotFound);
                   },
                 ),
                 BlocBuilder<ProductStateBloc, ProductStateState>(
                   builder: (context, state) {
                     if (state.isLoading) {
-                      return const Text("Cargando estado del producto...");
+                      return Text(AppLocalizations.of(context)!.loadingProductState);
                     } else if (state.errorMessage != null) {
-                      return Text("Error: ${state.errorMessage}");
+                      return Text(AppLocalizations.of(context)!.error);
                     } else if (state.productStates != null && state.productStates!.isNotEmpty) {
                       final productState = state.productStates!.firstWhere(
                         (productState) => productState.idStateProduct == widget.estado,
                         orElse: () => ProductStateEntity(
                           idStateProduct: -1,
-                          name: 'Estado no encontrado',
+                          name: AppLocalizations.of(context)!.stateNotFound,
                         ),
                       );
-                      return Text("El estado del producto es ${productState.name}", style: const TextStyle(fontSize: 16));
+                      return Text(AppLocalizations.of(context)!.stateProduct(productState.name), style: const TextStyle(fontSize: 16));
                     }
-                    return const Text("No se encontraron estados.");
+                    return Text(AppLocalizations.of(context)!.statesNotFound);
                   },
                 ),
                 const SizedBox(height: 16),
-                Text("Creado el: $formattedDate", style: const TextStyle(fontSize: 14, color: Colors.grey)),
+                Text(AppLocalizations.of(context)!.dateCreated(widget.fecha), style: const TextStyle(fontSize: 14, color: Colors.grey)),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),

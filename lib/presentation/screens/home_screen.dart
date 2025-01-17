@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/screens/search_products_screen.dart';
 import 'package:swapify/presentation/screens/my_products_screen.dart';
 import 'package:swapify/presentation/screens/messages_screen.dart';
@@ -13,11 +14,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int currentPageIndex = 0;
+  final PageStorageBucket bucket = PageStorageBucket();
 
   final List<Widget> pages = [
-    const SearchProductsScreen(), 
-    const MyProductsScreen(),
-    const MessagesScreen(),
+    const SearchProductsScreen(key: PageStorageKey('SearchProductsScreen')),
+    const MyProductsScreen(key: PageStorageKey('MyProductsScreen')),
+    const MessagesScreen(key: PageStorageKey('MessagesScreen')),
   ];
 
   @override
@@ -26,7 +28,10 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: const Drawer(
         child: DrawerWidget(),
       ),
-      body: pages[currentPageIndex],
+      body: PageStorage(
+        bucket: bucket,
+        child: pages[currentPageIndex],
+      ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
@@ -35,27 +40,27 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         selectedIndex: currentPageIndex,
         indicatorColor: Colors.transparent,
-        destinations: const <Widget>[
+        destinations: <Widget>[
           NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
+            selectedIcon: const Icon(Icons.home),
+            icon: const Icon(Icons.home_outlined),
+            label: AppLocalizations.of(context)!.home,
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.list),
-            icon: Icon(Icons.list_outlined),
-            label: 'Mis productos',
+            selectedIcon: const Icon(Icons.list),
+            icon: const Icon(Icons.list_outlined),
+            label: AppLocalizations.of(context)!.myProducts,
           ),
           NavigationDestination(
-            selectedIcon: Badge(
+            selectedIcon: const Badge(
               label: Text('12'),
               child: Icon(Icons.messenger),
             ),
-            icon: Badge(
+            icon: const Badge(
               label: Text('12'),
               child: Icon(Icons.messenger_sharp),
             ),
-            label: 'Mensajes',
+            label: AppLocalizations.of(context)!.messages,
           ),
         ],
       ),

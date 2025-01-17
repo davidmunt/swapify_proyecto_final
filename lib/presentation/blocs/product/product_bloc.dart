@@ -4,6 +4,7 @@ import 'package:swapify/core/usecase.dart';
 import 'package:swapify/domain/entities/product.dart';
 import 'package:swapify/domain/usecases/buy_product_usecase.dart';
 import 'package:swapify/domain/usecases/delete_product_usecase.dart';
+import 'package:swapify/domain/usecases/get_product_usecase.dart';
 import 'package:swapify/domain/usecases/get_products_usecase.dart';
 import 'package:swapify/domain/usecases/create_product_usecase.dart';
 import 'package:swapify/domain/usecases/like_product_usecase.dart';
@@ -16,6 +17,7 @@ import 'package:swapify/presentation/blocs/product/product_state.dart';
 
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final GetProductsUseCase getProductsUseCase;
+  final GetProductUseCase getProductUseCase;
   final CreateProductUseCase createProductUseCase;
   final UploadProductImagesUseCase uploadProductImagesUseCase;
   final DeleteProductUseCase deleteProductUseCase;
@@ -27,6 +29,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   ProductBloc(
     this.getProductsUseCase, 
+    this.getProductUseCase, 
     this.createProductUseCase, 
     this.deleteProductUseCase, 
     this.likeProductUseCase, 
@@ -43,6 +46,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         emit(ProductState.success(products));
       } catch (e) {
         emit(ProductState.failure("Fallo al obtener los productos: $e"));
+      }
+    });
+
+    on<GetProductButtonPressed>((event, emit) async {
+      emit(ProductState.loading());
+      try {
+        final product = await getProductUseCase(GetProductParams(productId: event.productId));
+        emit(ProductState.successSingle(product));
+      } catch (e) {
+        emit(ProductState.failure("Fallo al obtener el producto: $e"));
       }
     });
 

@@ -24,6 +24,18 @@ class ProductDataSource {
     }
   }
 
+  Future<ProductModel> getProduct(int productId) async {
+    final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+    final url = Uri.parse('$baseUrl/product/$productId');
+    final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body) as Map<String, dynamic>;
+      return ProductModel.fromMap(data);
+    } else {
+      throw Exception('Error al obtener el producto');
+    }
+  }
+
   Future<void> deleteProduct(int id) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';

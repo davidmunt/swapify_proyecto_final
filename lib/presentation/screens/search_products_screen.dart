@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:swapify/domain/entities/product.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_event.dart';
 import 'package:swapify/presentation/blocs/product/product_state.dart';
@@ -96,22 +96,22 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
                   if (productState.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (showProducts.isEmpty) {
-                    return const Center(
-                      child: Text('No hay productos disponibles.'),
+                    return Center(
+                      child: Text(AppLocalizations.of(context)!.noProductsAvailable),
                     );
                   }
                   if (productState.filteredProducts != null && productState.filteredProducts!.isEmpty) {
-                    return const Center(
-                      child: Text('No hay productos disponibles con los filtros seleccionados.'),
+                    return Center(
+                      child: Text(AppLocalizations.of(context)!.noProductsAvailableWithFilters),
                     );
                   }
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text("Productos disponibles : ", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(AppLocalizations.of(context)!.availableProducts, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                         ),
                         const Divider(color: Color.fromARGB(255, 84, 84, 84)),
                         ListView.builder(
@@ -120,11 +120,10 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
                           itemCount: showProducts.length,
                           itemBuilder: (context, index) {
                             final product = showProducts[index];
-                            final formattedDate = DateFormat('dd MMM yyyy').format(product.createdAt); 
                             final bool isLiked = product.likes.contains(userId);
                             return GestureDetector(
                               onTap: () {
-                                context.go(
+                                context.push(
                                   '/product',
                                   extra: {
                                     'id': product.productId,
@@ -171,9 +170,9 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
                                             const SizedBox(height: 8),
                                             Text(product.description, style: const TextStyle(fontSize: 14, color: Colors.black54), maxLines: 2, overflow: TextOverflow.ellipsis),
                                             const SizedBox(height: 8),
-                                            Text("${product.price}€", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.green)),
+                                            Text(AppLocalizations.of(context)!.productPrice(product.price), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.green)),
                                             const SizedBox(height: 8),
-                                            Text("Creado el: $formattedDate", style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                            Text(AppLocalizations.of(context)!.dateCreated(product.createdAt), style: const TextStyle(fontSize: 12, color: Colors.grey)),
                                           ],
                                         ),
                                       ),
@@ -205,7 +204,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Ha habido un error: ${userState.errorMessage}, intentalo mas tarde"),
+                  Text(AppLocalizations.of(context)!.errorComeLater),
                 ],
               ),
             );

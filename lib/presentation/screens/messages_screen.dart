@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/drawer.dart';
@@ -41,7 +42,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Ha habido un error: ${state.errorMessage}, intentalo mas tarde"),
+                  Text(AppLocalizations.of(context)!.errorComeLater),
                 ],
               ),
             );

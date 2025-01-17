@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/injection.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
@@ -42,16 +43,16 @@ class ChangeUserInfoScreenState extends State<ChangeUserInfoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Modificar datos del usuario"),
+        title: Text(AppLocalizations.of(context)!.changeUserInfo),
       ),
       body: SingleChildScrollView(
         child: BlocConsumer<UserBloc, UserState>(
           listener: (context, state) {
             if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? "Ha habido un error")));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.error)));
             } else if (state.errorMessage == null && !state.isLoading) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Datos del usuario modificados")));
-              context.go('/home');
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.userInfoChanged)));
+              context.push('/home');
             }
           },
           builder: (context, state) {
@@ -72,19 +73,19 @@ class ChangeUserInfoScreenState extends State<ChangeUserInfoScreen> {
                 ),
                 const SizedBox(height: 40),
                 WidgetTextoFormulario(
-                  texto: "Nombre",
+                  texto: AppLocalizations.of(context)!.name,
                   iconoHint: const Icon(Icons.person),
                   controller: nombreController,
                 ),
                 const SizedBox(height: 12),
                 WidgetTextoFormulario(
-                  texto: "Apellidos",
+                  texto: AppLocalizations.of(context)!.surnames,
                   iconoHint: const Icon(Icons.person),
                   controller: apellidosController,
                 ),
                 const SizedBox(height: 12),
                 WidgetTextoFormulario(
-                  texto: "Telefono",
+                  texto: AppLocalizations.of(context)!.phone,
                   iconoHint: const Icon(Icons.phone),
                   controller: telefonoController,
                 ),
@@ -108,25 +109,25 @@ class ChangeUserInfoScreenState extends State<ChangeUserInfoScreen> {
                       final telNumberParsed = int.tryParse(telNumber);
                   
                       if (name.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que rellenar el campo del nombre')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldName)));
                         return;
                       } else if (name.length < 2) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El nombre no puede ser tan corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldNameShort)));
                         return;
                       } else if (surname.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que rellenar el campo de apellidos')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldSurname)));
                         return;
                       } else if (surname.length < 2) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El apellido no puede ser tan corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldSurnameShort)));
                         return;
                       } else if (telNumberParsed == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que introducir solo numeros en el campo de telefono')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldPhone)));
                         return;
                       } else if (telNumber.length < 8) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El numero de telefono es demasiado corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldPhoneShort)));
                         return;
                       } else if (selectedDate == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que seleccionar la fecha de tu nacimiento')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldDatebirth)));
                         return;
                       }
                       final prefs = sl<SharedPreferences>();
@@ -146,9 +147,9 @@ class ChangeUserInfoScreenState extends State<ChangeUserInfoScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
-                      "Modificar datos del usuario",
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.changeUserInfo,
+                      style: const TextStyle(
                         color: Colors.black,
                         fontSize: 20,
                         fontWeight: FontWeight.bold,

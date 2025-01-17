@@ -5,6 +5,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapify/injection.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
@@ -85,7 +86,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.productId == null ? "Crear producto" : "Modificar producto"),
+        title: Text(widget.productId == null ? AppLocalizations.of(context)!.createProduct : AppLocalizations.of(context)!.modifyProduct),
       ),
       body: MultiBlocListener(
         listeners: [
@@ -127,13 +128,13 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 40),
-                        WidgetTextoFormulario(texto: "Marca", iconoHint: const Icon(Icons.local_offer), controller: marcaController),
+                        WidgetTextoFormulario(texto: AppLocalizations.of(context)!.brand, iconoHint: const Icon(Icons.local_offer), controller: marcaController),
                         const SizedBox(height: 12),
-                        WidgetTextoFormulario(texto: "Modelo", iconoHint: const Icon(Icons.style), controller: modeloController),
+                        WidgetTextoFormulario(texto: AppLocalizations.of(context)!.model, iconoHint: const Icon(Icons.style), controller: modeloController),
                         const SizedBox(height: 12),
-                        WidgetTextoFormulario(texto: "Descripcion", iconoHint: const Icon(Icons.article), controller: descripcionController),
+                        WidgetTextoFormulario(texto: AppLocalizations.of(context)!.description, iconoHint: const Icon(Icons.article), controller: descripcionController),
                         const SizedBox(height: 12),
-                        WidgetTextoPrecio(texto: "Precio en €", controller: precioController), 
+                        WidgetTextoPrecio(texto: AppLocalizations.of(context)!.price, controller: precioController), 
                         const SizedBox(height: 12),
                         WidgetDropdownCategory(
                           items: categories,
@@ -143,7 +144,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                               selectedCategoryId = newValue;
                             });
                           },
-                          hintText: "Categoria del producto",
+                          hintText: AppLocalizations.of(context)!.productCategory,
                           getId: (category) => category.idCategoryProduct,
                           displayText: (category) => category.name,
                         ),
@@ -156,7 +157,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                               selectedStateId = newValue;
                             });
                           },
-                          hintText: "Estado del producto",
+                          hintText: AppLocalizations.of(context)!.state,
                           getId: (state) => state.idStateProduct,
                           displayText: (state) => state.name,
                         ),
@@ -179,10 +180,10 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                             child: TextButton(
                               onPressed: () {
                                 context.read<ProductBloc>().add(DeleteProductButtonPressed(id: widget.productId!));
-                                context.go('/home');
+                                context.push('/home');
                               },
                               style: TextButton.styleFrom(backgroundColor: Colors.black, minimumSize: const Size(double.infinity, 70), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                              child: const Text("Elimina el producto", style: TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
+                              child: Text(AppLocalizations.of(context)!.deleteProduct, style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
                             ),
                           ),
                         const SizedBox(height: 12),
@@ -196,47 +197,47 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                               final precio = precioController.text.trim();
                               double? precioParsed = double.tryParse(precio);
                               if (_selectedImages.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Debes seleccionar o capturar al menos una imagen.")));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.deleteProduct)));
                                 return;
                               } else if (marca.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que escribir algo en el campo de la marca')));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldBrand)));
                                 return;
                               } else if (marca.length < 2) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('La marca no puede ser tan corta')));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldBrandShort)));
                                 return;
                               } else if (modelo.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que escribir algo el campo del modelo')));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldModel)));
                                 return;
                               } else if (modelo.length < 2) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El modelo no puede ser tan corto')));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldModelShort)));
                                 return;
                               } else if (descripcion.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tienes que escribir algo en el campo de descripcion')));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldDescription)));
                                 return;
                               } else if (descripcion.length < 4) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('La descripcion es demasiado corta')));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldDescriptionShort)));
                                 return;
                               } else if (precio.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Tienes que escribir un precio")));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldPrice)));
                                 return;
                               } else if (precioParsed == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("En el campo de precio solo puedes escribir numeros")));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldPriceNumber)));
                                 return;
                               } else if (selectedCategoryId == null) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Tienes que seleccionar la categoria del producto")));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldCategory)));
                                 return;
                               }
                               try {
                                 bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
                                 if (!serviceEnabled) {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Por favor habilita los servicios de ubicación.")));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorUbication)));
                                   return;
                                 }
                                 LocationPermission permission = await Geolocator.checkPermission();
                                 if (permission == LocationPermission.denied) {
                                   permission = await Geolocator.requestPermission();
                                   if (permission == LocationPermission.denied) {
-                                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Permiso de ubicación denegado.")));
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorPrermisionLocation)));
                                     return;
                                   }
                                 }
@@ -244,7 +245,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                 double latitudeCreated = position.latitude;
                                 double longitudeCreated = position.longitude;
                                 List<Placemark> placemarks = await placemarkFromCoordinates(latitudeCreated, longitudeCreated);
-                                String nameCityCreated = placemarks.first.locality ?? "Ciudad desconocida";
+                                String nameCityCreated = placemarks.first.locality ?? AppLocalizations.of(context)!.unknownCity;
                                 if (widget.productId == null) {
                                   context.read<ProductBloc>().add(CreateProductButtonPressed(
                                     productModel: modelo,
@@ -271,9 +272,9 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                     images: _selectedImages.map((file) => XFile(file.path)).toList(),
                                   ));
                                 }
-                                context.go('/home');
+                                context.push('/home');
                               } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error al obtener la ubicacion: $e")));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorObtainingUbication)));
                               }
                             },
                             style: TextButton.styleFrom(
@@ -284,7 +285,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                               ),
                             ),
                             child: Text(
-                              widget.productId == null ? "Crear producto" : "Modificar producto",
+                              widget.productId == null ? AppLocalizations.of(context)!.createProduct : AppLocalizations.of(context)!.modifyProduct,
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 20,
@@ -298,7 +299,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                     ),
                   );
                 } else {
-                  return const Center(child: Text("No hay datos disponibles"));
+                  return Center(child: Text(AppLocalizations.of(context)!.noDataAvailable));
                 }
               },
             );

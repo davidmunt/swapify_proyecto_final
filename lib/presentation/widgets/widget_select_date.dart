@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WidgetFechaNacimiento extends StatefulWidget {
   final DateTime? selectedDate;
@@ -42,7 +43,7 @@ class _WidgetFechaNacimientoState extends State<WidgetFechaNacimiento> {
             const SizedBox(width: 16),
             Text(
               widget.selectedDate == null
-              ? "Fecha de nacimiento"
+              ? AppLocalizations.of(context)!.dateBirth
               : "${widget.selectedDate!.day}/${widget.selectedDate!.month}/${widget.selectedDate!.year}",
               style: const TextStyle(fontSize: 16, color: Colors.black54),
             ),

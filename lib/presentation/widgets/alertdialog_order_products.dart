@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OrdenarProductosWidget extends StatefulWidget {
   final Function(String criteria, String direction) onApplySort;
@@ -22,15 +23,15 @@ class _OrdenarProductosState extends State<OrdenarProductosWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Ordenar productos", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(AppLocalizations.of(context)!.orderProducts, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
-            const Text("Ordenar por:"),
+            Text(AppLocalizations.of(context)!.orderBy),
             DropdownButtonFormField<String>(
               value: selectedOrder,
-              items: const [
-                DropdownMenuItem(value: "fecha", child: Text("Fecha de publicacion")),
-                DropdownMenuItem(value: "distancia", child: Text("Distancia")),
-                DropdownMenuItem(value: "precio", child: Text("Precio")),
+              items: [
+                DropdownMenuItem(value: "fecha", child: Text(AppLocalizations.of(context)!.dateUpload)),
+                DropdownMenuItem(value: "distancia", child: Text(AppLocalizations.of(context)!.distance)),
+                DropdownMenuItem(value: "precio", child: Text(AppLocalizations.of(context)!.price)),
               ],
               onChanged: (value) {
                 setState(() {
@@ -38,18 +39,18 @@ class _OrdenarProductosState extends State<OrdenarProductosWidget> {
                   errorMessage = null;
                 });
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: "Criterio",
+                labelText: AppLocalizations.of(context)!.criterion,
               ),
             ),
             const SizedBox(height: 16),
-            const Text("Direccion:"),
+            Text(AppLocalizations.of(context)!.direction),
             DropdownButtonFormField<String>(
               value: selectedDirection,
-              items: const [
-                DropdownMenuItem(value: "asc", child: Text("Ascendente")),
-                DropdownMenuItem(value: "desc", child: Text("Descendente")),
+              items: [
+                DropdownMenuItem(value: "asc", child: Text(AppLocalizations.of(context)!.ascending)),
+                DropdownMenuItem(value: "desc", child: Text(AppLocalizations.of(context)!.descending)),
               ],
               onChanged: (value) {
                 setState(() {
@@ -57,9 +58,9 @@ class _OrdenarProductosState extends State<OrdenarProductosWidget> {
                   errorMessage = null; 
                 });
               },
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: "Orden",
+                labelText: AppLocalizations.of(context)!.order,
               ),
             ),
             const SizedBox(height: 16),
@@ -73,20 +74,20 @@ class _OrdenarProductosState extends State<OrdenarProductosWidget> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Cancelar"),
+                  child: Text(AppLocalizations.of(context)!.cancel),
                 ),
                 TextButton(
                   onPressed: () {
                     if (selectedOrder == null || selectedDirection == null) {
                       setState(() {
-                        errorMessage = "Selecciona los dos campos para aplicar el orden";
+                        errorMessage = AppLocalizations.of(context)!.selectTheFieldsApplySorting;
                       });
                     } else {
                       widget.onApplySort(selectedOrder!, selectedDirection!);
                       Navigator.of(context).pop();
                     }
                   },
-                  child: const Text("Ordenar"),
+                  child: Text(AppLocalizations.of(context)!.order),
                 ),
               ],
             ),

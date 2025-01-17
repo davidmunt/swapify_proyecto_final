@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
@@ -29,9 +30,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: CircularProgressIndicator(),
               );
             } else if (state.user?.email != null && state.user?.email != "NO_USER" && state.errorMessage == null) {
-              context.go('/home', extra: state.user?.email);
+              context.push('/home', extra: state.user?.email);
             } else if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? "Ocurrió un error inesperado")));
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.unexpectedError)));
             }
           },
           builder: (context, state) {
@@ -46,13 +47,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 40),
                 WidgetTextoFormulario(
-                  texto: "Email o nombre de usuario",
+                  texto: AppLocalizations.of(context)!.email,
                   iconoHint: const Icon(Icons.alternate_email),
                   controller: emailController,
                 ),
                 const SizedBox(height: 20),
                 WidgetTextoFormulario(
-                  texto: "Contraseña",
+                  texto: AppLocalizations.of(context)!.password,
                   iconoHint: const Icon(Icons.lock),
                   onPressed: () {
                     setState(() {
@@ -67,14 +68,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("¿Se te ha olvidado la contraseña?  ", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(AppLocalizations.of(context)!.forgotPassword, style: const TextStyle(fontWeight: FontWeight.bold)),
                     TextButton(
                       onPressed: () {
-                        context.go('/reset_password');
+                        context.push('/reset_password');
                       },
-                      child: const Text(
-                        "Clica aqui",
-                        style: TextStyle(color: Color.fromARGB(255, 10, 185, 121)),
+                      child: Text(
+                        AppLocalizations.of(context)!.clickHere,
+                        style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121)),
                       ),
                     ),
                   ],
@@ -87,13 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       final email = emailController.text.trim();
                       final password = passwordController.text.trim();
                       if (email.length < 4) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El email es demasiado corto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldEmailShort)));
                         return;
                       } else if (!email.contains("@") || email.startsWith('@') || email.endsWith('@')) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('El formato del email no es correcto')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldFormatEmail)));
                         return;
                       } else if (password.length < 4) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('La contraseña es demasiado corta')));
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.shortPassword)));
                         return;
                       }
                       context.read<UserBloc>().add(LoginButtonPressed(email: email, password: password));
@@ -103,9 +104,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       minimumSize: const Size(double.infinity, 70), 
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text(
-                      "Iniciar sesion",
-                      style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppLocalizations.of(context)!.login,
+                      style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
@@ -114,16 +115,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: TextButton(
                     onPressed: () {
-                      context.go('/create_acount');
+                      context.push('/create_acount');
                     },
                     style: TextButton.styleFrom(
                       backgroundColor: Colors.black,
                       minimumSize: const Size(double.infinity, 70), 
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text(
-                      "Registrate",
-                      style: TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppLocalizations.of(context)!.register,
+                      style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
