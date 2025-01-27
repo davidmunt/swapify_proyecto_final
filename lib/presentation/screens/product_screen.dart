@@ -30,6 +30,7 @@ class ProductScreen extends StatefulWidget {
   final DateTime fecha;
   final int categoria;
   final int estado;
+  final String userId;
   final double latitudeCreated;
   final double longitudeCreated;
   final String nameCityCreated;
@@ -45,6 +46,7 @@ class ProductScreen extends StatefulWidget {
     required this.fecha,
     required this.categoria,
     required this.estado,
+    required this.userId,
     required this.latitudeCreated,
     required this.longitudeCreated,
     required this.nameCityCreated,
@@ -125,28 +127,29 @@ class _ProductScreenState extends State<ProductScreen> {
                 const SizedBox(height: 4),
                 Text(widget.modelo, style: const TextStyle(fontSize: 18, color: Colors.grey)),
                 const SizedBox(height: 25),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: TextButton(
-                    onPressed: () {
-                      context.read<ProductBloc>().add(BuyProductButtonPressed(productId: widget.id, userId: id ?? 'Sin id'));
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      minimumSize: const Size(double.infinity, 70),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                if (widget.userId != id)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: TextButton(
+                      onPressed: () {
+                        context.read<ProductBloc>().add(BuyProductButtonPressed(productId: widget.id, userId: id ?? 'Sin id'));
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        minimumSize: const Size(double.infinity, 70),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.shopping_cart),
+                          Text(AppLocalizations.of(context)!.buyProduct, style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
+                        ],
                       ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.shopping_cart),
-                        Text(AppLocalizations.of(context)!.buyProduct, style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
                   ),
-                ),
                 const SizedBox(height: 25),
                 Text(widget.descripcion, style: const TextStyle(fontSize: 16)),
                 const SizedBox(height: 16),

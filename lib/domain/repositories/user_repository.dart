@@ -27,6 +27,7 @@ abstract class UserRepository {
     required XFile image,
   });
   Future<Either<Failure, UserEntity>> getUserInfo(String uid);
+  Future<Either<Failure, List<UserEntity>>> getUsersInfo();
   Future<Either<Failure, void>> resetPassword(String email);
   Future<Either<Failure, void>> changePassword(String password);
   Future<Either<Failure, void>> logout();

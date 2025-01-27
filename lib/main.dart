@@ -1,3 +1,4 @@
+import 'package:swapify/presentation/blocs/chat/chat_bloc.dart';
 import 'package:swapify/presentation/blocs/language/language_bloc.dart';
 import 'package:swapify/presentation/blocs/language/language_event.dart';
 import 'package:swapify/presentation/blocs/language/language_state.dart';
@@ -60,6 +61,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => sl<ProductBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => sl<ChatBloc>(),
         ),
         BlocProvider(
           create: (_) {

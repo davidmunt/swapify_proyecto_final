@@ -102,4 +102,6 @@ class ChangePasswordButtonPressed extends UserEvent {
 
 class LogoutButtonPressed extends UserEvent {}
 
+class GetUsersInfoButtonPressed extends UserEvent {}
+
 class CheckAuthentication extends UserEvent {}

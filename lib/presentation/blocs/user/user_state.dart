@@ -3,22 +3,26 @@ import 'package:swapify/domain/entities/user.dart';
 class UserState {
   final bool isLoading;
   final UserEntity? user;
+  final List<UserEntity>? users;
   final String? errorMessage;
 
   const UserState({
     this.isLoading = false,
     this.user,
+    this.users,
     this.errorMessage,
   });
 
   UserState copyWith({
     bool? isLoading,
     UserEntity? user,
+    List<UserEntity>? users,
     String? errorMessage,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
       user: user ?? this.user,
+      users: users ?? this.users,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
@@ -29,6 +33,10 @@ class UserState {
 
   factory UserState.success(UserEntity user) {
     return UserState(user: user);
+  }
+
+  factory UserState.successList(List<UserEntity> users) {
+    return UserState(users: users);
   }
 
   factory UserState.resetPasswordSuccess() => const UserState(

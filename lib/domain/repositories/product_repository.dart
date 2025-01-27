@@ -40,6 +40,7 @@ abstract class ProductRepository {
     required int productId,
     required String userId,
   });
+  Future<Either<Failure, List<ProductEntity>>> getFilteredProducts({Map<String, dynamic>? filters});
   Future<Either<Failure, void>> likeProduct({required int productId, required String userId});
   Future<Either<Failure, void>> unlikeProduct({required int productId, required String userId});  
 }

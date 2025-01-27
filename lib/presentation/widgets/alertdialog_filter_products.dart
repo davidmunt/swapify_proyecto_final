@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swapify/presentation/blocs/product/product_bloc.dart';
+import 'package:swapify/presentation/blocs/product/product_event.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_event.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_state.dart';
@@ -27,6 +29,14 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
   void initState() {
     super.initState();
     context.read<ProductCategoryBloc>().add(GetProductCategoryButtonPressed());
+    final productBloc = context.read<ProductBloc>().state;
+
+    // Restaurar valores del estado actual
+    searchController.text = productBloc.currentSearchTerm ?? '';
+    minPriceController.text = productBloc.currentMinPrice?.toString() ?? '';
+    maxPriceController.text = productBloc.currentMaxPrice?.toString() ?? '';
+    proximityController.text = productBloc.currentProximity?.toString() ?? '';
+    selectedCategoryId = productBloc.currentCategoryId;
   }
 
   bool _esNumero(String value) {
@@ -130,9 +140,10 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
               children: [
                 TextButton(
                   onPressed: () {
+                    context.read<ProductBloc>().add(ResetFiltersButtonPressed());
                     Navigator.of(context).pop();
                   },
-                  child: Text(AppLocalizations.of(context)!.cancel),
+                  child: Text(AppLocalizations.of(context)!.resetFilters),
                 ),
                 TextButton(
                   onPressed: () {

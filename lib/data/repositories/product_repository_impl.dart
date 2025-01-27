@@ -135,6 +135,17 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
+  Future<Either<Failure, List<ProductEntity>>> getFilteredProducts({Map<String, dynamic>? filters}) async {
+    try {
+      final productModels = await dataSource.getFilteredProducts(filters: filters);
+      final productEntities = productModels.map((product) => product.toEntity()).toList();
+      return Right(productEntities);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, ProductEntity>> getProduct(int productId) async {
     try {
       final productModel = await dataSource.getProduct(productId);

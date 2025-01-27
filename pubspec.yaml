@@ -7,6 +7,7 @@ environment:
   sdk: ^3.5.3
 
 dependencies:
+  flutter_launcher_icons: ^0.14.3
   cloud_firestore: ^5.5.1
   cupertino_icons: ^1.0.2
   firebase_auth: ^5.3.4
@@ -56,3 +57,9 @@ flutter_native_splash:
   android: true
   ios: true
   web: true
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/logo_app.png"
+  remove_alpha_ios: true

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:swapify/presentation/screens/change_password_screen.dart';
 import 'package:swapify/presentation/screens/change_user_avatar_screen.dart';
 import 'package:swapify/presentation/screens/change_user_info_screen.dart';
+import 'package:swapify/presentation/screens/chat_screen.dart';
 import 'package:swapify/presentation/screens/config_and_privacy_screen.dart';
 import 'package:swapify/presentation/screens/create_modify_product_screen.dart';
 import 'package:swapify/presentation/screens/home_screen.dart';
@@ -100,10 +101,22 @@ final GoRouter router = GoRouter(
           categoria: extra['categoria'],
           estado: extra['estado'],
           fecha: extra['fecha'],
+          userId: extra['userId'],
           latitudeCreated: extra['latitudeCreated'],
           longitudeCreated: extra['longitudeCreated'],
           nameCityCreated: extra['nameCityCreated'],
           images: List<String>.from(extra['images'] ?? []),
+        );
+      },
+    ),
+    GoRoute(
+      path: '/chat',
+      builder: (context, state) {
+        final Map<String, dynamic> extra = state.extra as Map<String, dynamic>;
+        return ChatScreen(
+          productOwnerId: extra['productOwnerId'],
+          potBuyerId: extra['potBuyerId'],
+          productId: extra['productId'],
         );
       },
     ),

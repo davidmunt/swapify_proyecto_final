@@ -8,6 +8,29 @@ abstract class ProductEvent extends Equatable {
 
 class GetProductsButtonPressed extends ProductEvent {}
 
+class FilterProductsButtonPressed extends ProductEvent {
+  final String? searchTerm;
+  final double? minPrice;
+  final double? maxPrice;
+  final double? proximity;
+  final double userLatitude;
+  final double userLongitude;
+  final int? categoryId;
+
+  FilterProductsButtonPressed({
+    this.searchTerm,
+    this.minPrice,
+    this.maxPrice,
+    this.proximity,
+    required this.userLatitude,
+    required this.userLongitude,
+    this.categoryId,
+  });
+
+  @override
+  List<Object?> get props => [searchTerm, minPrice, maxPrice, proximity, userLatitude, userLongitude, categoryId];
+}
+
 class GetProductButtonPressed extends ProductEvent {
   final int productId;
 
@@ -36,6 +59,10 @@ class LikeProductButtonPressed extends ProductEvent {
   List<Object?> get props => [userId, productId];
 }
 
+class ResetFiltersButtonPressed extends ProductEvent {}
+
+class ResetSortButtonPressed extends ProductEvent {}
+
 class UnlikeProductButtonPressed extends ProductEvent {
   final String userId;
   final int productId;
@@ -56,28 +83,28 @@ class BuyProductButtonPressed extends ProductEvent {
   List<Object?> get props => [productId, userId];
 }
 
-class FilterProductsButtonPressed extends ProductEvent {
-  final String? searchTerm;
-  final double? minPrice;
-  final double? maxPrice;
-  final double? proximity;
-  final double userLatitude;
-  final double userLongitude;
-  final int? categoryId;
+// class FilterProductsButtonPressed extends ProductEvent {
+//   final String? searchTerm;
+//   final double? minPrice;
+//   final double? maxPrice;
+//   final double? proximity;
+//   final double userLatitude;
+//   final double userLongitude;
+//   final int? categoryId;
 
-  FilterProductsButtonPressed({
-    this.searchTerm,
-    this.minPrice,
-    this.maxPrice,
-    this.proximity,
-    required this.userLatitude,
-    required this.userLongitude,
-    this.categoryId,
-  });
+//   FilterProductsButtonPressed({
+//     this.searchTerm,
+//     this.minPrice,
+//     this.maxPrice,
+//     this.proximity,
+//     required this.userLatitude,
+//     required this.userLongitude,
+//     this.categoryId,
+//   });
 
-  @override
-  List<Object?> get props => [searchTerm, minPrice, maxPrice, proximity, userLatitude, userLongitude];
-}
+//   @override
+//   List<Object?> get props => [searchTerm, minPrice, maxPrice, proximity, userLatitude, userLongitude];
+// }
 
 class SortProductsButtonPressed extends ProductEvent {
   final String criteria;

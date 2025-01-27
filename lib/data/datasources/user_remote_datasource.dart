@@ -18,6 +18,7 @@ class FirebaseAuthDataSource {
 
   Future<UserModel> signIn(String email, String password) async {
     UserCredential userCredentials = await auth.signInWithEmailAndPassword(email: email, password: password);
+    
     return UserModel.fromUserCredential(userCredentials);
   }
 
@@ -100,6 +101,22 @@ class FirebaseAuthDataSource {
       }
     } catch (e) {
       debugPrint("Error en getUserInfo: $e");
+      throw ServerFailure();
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUsersInfo() async {
+    try {
+      final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+      final url = Uri.parse('$baseUrl/user');
+      final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+      if (response.statusCode == 200) {
+        return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+      } else {
+        throw Exception('Error al obtener la información de los usuarios');
+      }
+    } catch (e) {
+      debugPrint("Error en getUsersInfo: $e");
       throw ServerFailure();
     }
   }

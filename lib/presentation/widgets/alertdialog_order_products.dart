@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:swapify/presentation/blocs/product/product_bloc.dart';
+import 'package:swapify/presentation/blocs/product/product_event.dart';
 
 class OrdenarProductosWidget extends StatefulWidget {
   final Function(String criteria, String direction) onApplySort;
@@ -14,6 +17,16 @@ class _OrdenarProductosState extends State<OrdenarProductosWidget> {
   String? selectedOrder;
   String? selectedDirection;
   String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    final productBloc = context.read<ProductBloc>().state;
+
+    // Restaurar valores del estado actual
+    selectedOrder = productBloc.currentSortCriteria;
+    selectedDirection = productBloc.currentSortDirection;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +68,7 @@ class _OrdenarProductosState extends State<OrdenarProductosWidget> {
               onChanged: (value) {
                 setState(() {
                   selectedDirection = value;
-                  errorMessage = null; 
+                  errorMessage = null;
                 });
               },
               decoration: InputDecoration(
@@ -65,16 +78,17 @@ class _OrdenarProductosState extends State<OrdenarProductosWidget> {
             ),
             const SizedBox(height: 16),
             if (errorMessage != null)
-              Text(errorMessage!, style: const TextStyle(color: Colors.red)), 
+              Text(errorMessage!, style: const TextStyle(color: Colors.red)),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    context.read<ProductBloc>().add(ResetSortButtonPressed());
+                    Navigator.of(context).pop(); 
                   },
-                  child: Text(AppLocalizations.of(context)!.cancel),
+                  child: Text(AppLocalizations.of(context)!.resetOrder),
                 ),
                 TextButton(
                   onPressed: () {

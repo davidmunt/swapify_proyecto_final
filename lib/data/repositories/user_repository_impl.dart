@@ -109,6 +109,25 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<Either<Failure, List<UserEntity>>> getUsersInfo() async {
+    try {
+      final usersData = await dataSource.getUsersInfo();
+      final List<UserEntity> users = [];
+      for (final userData in usersData) {
+        String? linkAvatar;
+        if (userData['avatar_id'] != null) {
+          linkAvatar = await dataSource.getLinkUserAvatar(userData['avatar_id'].toString());
+        }
+        final userModel = UserModel.fromMap(userData).copyWith(linkAvatar: linkAvatar);
+        users.add(userModel.toEntity());
+      }
+      return Right(users);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> resetPassword(String email) async {
     try {
       await dataSource.resetPassword(email);

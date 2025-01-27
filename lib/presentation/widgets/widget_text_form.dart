@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class WidgetTextoFormulario extends StatelessWidget {
-  final String texto;
-  final Icon iconoHint;
+  final String? texto;
+  final Icon? iconoHint;
   final IconData? icon;
   final void Function()? onPressed;
   final bool obscureText;
@@ -11,8 +11,8 @@ class WidgetTextoFormulario extends StatelessWidget {
 
   const WidgetTextoFormulario({
     super.key,
-    required this.texto,
-    required this.iconoHint,
+    this.texto,
+    this.iconoHint,
     this.icon,
     this.onPressed,
     this.obscureText = false,

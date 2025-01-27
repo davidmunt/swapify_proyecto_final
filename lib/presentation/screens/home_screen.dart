@@ -52,14 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
             label: AppLocalizations.of(context)!.myProducts,
           ),
           NavigationDestination(
-            selectedIcon: const Badge(
-              label: Text('12'),
-              child: Icon(Icons.messenger),
-            ),
-            icon: const Badge(
-              label: Text('12'),
-              child: Icon(Icons.messenger_sharp),
-            ),
+            selectedIcon: const Icon(Icons.messenger_sharp),
+            icon: const Icon(Icons.messenger),
             label: AppLocalizations.of(context)!.messages,
           ),
         ],

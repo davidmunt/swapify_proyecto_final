@@ -7,6 +7,7 @@ import 'package:swapify/domain/usecases/change_user_info_usecase.dart';
 import 'package:swapify/domain/usecases/delete_user_usecase.dart';
 import 'package:swapify/domain/usecases/get_current_user_usecase.dart';
 import 'package:swapify/domain/usecases/get_user_info_usecase.dart';
+import 'package:swapify/domain/usecases/get_users_info_usecase.dart';
 import 'package:swapify/domain/usecases/reset_password_user_usecase.dart';
 import 'package:swapify/domain/usecases/save_user_info_usecase.dart';
 import 'package:swapify/domain/usecases/sign_in_user_usecase.dart';
@@ -27,6 +28,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final SaveUserInfoUseCase saveUserInfoUseCase;
   final SignoutUserUseCase signOutUserUseCase;
   final GetCurrentUserUseCase getCurrentUserUseCase;
+  final GetUsersInfoUseCase getUsersInfoUseCase;
 
   UserBloc(
     this.signInUserUseCase,
@@ -40,6 +42,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     this.changeUserAvatarUseCase,
     this.changePassUserUsecase,
     this.deleteUserUseCase,
+    this.getUsersInfoUseCase,
   ) : super(UserState.initial()) {
 
     on<LoginButtonPressed>((event, emit) async {
@@ -156,6 +159,24 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           );
         },
       );
+    });
+
+    on<GetUsersInfoButtonPressed>((event, emit) async {
+      emit(state.copyWith(isLoading: true));
+      try {
+        final users = await getUsersInfoUseCase(NoParams());
+        emit(state.copyWith(
+          isLoading: false,
+          users: users,
+          user: state.user,
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: "Error al buscar la informacion de los usuarios: $e",
+          user: state.user,
+        ));
+      }
     });
 
     on<ChangePasswordButtonPressed>((event, emit) async {

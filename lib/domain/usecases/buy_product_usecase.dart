@@ -1,6 +1,5 @@
 import 'package:swapify/domain/repositories/product_repository.dart';
 import 'package:swapify/core/usecase.dart';
-import 'package:image_picker/image_picker.dart';
 
 class BuyProductUseCase implements UseCase<void, BuyProductParams> {
   final ProductRepository repository;

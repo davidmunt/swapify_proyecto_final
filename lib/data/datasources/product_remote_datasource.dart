@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show jsonDecode, jsonEncode;
-import 'dart:io';
 import 'package:swapify/core/failure.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -21,6 +20,27 @@ class ProductDataSource {
       return data.map((product) => ProductModel.fromMap(product as Map<String, dynamic>)).toList();
     } else {
       throw Exception('Error al obtener productos');
+    }
+  }
+
+  Future<List<ProductModel>> getFilteredProducts({Map<String, dynamic>? filters}) async {
+    final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+    final url = Uri.parse('$baseUrl/product/filters');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(filters ?? {}),
+      );
+      if (response.statusCode == 201) {
+        final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+        return data.map((product) => ProductModel.fromMap(product as Map<String, dynamic>)).toList();
+      } else {
+        throw Exception('Error al obtener productos filtrados');
+      }
+    } catch (e) {
+      debugPrint("Error en getFilteredProducts: $e");
+      throw ServerFailure();
     }
   }
 
@@ -148,7 +168,7 @@ class ProductDataSource {
       request.fields['product'] = productId.toString();
       final response = await request.send();
       if (response.statusCode != 200) {
-        throw Exception('Error al actualizar las imágenes del producto');
+        throw Exception('Error al actualizar las imagenes del producto');
       }
     } catch (e) {
       debugPrint("Error en updateProductImages: $e");

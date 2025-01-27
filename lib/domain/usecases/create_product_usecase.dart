@@ -1,4 +1,3 @@
-import 'package:swapify/core/failure.dart';
 import 'package:swapify/core/usecase.dart';
 import 'package:swapify/domain/repositories/product_repository.dart';
 
