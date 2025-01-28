@@ -162,6 +162,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     });
 
     on<GetUsersInfoButtonPressed>((event, emit) async {
+      if (state.users != null && state.users!.isNotEmpty) {
+        return;
+      }
       emit(state.copyWith(isLoading: true));
       try {
         final users = await getUsersInfoUseCase(NoParams());

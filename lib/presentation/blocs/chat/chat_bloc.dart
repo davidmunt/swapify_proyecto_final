@@ -34,40 +34,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(ChatState.initial());
     });
 
-    // on<SendMessageButtonPressed>((event, emit) async {
-    //   emit(ChatState.loading());
-    //   try {
-    //     if (event.message != null) {
-    //       await sendMessageChatUsecase.call(SendMessageParams(
-    //         productOwnerId: event.productOwnerId,
-    //         potBuyerId: event.potBuyerId,
-    //         productId: event.productId,
-    //         senderId: event.senderId,
-    //         message: event.message,
-    //         imagePath: null,
-    //         dateMessageSent: event.dateMessageSent,
-    //       ));
-    //     }
-    //     if (event.image != null) {
-    //       final uploadedImagePath = await uploadMessageImageUsecase.call(
-    //         UploadMessageImageParams(image: event.image!),
-    //       );
-    //       await sendMessageChatUsecase.call(SendMessageParams(
-    //         productOwnerId: event.productOwnerId,
-    //         potBuyerId: event.potBuyerId,
-    //         productId: event.productId,
-    //         senderId: event.senderId,
-    //         message: null,
-    //         imagePath: uploadedImagePath,
-    //         dateMessageSent: event.dateMessageSent,
-    //       ));
-    //     }
-    //     add(GetMyChatsButtonPressed(userId: event.senderId));
-    //   } catch (e) {
-    //     emit(ChatState.failure("Error al enviar el mensaje: $e"));
-    //   }
-    // });
-
     on<SendMessageButtonPressed>((event, emit) async {
       emit(ChatState.loading());
       try {
@@ -103,41 +69,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(ChatState.failure("Error al enviar el mensaje: $e"));
       }
     });
-
-    // on<SendMessageButtonPressed>((event, emit) async {
-    //   emit(ChatState.loading());
-    //   try {
-    //     if (event.message != null) {
-    //       await sendMessageChatUsecase.call(SendMessageParams(
-    //         productOwnerId: event.productOwnerId,
-    //         potBuyerId: event.potBuyerId,
-    //         productId: event.productId,
-    //         senderId: event.senderId,
-    //         message: event.message,
-    //         imagePath: null,
-    //         dateMessageSent: event.dateMessageSent,
-    //       ));
-    //     }
-    //     if (event.image != null) {
-    //       final uploadedImagePath = await uploadMessageImageUsecase.call(
-    //         UploadMessageImageParams(image: event.image!),
-    //       );
-    //       await sendMessageChatUsecase.call(SendMessageParams(
-    //         productOwnerId: event.productOwnerId,
-    //         potBuyerId: event.potBuyerId,
-    //         productId: event.productId,
-    //         senderId: event.senderId,
-    //         message: null,
-    //         imagePath: uploadedImagePath,
-    //         dateMessageSent: event.dateMessageSent,
-    //       ));
-    //     }
-    //     final chatId = "${event.productOwnerId}${event.potBuyerId}${event.productId}";
-    //     add(GetChatButtonPressed(chatId: chatId));
-    //   } catch (e) {
-    //     emit(ChatState.failure("Error al enviar el mensaje: $e"));
-    //   }
-    // });
 
     on<GetChatButtonPressed>((event, emit) async {
       emit(ChatState.loading());

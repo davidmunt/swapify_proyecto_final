@@ -77,7 +77,6 @@ class _ProductScreenState extends State<ProductScreen> {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final prefs = sl<SharedPreferences>();
     final id = prefs.getString('id');
-
     return Scaffold(
       appBar: AppBar(
         title: Text("${widget.marca} ${widget.modelo}"),
@@ -120,8 +119,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     ],
                 ),
                 const SizedBox(height: 16),
-                Text(AppLocalizations.of(context)!.productPrice(widget.precio), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
-                ),
+                Text(AppLocalizations.of(context)!.productPrice(widget.precio), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green)),
                 const SizedBox(height: 20),
                 Text(widget.marca, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
@@ -146,6 +144,44 @@ class _ProductScreenState extends State<ProductScreen> {
                         children: [
                           const Icon(Icons.shopping_cart),
                           Text(AppLocalizations.of(context)!.buyProduct, style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 25),
+                if (widget.userId != id)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: TextButton(
+                      onPressed: () {
+                        context.push(
+                          '/chat',
+                          extra: {
+                            'productOwnerId': widget.userId,
+                            'potBuyerId': id!,
+                            'productId': widget.id,
+                          },
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor:  const Color.fromARGB(255, 31, 194, 134), 
+                        minimumSize: const Size(double.infinity, 70),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.chat_bubble),
+                          Text(
+                            AppLocalizations.of(context)!.chat,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -202,10 +238,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         initialZoom: 14.0,
                       ),
                       children: [
-                        TileLayer(
-                          urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                          subdomains: ['a', 'b', 'c'],
-                        ),
+                        TileLayer(urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", subdomains: ['a', 'b', 'c']),
                         MarkerLayer(
                           markers: [
                             Marker(

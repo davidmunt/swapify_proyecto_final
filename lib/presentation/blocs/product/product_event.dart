@@ -83,29 +83,6 @@ class BuyProductButtonPressed extends ProductEvent {
   List<Object?> get props => [productId, userId];
 }
 
-// class FilterProductsButtonPressed extends ProductEvent {
-//   final String? searchTerm;
-//   final double? minPrice;
-//   final double? maxPrice;
-//   final double? proximity;
-//   final double userLatitude;
-//   final double userLongitude;
-//   final int? categoryId;
-
-//   FilterProductsButtonPressed({
-//     this.searchTerm,
-//     this.minPrice,
-//     this.maxPrice,
-//     this.proximity,
-//     required this.userLatitude,
-//     required this.userLongitude,
-//     this.categoryId,
-//   });
-
-//   @override
-//   List<Object?> get props => [searchTerm, minPrice, maxPrice, proximity, userLatitude, userLongitude];
-// }
-
 class SortProductsButtonPressed extends ProductEvent {
   final String criteria;
   final String direction;

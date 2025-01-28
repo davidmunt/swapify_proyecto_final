@@ -47,6 +47,7 @@
   "notEqualsPasswords": "Passwords do not match",
   "changeUserAvatar": "Change user avatar",
   "foto": "Foto",
+  "chatNotYetStarted": "Start chat",
   "userAvatarChanged": "User avatar updated",
   "selectImageUserAvatar": "Select the user avatar image",
   "errorImageUserAvatarRequired": "You must select an image",
@@ -138,6 +139,7 @@
   "errorObtainingChats": "Error loading chats", 
   "errorObtainingProducts": "Error loading  products", 
   "errorNoChats": "No open chats", 
+  "chat": "Chat", 
   "dateCreated": "Created on {fecha}",
   "@dateCreated": {
     "placeholders": {

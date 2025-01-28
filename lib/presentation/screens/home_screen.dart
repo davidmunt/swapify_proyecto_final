@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swapify/presentation/blocs/user/user_bloc.dart';
+import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/screens/search_products_screen.dart';
 import 'package:swapify/presentation/screens/my_products_screen.dart';
 import 'package:swapify/presentation/screens/messages_screen.dart';
@@ -13,9 +16,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _usersInfoLoaded = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_usersInfoLoaded) {
+      context.read<UserBloc>().add(GetUsersInfoButtonPressed());
+      _usersInfoLoaded = true; 
+    }
+  }
+
   int currentPageIndex = 0;
   final PageStorageBucket bucket = PageStorageBucket();
-
   final List<Widget> pages = [
     const SearchProductsScreen(key: PageStorageKey('SearchProductsScreen')),
     const MyProductsScreen(key: PageStorageKey('MyProductsScreen')),
@@ -25,9 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const Drawer(
-        child: DrawerWidget(),
-      ),
+      drawer: const Drawer(child: DrawerWidget()),
       body: PageStorage(
         bucket: bucket,
         child: pages[currentPageIndex],

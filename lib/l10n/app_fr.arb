@@ -120,6 +120,7 @@
   "createdUser": "Utilisateur créé",
   "changeUserAvatar": "Changer la photo de profil",
   "foto": "Foto",
+  "chatNotYetStarted": "Empezar chat",
   "areYouSureDeleteUserAccount": "Êtes-vous sûr de vouloir supprimer le compte ?",
   "deleteUserAcount": "Supprimer le compte",
   "deleteProduct": "Supprimer le produit",
@@ -138,6 +139,7 @@
   "errorObtainingChats": "Error loading chats", 
   "errorObtainingProducts": "Error loading  products", 
   "errorNoChats": "No open chats", 
+  "chat": "Chat", 
   "dateCreated": "Créé le {fecha}",
   "@dateCreated": {
     "placeholders": {

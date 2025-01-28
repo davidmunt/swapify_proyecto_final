@@ -119,7 +119,8 @@
   "changeUserData": "Cambiar datos del usuario",
   "createdUser": "Usuario creado",
   "changeUserAvatar": "Cambiar foto de perfil",
-  "foto": "Foto",
+  "foto": "Foto", 
+  "chatNotYetStarted": "Empezar chat",
   "areYouSureDeleteUserAccount": "¿Estas seguro de eliminar la cuenta?",
   "deleteUserAcount": "Eliminar cuenta",
   "deleteProduct": "Eliminar producto",
@@ -138,6 +139,7 @@
   "errorObtainingChats": "Error al cargar los chats", 
   "errorObtainingProducts": "Error al cargar los productos", 
   "errorNoChats": "No tienes chats abiertos", 
+  "chat": "Chat", 
   "dateCreated": "Creado el {fecha}",
   "@dateCreated": {
     "placeholders": {
