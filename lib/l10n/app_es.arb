@@ -140,6 +140,14 @@
   "errorObtainingProducts": "Error al cargar los productos", 
   "errorNoChats": "No tienes chats abiertos", 
   "chat": "Chat", 
+  "confirmSell": "Confirmar venta", 
+  "qrInvalid": "Código QR inválido", 
+  "scanQRToConfirmSell": "Escanea el Código QR para confirmar la compra", 
+  "cameraNoAutorized": "Cámara no autorizada", 
+  "productSoldSuccesfully": "Has vendido tu producto", 
+  "sell": "Vender", 
+  "selled": "Vendido", 
+  "reserved": "Reservado", 
   "dateCreated": "Creado el {fecha}",
   "@dateCreated": {
     "placeholders": {

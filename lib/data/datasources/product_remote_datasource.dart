@@ -73,6 +73,7 @@ class ProductDataSource {
   Future<void> buyProduct({
     required int productId,
     required String userId,
+    required String sellerId,
   }) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
@@ -83,6 +84,7 @@ class ProductDataSource {
         body: jsonEncode({
           'productId': productId,
           'buyerId': userId,
+          'sellerId': sellerId
         }),
       );
       if (response.statusCode != 201) {
@@ -127,6 +129,7 @@ class ProductDataSource {
     required String description,
     required int idCategoryProduct,
     required int idStateProduct,
+    required int idSaleStateProduct,
     required int productId,
   }) async {
     try {
@@ -142,6 +145,7 @@ class ProductDataSource {
           'description': description,
           'id_category_product': idCategoryProduct,
           'id_state_product': idStateProduct,
+          'id_sale_state_product': idSaleStateProduct,
         }),
       );
       if (response.statusCode != 200) {
@@ -205,9 +209,10 @@ class ProductDataSource {
           'user_id': userId,
           'id_category_product': idCategoryProduct,
           'id_state_product': idStateProduct,
+          'id_sale_state_product': 1,
         }),
       );
-      if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.statusCode == 201) {
         final responseData = jsonDecode(response.body);
         return responseData['id_product'];
       } else {

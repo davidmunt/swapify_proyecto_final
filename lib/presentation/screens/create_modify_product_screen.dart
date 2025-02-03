@@ -10,6 +10,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:swapify/injection.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_event.dart';
+import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
+import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_event.dart';
+import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_state.dart';
 import 'package:swapify/presentation/widgets/widget_images_selector.dart';
 import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -31,6 +34,7 @@ class CreateModifyProductScreen extends StatefulWidget {
   final double? precio;
   final int? categoria;
   final int? estado;
+  final int? estadoVenta;
   final List<XFile>? images;
 
   const CreateModifyProductScreen({
@@ -42,6 +46,7 @@ class CreateModifyProductScreen extends StatefulWidget {
     this.precio,
     this.categoria,
     this.estado,
+    this.estadoVenta,
     this.images,
   });
 
@@ -56,6 +61,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
   late final TextEditingController precioController;
   late int? selectedCategoryId;
   late int? selectedStateId;
+  late int? selectedSaleStateId;
   final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
   final List<File> _selectedImages = [];
 
@@ -68,9 +74,11 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
     precioController = TextEditingController(text: widget.precio?.toStringAsFixed(2) ?? '0.00');
     selectedCategoryId = widget.categoria;
     selectedStateId = widget.estado;
+    selectedSaleStateId = widget.estadoVenta ?? 0;
     _selectedImages.addAll(widget.images?.map((xFile) => File(xFile.path)) ?? []);
     context.read<ProductCategoryBloc>().add(GetProductCategoryButtonPressed());
     context.read<ProductStateBloc>().add(GetProductStateButtonPressed());
+    context.read<ProductSaleStateBloc>().add(GetProductSaleStateButtonPressed());
   }
 
   @override
@@ -93,36 +101,42 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
           BlocListener<ProductCategoryBloc, ProductCategoryState>(
             listener: (context, state) {
               if (state.errorMessage != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage!)),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
               }
             },
           ),
           BlocListener<ProductStateBloc, ProductStateState>(
             listener: (context, state) {
               if (state.errorMessage != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.errorMessage!)),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+              }
+            },
+          ),
+          BlocListener<ProductSaleStateBloc, ProductSaleStateState>(
+            listener: (context, state) {
+              if (state.errorMessage != null) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
               }
             },
           ),
         ],
         child: BlocBuilder<ProductCategoryBloc, ProductCategoryState>(
           builder: (context, categoryState) {
-            return BlocBuilder<ProductStateBloc, ProductStateState>(
-              builder: (context, stateState) {
-                if (categoryState.isLoading || stateState.isLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (categoryState.productCategories != null &&
-                    stateState.productStates != null) {
-                  final categories = categoryState.productCategories!;
-                  final states = stateState.productStates!;
-                  final prefs = sl<SharedPreferences>();
-                  final userProductId = prefs.getString('id');
+            return BlocBuilder<ProductSaleStateBloc, ProductSaleStateState>(
+              builder: (context, saleStateState) {
+                return BlocBuilder<ProductStateBloc, ProductStateState>(
+                  builder: (context, stateState) {
+                    if (categoryState.isLoading || stateState.isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else if (categoryState.productCategories != null &&
+                        stateState.productStates != null) {
+                      final categories = categoryState.productCategories!;
+                      final states = stateState.productStates!;
+                      final saleStates = saleStateState.productSaleStates!;
+                      final prefs = sl<SharedPreferences>();
+                      final userProductId = prefs.getString('id');
                   return SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -162,6 +176,20 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                           displayText: (state) => state.name,
                         ),
                         const SizedBox(height: 12),
+                        if (widget.productId != null)
+                          WidgetDropdownCategory(
+                            items: saleStates,
+                            selectedItemId: selectedSaleStateId,
+                            onChanged: (int? newValue) {
+                              setState(() {
+                                selectedSaleStateId = newValue;
+                              });
+                            },
+                            hintText: AppLocalizations.of(context)!.state,
+                            getId: (saleState) => saleState.idSaleStateProduct,
+                            displayText: (saleState) => saleState.name,
+                          ),
+                        const SizedBox(height: 12),
                         WidgetImagesSelector(
                           selectedImages: List<File>.from(_selectedImages),
                           baseUrl: baseUrl,
@@ -197,24 +225,18 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                               final precio = precioController.text.trim();
                               double? precioParsed = double.tryParse(precio);
                               if (_selectedImages.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.deleteProduct)));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldImages)));
                                 return;
                               } else if (marca.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldBrand)));
                                 return;
-                              } else if (marca.length < 2) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldBrandShort)));
-                                return;
                               } else if (modelo.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldModel)));
-                                return;
-                              } else if (modelo.length < 2) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldModelShort)));
                                 return;
                               } else if (descripcion.isEmpty) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldDescription)));
                                 return;
-                              } else if (descripcion.length < 4) {
+                              } else if (descripcion.length < 2) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldDescriptionShort)));
                                 return;
                               } else if (precio.isEmpty) {
@@ -266,6 +288,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                     productModel: modelo,
                                     productBrand: marca,
                                     idStateProduct: selectedStateId ?? 0,
+                                    idSaleStateProduct: selectedSaleStateId ?? 0,
                                     idCategoryProduct: selectedCategoryId ?? 0,
                                     description: descripcion,
                                     price: precioParsed,
@@ -302,6 +325,8 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                   return Center(child: Text(AppLocalizations.of(context)!.noDataAvailable));
                 }
               },
+            );
+              }
             );
           },
         ),

@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:swapify/core/usecase.dart';
 import 'package:swapify/domain/entities/product.dart';
 import 'package:swapify/domain/usecases/buy_product_usecase.dart';
 import 'package:swapify/domain/usecases/delete_product_usecase.dart';
@@ -81,14 +80,31 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     });
 
     on<GetProductButtonPressed>((event, emit) async {
-      emit(ProductState.loading());
+      emit(state.copyWith(isLoading: true));
       try {
         final product = await getProductUseCase(GetProductParams(productId: event.productId));
-        emit(ProductState.successSingle(product));
+        emit(state.copyWith(
+          product: product,
+          products: state.products, 
+          isLoading: false,
+        ));
       } catch (e) {
-        emit(ProductState.failure("Fallo al obtener el producto: $e"));
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: "Fallo al obtener el producto: $e",
+        ));
       }
     });
+
+    // on<GetProductButtonPressed>((event, emit) async {
+    //   emit(ProductState.loading());
+    //   try {
+    //     final product = await getProductUseCase(GetProductParams(productId: event.productId));
+    //     emit(ProductState.successSingle(product));
+    //   } catch (e) {
+    //     emit(ProductState.failure("Fallo al obtener el producto: $e"));
+    //   }
+    // });
 
     on<BuyProductButtonPressed>((event, emit) async {
       emit(ProductState.loading());
@@ -96,6 +112,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         await buyProductUseCase.call(BuyProductParams(
           productId: event.productId,
           userId: event.userId,
+          sellerId: event.sellerId,
         ));
         emit(state.copyWith(
           purchaseSuccess: true,
@@ -242,6 +259,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           productId: event.productId,
           idCategoryProduct: event.idCategoryProduct,
           idStateProduct: event.idStateProduct,
+          idSaleStateProduct: event.idSaleStateProduct,
         ));
         if (event.images.isNotEmpty) {
           await updateProductImagesUseCase.call(UpdateProductImagesParams(

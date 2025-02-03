@@ -84,6 +84,7 @@ final GoRouter router = GoRouter(
           precio: extra['precio'] as double?,
           categoria: extra['categoria'] as int?,
           estado: extra['estado'] as int?,
+          estadoVenta: extra['estadoVenta'] as int?,
           images: extra['images'] as List<XFile>? ?? [],
         );
       },

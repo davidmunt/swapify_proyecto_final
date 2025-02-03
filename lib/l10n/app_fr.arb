@@ -140,6 +140,14 @@
   "errorObtainingProducts": "Error loading  products", 
   "errorNoChats": "No open chats", 
   "chat": "Chat", 
+  "confirmSell": "Confirma Sold", 
+  "qrInvalid": "QR code invalid", 
+  "scanQRToConfirmSell": "Scan the QR code to confirm sold", 
+  "cameraNoAutorized": "Unautorized camera", 
+  "productSoldSuccesfully": "The product has been successfuly sold", 
+  "sell": "Sell", 
+  "selled": "Vendido", 
+  "reserved": "Reservado", 
   "dateCreated": "Créé le {fecha}",
   "@dateCreated": {
     "placeholders": {

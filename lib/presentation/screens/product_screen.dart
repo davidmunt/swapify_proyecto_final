@@ -5,8 +5,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:swapify/domain/entities/product_category.dart';
-import 'package:swapify/domain/entities/product_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swapify/injection.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,7 +17,7 @@ import 'package:swapify/presentation/blocs/product_category/product_category_sta
 import 'package:swapify/presentation/blocs/product_state/product_state_bloc.dart';
 import 'package:swapify/presentation/blocs/product_state/product_state_event.dart';
 import 'package:swapify/presentation/blocs/product_state/product_state_state.dart';
-import 'package:swapify/presentation/widgets/drawer.dart';
+import 'package:swapify/presentation/widgets/alertdialog_show_qr_purchase.dart';
 
 class ProductScreen extends StatefulWidget {
   final int id;
@@ -129,24 +127,45 @@ class _ProductScreenState extends State<ProductScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: TextButton(
-                      onPressed: () {
-                        context.read<ProductBloc>().add(BuyProductButtonPressed(productId: widget.id, userId: id ?? 'Sin id'));
-                      },
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        minimumSize: const Size(double.infinity, 70),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.shopping_cart),
-                          Text(AppLocalizations.of(context)!.buyProduct, style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
+  onPressed: () async {
+    showDialog(
+      context: context,
+      builder: (_) => AlertShowQRPurchase(productId: widget.id, userId: id!),
+    ).then((_) async {
+      context.read<ProductBloc>().add(GetProductButtonPressed(productId: widget.id));
+      final productState = await context.read<ProductBloc>().stream.firstWhere(
+        (state) => state.product != null && state.product!.productId == widget.id,
+      );
+      final updatedProduct = productState.product; 
+      if (updatedProduct != null && updatedProduct.idSaleStateProduct == 4 && updatedProduct.buyerId == id) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
+        context.pop();
+      }
+    });
+  },
+  style: TextButton.styleFrom(
+    backgroundColor: Colors.black,
+    minimumSize: const Size(double.infinity, 70),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+  ),
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      const Icon(Icons.shopping_cart),
+      Text(
+        AppLocalizations.of(context)!.buyProduct,
+        style: const TextStyle(
+          color: Color.fromARGB(255, 10, 185, 121),
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ],
+  ),
+),
+
                   ),
                 const SizedBox(height: 25),
                 if (widget.userId != id)
@@ -194,13 +213,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     if (state.errorMessage != null) {
                       return Text(AppLocalizations.of(context)!.error);
                     } else if (state.productCategories != null && state.productCategories!.isNotEmpty) {
-                      final category = state.productCategories!.firstWhere(
-                        (category) => category.idCategoryProduct == widget.categoria, orElse: () => ProductCategoryEntity(
-                          idCategoryProduct: -1,
-                          name: AppLocalizations.of(context)!.categoryNotFound,
-                          description: '',
-                        ),
-                      );
+                      final category = state.productCategories!.firstWhere((category) => category.idCategoryProduct == widget.categoria);
                       return Text(AppLocalizations.of(context)!.showCategory(category.name), style: const TextStyle(fontSize: 16));
                     }
                     return Text(AppLocalizations.of(context)!.categoriesNotFound);
@@ -213,13 +226,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     } else if (state.errorMessage != null) {
                       return Text(AppLocalizations.of(context)!.error);
                     } else if (state.productStates != null && state.productStates!.isNotEmpty) {
-                      final productState = state.productStates!.firstWhere(
-                        (productState) => productState.idStateProduct == widget.estado,
-                        orElse: () => ProductStateEntity(
-                          idStateProduct: -1,
-                          name: AppLocalizations.of(context)!.stateNotFound,
-                        ),
-                      );
+                      final productState = state.productStates!.firstWhere((productState) => productState.idStateProduct == widget.estado);
                       return Text(AppLocalizations.of(context)!.stateProduct(productState.name), style: const TextStyle(fontSize: 16));
                     }
                     return Text(AppLocalizations.of(context)!.statesNotFound);
@@ -257,13 +264,12 @@ class _ProductScreenState extends State<ProductScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 30),
               ],
             ),
           ),
         ),
       ),
-      drawer: const DrawerWidget(),
     );
   }
 }

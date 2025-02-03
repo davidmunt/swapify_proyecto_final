@@ -40,7 +40,7 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                 if (productState.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (productState.products != null) {
-                  final userProducts = productState.products!.where((product) => product.userId == userId).toList();
+                  final userProducts = productState.products!.where((product) => product.userId == userId && product.idSaleStateProduct != 4).toList();
                   if (userProducts.isEmpty) {
                     return Center(
                       child: Text(AppLocalizations.of(context)!.youDontHaveProducts, style: const TextStyle(fontSize: 16)),
@@ -73,6 +73,7 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                                     'precio': product.price,
                                     'categoria': product.idCategoryProduct,
                                     'estado': product.idStateProduct,
+                                    'estadoVenta': product.idSaleStateProduct,
                                     'images': product.images.map((image) => XFile(image.path)).toList(),
                                   },
                                 );
@@ -87,14 +88,21 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                                     children: [
                                       const SizedBox(width: 16),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 16),
-                                        child: Image.network(
-                                          '$baseUrl${product.images.first.path}',
-                                          width: 125,
-                                          height: 125,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
+  padding: const EdgeInsets.symmetric(vertical: 16),
+  child: product.images != null && product.images.isNotEmpty 
+      ? Image.network(
+          '$baseUrl${product.images.first.path}',
+          width: 125,
+          height: 125,
+          fit: BoxFit.cover,
+        )
+      : Container(
+          width: 125,
+          height: 125,
+          color: Colors.grey[300],
+          child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+        ),
+),
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(

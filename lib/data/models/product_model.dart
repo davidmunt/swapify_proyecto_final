@@ -11,8 +11,10 @@ class ProductModel {
   final double longitudeCreated;
   final String nameCityCreated;
   final String userId;
+  final String buyerId;
   final int idCategoryProduct;
   final int idStateProduct;
+  final int idSaleStateProduct;
   final List<XFile> images;
   final DateTime createdAt;
   final List<String> likes;
@@ -27,8 +29,10 @@ class ProductModel {
     required this.longitudeCreated,
     required this.nameCityCreated,
     required this.userId,
+    required this.buyerId,
     required this.idCategoryProduct,
     required this.idStateProduct,
+    required this.idSaleStateProduct,
     required this.images,
     required this.createdAt,
     required this.likes,
@@ -45,8 +49,10 @@ class ProductModel {
       longitudeCreated: double.tryParse(map['longitude_created'].toString()) ?? 0.0,
       nameCityCreated: map['name_city_created'] as String,
       userId: map['user']['id_user'] as String,
+      buyerId: map['buyer'] != null ? map['buyer']['id_user'] as String : '',
       idCategoryProduct: map['product_category']['id_category_product'] as int,
       idStateProduct: map['product_state']['id_state_product'] as int,
+      idSaleStateProduct: map['product_sale_state']['id_sale_state_product'] as int,
       images: (map['images'] as List).map((img) => XFile(img['path'] as String)).toList(),
       createdAt: DateTime.parse(map['created_at'] as String),
       likes: (map['likes'] as List).map((like) => like['user']['id_user'] as String).toList(),
@@ -64,8 +70,10 @@ class ProductModel {
       longitudeCreated: longitudeCreated,
       nameCityCreated: nameCityCreated,
       userId: userId,
+      buyerId: buyerId,
       idCategoryProduct: idCategoryProduct,
       idStateProduct: idStateProduct,
+      idSaleStateProduct: idSaleStateProduct,
       images: images,
       createdAt: createdAt,
       likes: likes,
@@ -83,8 +91,10 @@ class ProductModel {
       longitudeCreated: longitudeCreated,
       nameCityCreated: nameCityCreated,
       userId: userId,
+      buyerId: buyerId,
       idCategoryProduct: idCategoryProduct,
       idStateProduct: idStateProduct,
+      idSaleStateProduct: idSaleStateProduct,
       images: images,
       createdAt: createdAt,
       likes: likes,

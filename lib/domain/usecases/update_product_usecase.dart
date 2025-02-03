@@ -16,6 +16,7 @@ class UpdateProductUseCase implements UseCase<void, UpdateProductParams> {
       productId: params.productId,
       idCategoryProduct: params.idCategoryProduct,
       idStateProduct: params.idStateProduct,
+      idSaleStateProduct: params.idSaleStateProduct,
     );
   }
 }
@@ -28,6 +29,7 @@ class UpdateProductParams {
   final int productId;
   final int idCategoryProduct;
   final int idStateProduct;
+  final int idSaleStateProduct;
 
   UpdateProductParams({
     required this.productModel,
@@ -37,5 +39,6 @@ class UpdateProductParams {
     required this.productId,
     required this.idCategoryProduct,
     required this.idStateProduct,
+    required this.idSaleStateProduct,
   });
 }

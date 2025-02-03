@@ -39,7 +39,6 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.error)),
               );
             } else if (state.errorMessage == null && !state.isLoading) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.createdUser)));
               context.push('/home');
             }
           },

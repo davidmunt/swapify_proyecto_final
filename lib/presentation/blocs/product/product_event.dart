@@ -75,9 +75,10 @@ class UnlikeProductButtonPressed extends ProductEvent {
 
 class BuyProductButtonPressed extends ProductEvent {
   final int productId;
-  final String userId;
+  final String userId; 
+  final String sellerId;
 
-  BuyProductButtonPressed({required this.productId, required this.userId});
+  BuyProductButtonPressed({required this.productId, required this.userId, required this.sellerId});
 
   @override
   List<Object?> get props => [productId, userId];
@@ -139,6 +140,7 @@ class UpdateProductButtonPressed extends ProductEvent {
   final int productId;
   final int idCategoryProduct;
   final int idStateProduct;
+  final int idSaleStateProduct;
   final List<XFile> images;
 
   UpdateProductButtonPressed({
@@ -149,6 +151,7 @@ class UpdateProductButtonPressed extends ProductEvent {
     required this.productId,
     required this.idCategoryProduct,
     required this.idStateProduct,
+    required this.idSaleStateProduct,
     required this.images,
   });
 

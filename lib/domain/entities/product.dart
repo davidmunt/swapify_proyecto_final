@@ -6,11 +6,13 @@ class ProductEntity {
   final double price;
   final String description;
   final double latitudeCreated;
-  final double longitudeCreated;
+  final double longitudeCreated; 
   final String nameCityCreated;
   final String userId;
+  final String buyerId;
   final int idCategoryProduct;
   final int idStateProduct;
+  final int idSaleStateProduct;
   final List<XFile> images;
   final DateTime createdAt;
   final List<String> likes;
@@ -25,8 +27,10 @@ class ProductEntity {
     required this.longitudeCreated,
     required this.nameCityCreated,
     required this.userId,
+    required this.buyerId,
     required this.idCategoryProduct,
     required this.idStateProduct,
+    required this.idSaleStateProduct,
     required this.images,
     required this.createdAt,
     required this.likes,

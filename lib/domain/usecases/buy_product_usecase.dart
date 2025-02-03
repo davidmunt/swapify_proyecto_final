@@ -11,16 +11,19 @@ class BuyProductUseCase implements UseCase<void, BuyProductParams> {
     return await repository.buyProduct(
       productId: params.productId,
       userId: params.userId,
+      sellerId: params.sellerId,
     );
   }
 }
 
 class BuyProductParams {
   final int productId;
-  final String userId;
+  final String userId; 
+  final String sellerId;
 
   BuyProductParams({
     required this.productId,
     required this.userId,
+    required this.sellerId,
   });
 }

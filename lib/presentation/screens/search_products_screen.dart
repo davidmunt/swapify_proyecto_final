@@ -41,7 +41,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
             final userId = userState.user!.id;
             return BlocBuilder<ProductBloc, ProductState>(
               builder: (context, productState) {
-                final products = productState.products?.where((p) => p.userId != userId).toList() ?? [];
+                final products = productState.products?.where((p) => p.userId != userId && p.idSaleStateProduct == 1).toList() ?? [];
                 if (productState.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (products.isEmpty) {

@@ -30,6 +30,7 @@ abstract class ProductRepository {
     required String description,
     required int idCategoryProduct,
     required int idStateProduct,
+    required int idSaleStateProduct,
     required int productId,
   });
   Future<void> updateProductImages({
@@ -38,7 +39,8 @@ abstract class ProductRepository {
   });
   Future<void> buyProduct({
     required int productId,
-    required String userId,
+    required String userId, 
+    required String sellerId,
   });
   Future<Either<Failure, List<ProductEntity>>> getFilteredProducts({Map<String, dynamic>? filters});
   Future<Either<Failure, void>> likeProduct({required int productId, required String userId});

@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_logout.dart';
+import 'package:swapify/presentation/widgets/widget_qr_scanner_product_payment.dart';
 
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
@@ -81,6 +82,27 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         const Icon(Icons.lock),
                         const SizedBox(width: 10),
                         Text(AppLocalizations.of(context)!.settingsAndPrivacy),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AlertDialog(
+                            title: Center(child: Text("Vender producto")),
+                            content: QRScannerProductPayment(),
+                          );
+                        },
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        const Icon(Icons.qr_code_scanner),
+                        const SizedBox(width: 10),
+                        Text("Vender producto"),
                       ],
                     ),
                   ),

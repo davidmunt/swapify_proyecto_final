@@ -16,17 +16,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _usersInfoLoaded = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_usersInfoLoaded) {
-      context.read<UserBloc>().add(GetUsersInfoButtonPressed());
-      _usersInfoLoaded = true; 
-    }
-  }
-
   int currentPageIndex = 0;
   final PageStorageBucket bucket = PageStorageBucket();
   final List<Widget> pages = [

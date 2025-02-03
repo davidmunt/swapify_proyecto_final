@@ -3,18 +3,21 @@ import 'package:swapify/data/datasources/product_category_remote_datasource.dart
 import 'package:swapify/data/datasources/product_remote_datasource.dart';
 import 'package:swapify/data/datasources/product_sale_state_remote_datasource.dart';
 import 'package:swapify/data/datasources/product_state_remote_datasource.dart';
+import 'package:swapify/data/datasources/qr_remote_datasource.dart';
 import 'package:swapify/data/datasources/user_remote_datasource.dart';
 import 'package:swapify/data/repositories/chat_repository_impl.dart';
 import 'package:swapify/data/repositories/product_category_repository_impl.dart';
 import 'package:swapify/data/repositories/product_repository_impl.dart';
 import 'package:swapify/data/repositories/product_sale_state_repository_impl.dart';
 import 'package:swapify/data/repositories/product_state_repository_impl.dart';
+import 'package:swapify/data/repositories/qr_repository_impl.dart';
 import 'package:swapify/data/repositories/user_repository_impl.dart';
 import 'package:swapify/domain/repositories/chat_repository.dart';
 import 'package:swapify/domain/repositories/product_category_repository.dart';
 import 'package:swapify/domain/repositories/product_repository.dart';
 import 'package:swapify/domain/repositories/product_sale_state_repository.dart';
 import 'package:swapify/domain/repositories/product_state_repository.dart';
+import 'package:swapify/domain/repositories/qr_repository.dart';
 import 'package:swapify/domain/repositories/user_repository.dart';
 import 'package:swapify/domain/usecases/buy_product_usecase.dart';
 import 'package:swapify/domain/usecases/change_password_user_usecase.dart';
@@ -32,6 +35,7 @@ import 'package:swapify/domain/usecases/get_product_sale_state_usecase.dart';
 import 'package:swapify/domain/usecases/get_product_state_usecase.dart';
 import 'package:swapify/domain/usecases/get_product_usecase.dart';
 import 'package:swapify/domain/usecases/get_products_usecase.dart';
+import 'package:swapify/domain/usecases/get_qr_product_payment_usecase.dart';
 import 'package:swapify/domain/usecases/get_user_info_usecase.dart';
 import 'package:swapify/domain/usecases/get_users_info_usecase.dart';
 import 'package:swapify/domain/usecases/like_product_usecase.dart';
@@ -53,6 +57,7 @@ import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
 import 'package:swapify/presentation/blocs/product_state/product_state_bloc.dart';
+import 'package:swapify/presentation/blocs/qr/qr_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -84,6 +89,10 @@ Future<void> configureDependencies() async {
 
   sl.registerFactory<ChatBloc>(
     () => ChatBloc(sl(), sl(), sl(), sl()),
+  );
+
+  sl.registerFactory<QRBloc>(
+    () => QRBloc(sl()),
   );
 
   sl.registerFactory<LanguageBloc>(
@@ -124,6 +133,10 @@ Future<void> configureDependencies() async {
     () => ProductDataSource(),
   );
 
+  sl.registerLazySingleton<QRDataSource>(
+    () => QRDataSource(),
+  );
+
   sl.registerLazySingleton<UserRepository>(
     () => UserRepositoryImpl(sl<FirebaseAuthDataSource>(), sl<SharedPreferences>()),
   );
@@ -146,6 +159,10 @@ Future<void> configureDependencies() async {
 
   sl.registerLazySingleton<ChatRepository>(
     () => ChatRepositoryImpl(sl<ChatDataSource>(), sl<SharedPreferences>()),
+  );
+
+  sl.registerLazySingleton<QRRepository>(
+    () => QRRepositoryImpl(sl<QRDataSource>()),
   );
 
   sl.registerLazySingleton<SigninUserUseCase>(
@@ -237,5 +254,8 @@ Future<void> configureDependencies() async {
   );
   sl.registerLazySingleton<GetChatUseCase>(
     () => GetChatUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetQRProductPaymentUseCase>(
+    () => GetQRProductPaymentUseCase(sl()),
   );
 }

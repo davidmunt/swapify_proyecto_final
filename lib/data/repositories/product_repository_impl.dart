@@ -56,6 +56,7 @@ class ProductRepositoryImpl implements ProductRepository {
     required String description,
     required int idCategoryProduct,
     required int idStateProduct,
+    required int idSaleStateProduct,
     required int productId,
   }) async {
     return await dataSource.updateProduct(
@@ -66,6 +67,7 @@ class ProductRepositoryImpl implements ProductRepository {
       productId: productId,
       idCategoryProduct: idCategoryProduct,
       idStateProduct: idStateProduct,
+      idSaleStateProduct: idSaleStateProduct,
     );
   }
 
@@ -83,10 +85,11 @@ class ProductRepositoryImpl implements ProductRepository {
   @override
   Future<void> buyProduct({
     required int productId,
-    required String userId,
+    required String userId, 
+    required String sellerId,
   }) async {
     try {
-      await dataSource.buyProduct(productId: productId, userId: userId);
+      await dataSource.buyProduct(productId: productId, userId: userId, sellerId: sellerId);
       return;
     } catch (e) {
       throw ServerFailure();

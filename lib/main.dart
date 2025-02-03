@@ -7,6 +7,7 @@ import 'package:swapify/presentation/blocs/product_category/product_category_blo
 import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
 import 'package:swapify/presentation/blocs/product_state/product_state_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:swapify/presentation/blocs/qr/qr_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'firebase_options.dart';
@@ -64,6 +65,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => sl<ChatBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => sl<QRBloc>(),
         ),
         BlocProvider(
           create: (_) {
