@@ -127,46 +127,47 @@ class _ProductScreenState extends State<ProductScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: TextButton(
-  onPressed: () async {
-    showDialog(
-      context: context,
-      builder: (_) => AlertShowQRPurchase(productId: widget.id, userId: id!),
-    ).then((_) async {
-      context.read<ProductBloc>().add(GetProductButtonPressed(productId: widget.id));
-      final productState = await context.read<ProductBloc>().stream.firstWhere(
-        (state) => state.product != null && state.product!.productId == widget.id,
-      );
-      final updatedProduct = productState.product; 
-      if (updatedProduct != null && updatedProduct.idSaleStateProduct == 4 && updatedProduct.buyerId == id) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
-        context.pop();
-      }
-    });
-  },
-  style: TextButton.styleFrom(
-    backgroundColor: Colors.black,
-    minimumSize: const Size(double.infinity, 70),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-    ),
-  ),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      const Icon(Icons.shopping_cart),
-      Text(
-        AppLocalizations.of(context)!.buyProduct,
-        style: const TextStyle(
-          color: Color.fromARGB(255, 10, 185, 121),
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ],
-  ),
-),
-
+                      onPressed: () async {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertShowQRPurchase(productId: widget.id, userId: id!),
+                      ).then((_) async {
+                        final previousState = context.read<ProductBloc>().state;
+                        context.read<ProductBloc>().add(GetProductButtonPressed(productId: widget.id));
+                        final productState = await context.read<ProductBloc>().stream.firstWhere(
+                          (state) => state.product != null && state.product!.productId == widget.id && state.product != previousState.product,
+                        );
+                        final updatedProduct = productState.product; 
+                        if (updatedProduct != null && updatedProduct.idSaleStateProduct == 4 && updatedProduct.buyerId == id) {
+                          context.read<ProductBloc>().add(GetProductsButtonPressed());
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
+                          context.pop();
+                        }
+                      });
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      minimumSize: const Size(double.infinity, 70),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.shopping_cart),
+                        Text(
+                          AppLocalizations.of(context)!.buyProduct,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 10, 185, 121),
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                ),
                 const SizedBox(height: 25),
                 if (widget.userId != id)
                   Padding(

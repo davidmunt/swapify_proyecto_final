@@ -14,6 +14,7 @@ import 'package:swapify/presentation/screens/create_acount_screen.dart';
 import 'package:swapify/presentation/screens/product_screen.dart';
 import 'package:swapify/presentation/screens/profile_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:swapify/presentation/screens/qr_scanner_screen.dart';
 import 'package:swapify/presentation/screens/reset_password_screen.dart';
 final GoRouter router = GoRouter(
   initialLocation: '/home',
@@ -120,6 +121,10 @@ final GoRouter router = GoRouter(
           productId: extra['productId'],
         );
       },
+    ),
+    GoRoute(
+      path: '/qr_scanner',
+      builder: (context, state) => const QRScannerScreen(),
     ),
   ],
   redirect: (context, state) async {

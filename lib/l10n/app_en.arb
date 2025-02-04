@@ -106,7 +106,7 @@
   "youDontHaveProducts": "You have not uploaded any products.",
   "youreProducts": "These are your products:",
   "saleRealized": "Purchase successful!",
-  "notEnoughBalance": "You do not have enough balance",
+  "notEnoughBalance": "The buyer user does not have sufficient balance",
   "noImagesAvailable": "No images available",
   "buyProduct": "Buy product",
   "categoryNotFound": "Category not found",

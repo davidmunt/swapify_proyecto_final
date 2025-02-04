@@ -104,7 +104,7 @@
   "youDontHaveProducts": "No tienes productos subidos.",
   "youreProducts": "Estos son tus productos: ",
   "saleRealized": "¡Compra realizada con éxito!",
-  "notEnoughBalance": "No tienes saldo suficiente",
+  "notEnoughBalance": "El usuario comprador no tiene saldo suficiente",
   "noImagesAvailable": "No hay imagenes disponibles",
   "buyProduct": "Comprar producto",
   "categoryNotFound": "Categoria no encontrada",

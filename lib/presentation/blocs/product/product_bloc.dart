@@ -115,6 +115,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           sellerId: event.sellerId,
         ));
         emit(state.copyWith(
+          products: state.products,
           purchaseSuccess: true,
           errorMessage: null,
         ));
