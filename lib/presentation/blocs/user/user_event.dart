@@ -78,6 +78,19 @@ class ChangeUserInfoButtonPressed extends UserEvent {
   List<Object?> get props => [uid, name, surname, telNumber, dateBirth];
 }
 
+class SaveUserNotificationTokenButtonPressed extends UserEvent {
+  final String userId;
+  final String? notificationToken;
+
+  SaveUserNotificationTokenButtonPressed({
+    required this.userId,
+    required this.notificationToken,
+  });
+
+  @override
+  List<Object?> get props => [userId, notificationToken];
+}
+
 class DeleteUserButtonPressed extends UserEvent {
   final String id;
 

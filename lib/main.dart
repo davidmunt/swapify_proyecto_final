@@ -10,8 +10,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:swapify/presentation/blocs/qr/qr_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:swapify/presentation/services/notification_service.dart';
+import 'firebase_options.dart';
 import 'package:swapify/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swapify/config/theme/theme.dart';
@@ -22,12 +23,15 @@ import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await configureDependencies();
+  await NotificationService().initialize();
   final prefs = sl<SharedPreferences>();
   final email = prefs.getString('email');
   final password = prefs.getString('password');

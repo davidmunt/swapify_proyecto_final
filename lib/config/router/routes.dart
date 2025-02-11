@@ -1,6 +1,8 @@
+import 'package:swapify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:swapify/injection.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:swapify/presentation/screens/change_password_screen.dart';
 import 'package:swapify/presentation/screens/change_user_avatar_screen.dart';
 import 'package:swapify/presentation/screens/change_user_info_screen.dart';
@@ -13,11 +15,11 @@ import 'package:swapify/domain/repositories/user_repository.dart';
 import 'package:swapify/presentation/screens/create_acount_screen.dart';
 import 'package:swapify/presentation/screens/product_screen.dart';
 import 'package:swapify/presentation/screens/profile_screen.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:swapify/presentation/screens/qr_scanner_screen.dart';
 import 'package:swapify/presentation/screens/reset_password_screen.dart';
 final GoRouter router = GoRouter(
   initialLocation: '/home',
+  navigatorKey: navigatorKey,
   routes: [
     GoRoute(
       path: '/login',

@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_event.dart';
 import 'package:swapify/presentation/blocs/product/product_state.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
+import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_filter_products.dart';
 import 'package:swapify/presentation/widgets/alertdialog_order_products.dart';
@@ -21,6 +24,24 @@ class SearchProductsScreen extends StatefulWidget {
 }
 
 class _SearchProductsScreenState extends State<SearchProductsScreen> {
+    bool _hasCheckedToken = false;
+
+  Future<void> _checkAndUpdateFCMToken(UserState userState) async {
+    if (_hasCheckedToken || kIsWeb) return; 
+    try {
+      String? newToken = await FirebaseMessaging.instance.getToken();
+      if (newToken != null && mounted && userState.user != null) {
+        String? userMessageToken = userState.user!.tokenNotifications;
+        if (userMessageToken == null || userMessageToken != newToken) {
+          context.read<UserBloc>().add(SaveUserNotificationTokenButtonPressed(userId: userState.user!.id, notificationToken: newToken));
+        }
+      }
+    } catch (e) {
+      debugPrint("Error al obtener el token de Firebase Messaging: $e");
+    }
+    _hasCheckedToken = true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final productBloc = context.read<ProductBloc>();
@@ -38,6 +59,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
               child: CircularProgressIndicator(),
             );
           } else if (userState.errorMessage == null && userState.user != null) {
+            _checkAndUpdateFCMToken(userState);
             final userId = userState.user!.id;
             return BlocBuilder<ProductBloc, ProductState>(
               builder: (context, productState) {

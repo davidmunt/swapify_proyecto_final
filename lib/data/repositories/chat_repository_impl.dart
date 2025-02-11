@@ -71,4 +71,24 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, void>> sendNotificationToOtherUser({
+    required int productId,
+    required String? text,
+    required String sender,
+    required String reciver,
+  }) async {
+    try {
+      await dataSource.sendNotificationToOtherUser(
+        productId: productId,
+        text: text,
+        sender: sender,
+        reciver: reciver,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
-import 'package:swapify/presentation/blocs/user/user_event.dart';
+import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/screens/search_products_screen.dart';
 import 'package:swapify/presentation/screens/my_products_screen.dart';
 import 'package:swapify/presentation/screens/messages_screen.dart';
@@ -25,12 +25,21 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Drawer(child: DrawerWidget()),
-      body: PageStorage(
-        bucket: bucket,
-        child: pages[currentPageIndex],
+      body: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return PageStorage(
+            bucket: bucket,
+            child: pages[currentPageIndex],
+          );
+        },
       ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {

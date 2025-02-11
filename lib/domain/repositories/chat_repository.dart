@@ -18,4 +18,10 @@ abstract class ChatRepository {
   Future<Either<Failure, String>> uploadMessageImage({
     required XFile image,
   });
+  Future<Either<Failure, void>> sendNotificationToOtherUser({
+    required int productId,
+    required String? text,
+    required String sender,
+    required String reciver,
+  });
 }

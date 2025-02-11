@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert' show jsonDecode;
+import 'dart:convert' show jsonDecode, jsonEncode;
 import 'package:swapify/core/failure.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -90,7 +90,12 @@ class ChatDataSource {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/upload/chat');
       final request = http.MultipartRequest('POST', url);
-      request.files.add(await http.MultipartFile.fromPath('file', image.path));
+      if (kIsWeb) {
+        final bytes = await image.readAsBytes();
+        request.files.add(http.MultipartFile.fromBytes('file', bytes, filename: image.name));
+      } else {
+        request.files.add(await http.MultipartFile.fromPath('file', image.path));
+      }
       final response = await request.send();
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseBody = await response.stream.bytesToString();
@@ -102,6 +107,33 @@ class ChatDataSource {
       }
     } catch (e) {
       debugPrint("Error en uploadMessageImage: $e");
+      throw ServerFailure();
+    }
+  }
+
+  Future<void> sendNotificationToOtherUser({
+    required int productId,
+    required String? text,
+    required String sender,
+    required String reciver,
+  }) async {
+    try {
+      final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+      final url = Uri.parse('$baseUrl/message');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "productId": productId,
+          "text": text,
+          "sender": sender,
+          "reciver": reciver,
+        }),
+      );
+      if (response.statusCode != 201) {
+        throw Exception('Error al enviar la notifiacion al otro usuario');
+      }
+    } catch (e) {
       throw ServerFailure();
     }
   }

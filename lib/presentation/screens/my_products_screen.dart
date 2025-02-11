@@ -88,21 +88,21 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                                     children: [
                                       const SizedBox(width: 16),
                                       Container(
-  padding: const EdgeInsets.symmetric(vertical: 16),
-  child: product.images != null && product.images.isNotEmpty 
-      ? Image.network(
-          '$baseUrl${product.images.first.path}',
-          width: 125,
-          height: 125,
-          fit: BoxFit.cover,
-        )
-      : Container(
-          width: 125,
-          height: 125,
-          color: Colors.grey[300],
-          child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
-        ),
-),
+                                        padding: const EdgeInsets.symmetric(vertical: 16),
+                                        child: product.images != null && product.images.isNotEmpty 
+                                        ? Image.network(
+                                            '$baseUrl${product.images.first.path}',
+                                            width: 125,
+                                            height: 125,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Container(
+                                            width: 125,
+                                            height: 125,
+                                            color: Colors.grey[300],
+                                            child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                                          ),
+                                      ),
                                       const SizedBox(width: 16),
                                       Expanded(
                                         child: Column(

@@ -43,7 +43,9 @@ import 'package:swapify/domain/usecases/reset_password_user_usecase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:swapify/domain/usecases/save_message_image_usecase.dart';
 import 'package:swapify/domain/usecases/save_user_info_usecase.dart';
+import 'package:swapify/domain/usecases/save_user_notification_token_usecase.dart';
 import 'package:swapify/domain/usecases/send_message_chat_usecase.dart';
+import 'package:swapify/domain/usecases/send_notification_to_other_user_usecase.dart';
 import 'package:swapify/domain/usecases/sign_in_user_usecase.dart';
 import 'package:swapify/domain/usecases/sign_out_user_usecase.dart';
 import 'package:swapify/domain/usecases/sign_up_user_usecase.dart';
@@ -68,7 +70,7 @@ final GetIt sl = GetIt.instance;
 Future<void> configureDependencies() async {
 
   sl.registerFactory<UserBloc>(
-    () => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    () => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory<ProductCategoryBloc>(
@@ -88,7 +90,7 @@ Future<void> configureDependencies() async {
   );
 
   sl.registerFactory<ChatBloc>(
-    () => ChatBloc(sl(), sl(), sl(), sl()),
+    () => ChatBloc(sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory<QRBloc>(
@@ -198,6 +200,9 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton<ChangeUserInfoUseCase>(
     () => ChangeUserInfoUseCase(sl()),
   );
+  sl.registerLazySingleton<SaveUserNotificationTokenUseCase>(
+    () => SaveUserNotificationTokenUseCase(sl()),
+  );
   sl.registerLazySingleton<ChangeUserAvatarUseCase>(
     () => ChangeUserAvatarUseCase(sl()),
   );
@@ -254,6 +259,9 @@ Future<void> configureDependencies() async {
   );
   sl.registerLazySingleton<GetChatUseCase>(
     () => GetChatUseCase(sl()),
+  );
+  sl.registerLazySingleton<SendNotificationToOtherUserUseCase>(
+    () => SendNotificationToOtherUserUseCase(sl()),
   );
   sl.registerLazySingleton<GetQRProductPaymentUseCase>(
     () => GetQRProductPaymentUseCase(sl()),

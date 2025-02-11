@@ -4,6 +4,7 @@ import 'package:swapify/domain/usecases/get_chat_usecse.dart';
 import 'package:swapify/domain/usecases/get_my_chats_usecase.dart';
 import 'package:swapify/domain/usecases/save_message_image_usecase.dart';
 import 'package:swapify/domain/usecases/send_message_chat_usecase.dart';
+import 'package:swapify/domain/usecases/send_notification_to_other_user_usecase.dart';
 import 'package:swapify/presentation/blocs/chat/chat_event.dart';
 import 'package:swapify/presentation/blocs/chat/chat_state.dart';
 
@@ -12,12 +13,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final UploadMessageImageUsecase uploadMessageImageUsecase;
   final GetMyChatsUseCase getMyChatsUseCase;
   final GetChatUseCase getChatUseCase;
+  final SendNotificationToOtherUserUseCase sendNotificationToOtherUserUseCase;
 
   ChatBloc(
     this.sendMessageChatUsecase,
     this.uploadMessageImageUsecase,
     this.getMyChatsUseCase,
     this.getChatUseCase,
+    this.sendNotificationToOtherUserUseCase,
   ) : super(ChatState.initial()) {
     
     on<GetMyChatsButtonPressed>((event, emit) async {
@@ -37,6 +40,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<SendMessageButtonPressed>((event, emit) async {
       emit(ChatState.loading());
       try {
+        final String receiverId = event.productOwnerId == event.senderId ? event.potBuyerId : event.productOwnerId;
         if (event.message != null) {
           await sendMessageChatUsecase.call(SendMessageParams(
             productOwnerId: event.productOwnerId,
@@ -46,6 +50,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             message: event.message,
             imagePath: null,
             dateMessageSent: event.dateMessageSent,
+          ));
+          await sendNotificationToOtherUserUseCase.call(SendNotificationToOtherUserParams(
+            productId: event.productId,
+            text: event.message, 
+            sender: event.senderId,
+            reciver: receiverId,
           ));
         }
         if (event.image != null) {
@@ -61,6 +71,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             imagePath: uploadedImagePath,
             dateMessageSent: event.dateMessageSent,
           ));
+          await sendNotificationToOtherUserUseCase.call(SendNotificationToOtherUserParams(
+            productId: event.productId,
+            text: null, 
+            sender: event.senderId,
+            reciver: receiverId,
+          ));
         }
         final chatId = "${event.productOwnerId}${event.potBuyerId}${event.productId}";
         add(GetChatButtonPressed(chatId: chatId));
@@ -69,6 +85,42 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(ChatState.failure("Error al enviar el mensaje: $e"));
       }
     });
+
+    // on<SendMessageButtonPressed>((event, emit) async {
+    //   emit(ChatState.loading());
+    //   try {
+    //     if (event.message != null) {
+    //       await sendMessageChatUsecase.call(SendMessageParams(
+    //         productOwnerId: event.productOwnerId,
+    //         potBuyerId: event.potBuyerId,
+    //         productId: event.productId,
+    //         senderId: event.senderId,
+    //         message: event.message,
+    //         imagePath: null,
+    //         dateMessageSent: event.dateMessageSent,
+    //       ));
+    //     }
+    //     if (event.image != null) {
+    //       final uploadedImagePath = await uploadMessageImageUsecase.call(
+    //         UploadMessageImageParams(image: event.image!),
+    //       );
+    //       await sendMessageChatUsecase.call(SendMessageParams(
+    //         productOwnerId: event.productOwnerId,
+    //         potBuyerId: event.potBuyerId,
+    //         productId: event.productId,
+    //         senderId: event.senderId,
+    //         message: null,
+    //         imagePath: uploadedImagePath,
+    //         dateMessageSent: event.dateMessageSent,
+    //       ));
+    //     }
+    //     final chatId = "${event.productOwnerId}${event.potBuyerId}${event.productId}";
+    //     add(GetChatButtonPressed(chatId: chatId));
+    //     add(GetMyChatsButtonPressed(userId: event.senderId));
+    //   } catch (e) {
+    //     emit(ChatState.failure("Error al enviar el mensaje: $e"));
+    //   }
+    // });
 
     on<GetChatButtonPressed>((event, emit) async {
       emit(ChatState.loading());

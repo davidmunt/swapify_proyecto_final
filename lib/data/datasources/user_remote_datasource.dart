@@ -89,6 +89,28 @@ class FirebaseAuthDataSource {
     }
   }
 
+  Future<void> saveUserNotificationToken({
+    required String userId,
+    required String? notificationToken,
+  }) async {
+    try {
+      final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+      final url = Uri.parse('$baseUrl/user/$userId');
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "tokenNotifications": notificationToken
+        }),
+      );
+      if (response.statusCode != 200) {
+        throw Exception('Error al guardar el token de las notificaciones de ese usuario');
+      }
+    } catch (e) {
+      throw ServerFailure();
+    }
+  }
+
   Future<Map<String, dynamic>> getUserInfo(String uid) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';

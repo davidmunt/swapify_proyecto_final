@@ -10,6 +10,7 @@ import 'package:swapify/domain/usecases/get_user_info_usecase.dart';
 import 'package:swapify/domain/usecases/get_users_info_usecase.dart';
 import 'package:swapify/domain/usecases/reset_password_user_usecase.dart';
 import 'package:swapify/domain/usecases/save_user_info_usecase.dart';
+import 'package:swapify/domain/usecases/save_user_notification_token_usecase.dart';
 import 'package:swapify/domain/usecases/sign_in_user_usecase.dart';
 import 'package:swapify/domain/usecases/sign_out_user_usecase.dart';
 import 'package:swapify/domain/usecases/sign_up_user_usecase.dart';
@@ -29,6 +30,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final SignoutUserUseCase signOutUserUseCase;
   final GetCurrentUserUseCase getCurrentUserUseCase;
   final GetUsersInfoUseCase getUsersInfoUseCase;
+  final SaveUserNotificationTokenUseCase saveUserNotificationTokenUseCase;
 
   UserBloc(
     this.signInUserUseCase,
@@ -43,6 +45,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     this.changePassUserUsecase,
     this.deleteUserUseCase,
     this.getUsersInfoUseCase,
+    this.saveUserNotificationTokenUseCase,
   ) : super(UserState.initial()) {
 
     on<LoginButtonPressed>((event, emit) async {
@@ -109,6 +112,31 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           (_) async {
             try {
               final updatedUser = await getUserInfoUseCase(GetUserInfoParams(uid: event.uid));
+              emit(UserState.success(updatedUser));
+            } catch (e) {
+              emit(UserState.failure("Error inesperado al obtener la informacion actualizada: $e"));
+            }
+          },
+        );
+      } catch (e) {
+        emit(UserState.failure("Error inesperado: $e"));
+      }
+    });
+
+    on<SaveUserNotificationTokenButtonPressed>((event, emit) async {
+      emit(UserState.loading());
+      try {
+        final result = await saveUserNotificationTokenUseCase(SaveUserNotificationTokenParams(
+          userId: event.userId,
+          notificationToken: event.notificationToken,
+        ));
+        await result.fold(
+          (failure) async {
+            emit(UserState.failure("Error al cambiar la informacion del usuario"));
+          },
+          (_) async {
+            try {
+              final updatedUser = await getUserInfoUseCase(GetUserInfoParams(uid: event.userId));
               emit(UserState.success(updatedUser));
             } catch (e) {
               emit(UserState.failure("Error inesperado al obtener la informacion actualizada: $e"));

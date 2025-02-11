@@ -94,6 +94,22 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<Either<Failure, void>> saveUserNotificationToken({
+    required String userId,
+    required String? notificationToken,
+  }) async {
+    try {
+      await dataSource.saveUserNotificationToken(
+        userId: userId,
+        notificationToken: notificationToken,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, UserEntity>> getUserInfo(String uid) async {
     try {
       final userData = await dataSource.getUserInfo(uid);

@@ -14,14 +14,11 @@ class AlertLogout extends StatefulWidget {
 }
 
 class _AlertLogoutState extends State<AlertLogout> {
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: BlocConsumer<UserBloc, UserState>(
-        listener: (context, state) {
-        },
-        builder: (context, state) {
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, userState) {
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
@@ -35,6 +32,9 @@ class _AlertLogoutState extends State<AlertLogout> {
                 ),
                 TextButton(
                   onPressed: () async {
+                    if (userState.user != null) {
+                      context.read<UserBloc>().add(SaveUserNotificationTokenButtonPressed(userId: userState.user!.id, notificationToken: null));
+                    }
                     context.read<UserBloc>().add(LogoutButtonPressed());
                     Navigator.of(context).pop();
                     context.push('/login');

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:typed_data'; 
 
 class SendMessageWidget extends StatefulWidget {
   final Function(String message, XFile? image) onSendMessage;
@@ -15,14 +17,24 @@ class SendMessageWidget extends StatefulWidget {
 class _SendMessageWidgetState extends State<SendMessageWidget> {
   final TextEditingController _messageController = TextEditingController();
   XFile? _selectedImage;
+  Uint8List? _webImageBytes; // Para almacenar la imagen en Web
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
     if (image != null) {
-      setState(() {
-        _selectedImage = image;
-      });
+      if (kIsWeb) {
+        final bytes = await image.readAsBytes();
+        setState(() {
+          _webImageBytes = bytes; // Guardamos la imagen en Web
+          _selectedImage = image;
+        });
+      } else {
+        setState(() {
+          _selectedImage = image;
+        });
+      }
     }
   }
 
@@ -32,6 +44,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
     setState(() {
       _messageController.clear();
       _selectedImage = null;
+      _webImageBytes = null; // Limpiar la imagen en Web también
     });
   }
 
@@ -44,16 +57,25 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
           if (_selectedImage != null)
             Row(
               children: [
-                Image.file(
-                  File(_selectedImage!.path),
-                  width: 50,
-                  height: 50,
-                ),
+                kIsWeb
+                    ? Image.memory(
+                        _webImageBytes!,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ) // ✅ En Web, usa Image.memory
+                    : Image.file(
+                        File(_selectedImage!.path),
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.cover,
+                      ),
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
                     setState(() {
                       _selectedImage = null;
+                      _webImageBytes = null; // Limpiar en Web también
                     });
                   },
                 ),

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/injection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
@@ -18,12 +19,12 @@ class ChangeUserAvatarScreen extends StatefulWidget {
 
 class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
   final ImagePicker _picker = ImagePicker();
-  XFile? _selectedImage;
+  XFile? selectedImage;
 
   Future<void> _selectImage() async {
     final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
-      _selectedImage = pickedImage;
+      selectedImage = pickedImage;
     });
   }
 
@@ -65,15 +66,14 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: TextButton(
                       onPressed: () {
-                        if (_selectedImage == null) {
+                        if (selectedImage == null) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorImageUserAvatarRequired)));
                           return;
                         }
                         final prefs = sl<SharedPreferences>();
                         final id = prefs.getString('id');
                         if (id != null) {
-                          context.read<UserBloc>().add(ChangeUserAvatarButtonPressed(uid: id, image: _selectedImage!),
-                          );
+                          context.read<UserBloc>().add(ChangeUserAvatarButtonPressed(uid: id, image: selectedImage!));
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorUserIdNotFount)));
                         }

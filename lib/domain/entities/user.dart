@@ -5,7 +5,8 @@ class UserEntity {
   final String? surname;
   final int? telNumber;
   final String? avatarId;
-  final DateTime? dateBirth;
+  final String? tokenNotifications;
+  final DateTime? dateBirth; 
   final String? linkAvatar;
 
   UserEntity({
@@ -15,6 +16,7 @@ class UserEntity {
     this.surname,
     this.telNumber,
     this.avatarId,
+    this.tokenNotifications,
     this.dateBirth,
     this.linkAvatar,
   });

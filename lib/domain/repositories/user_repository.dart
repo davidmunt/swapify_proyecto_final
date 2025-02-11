@@ -22,6 +22,10 @@ abstract class UserRepository {
     required int telNumber,
     required DateTime dateBirth,
   });
+  Future<Either<Failure, void>> saveUserNotificationToken({
+    required String userId,
+    required String? notificationToken,
+  });
   Future<Either<Failure, void>> changeUserAvatar({
     required String uid,
     required XFile image,
