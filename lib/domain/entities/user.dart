@@ -8,6 +8,7 @@ class UserEntity {
   final String? tokenNotifications;
   final DateTime? dateBirth; 
   final String? linkAvatar;
+  final double? balance;
 
   UserEntity({
     required this.id,
@@ -19,5 +20,6 @@ class UserEntity {
     this.tokenNotifications,
     this.dateBirth,
     this.linkAvatar,
+    this.balance,
   });
 }

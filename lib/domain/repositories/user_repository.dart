@@ -36,4 +36,8 @@ abstract class UserRepository {
   Future<Either<Failure, void>> changePassword(String password);
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, void>> deleteUser(String id);
+  Future<Either<Failure, void>> addBalanceToUser({
+    required String userId,
+    required int balanceToAdd,
+  });
 }

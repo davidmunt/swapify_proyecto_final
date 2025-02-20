@@ -52,6 +52,7 @@
   "errorUserIdNotFount": "No se encontro el ID del usuario",
   "saveUserAvatar": "Guardar avatar del usuario",
   "changeUserInfo": "Modificar datos del usuario",
+  "change": "Modificar datos",
   "userInfoChanged": "Datos del usuario modificados",
   "name": "Nombre",
   "surnames": "Apellidos",

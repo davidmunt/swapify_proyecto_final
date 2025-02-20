@@ -15,8 +15,10 @@ import 'package:swapify/domain/repositories/user_repository.dart';
 import 'package:swapify/presentation/screens/create_acount_screen.dart';
 import 'package:swapify/presentation/screens/product_screen.dart';
 import 'package:swapify/presentation/screens/profile_screen.dart';
+import 'package:swapify/presentation/screens/qr_scanner_add_balance_to_account_screen.dart';
 import 'package:swapify/presentation/screens/qr_scanner_screen.dart';
 import 'package:swapify/presentation/screens/reset_password_screen.dart';
+import 'package:swapify/presentation/screens/user_info_drawer_screen.dart';
 final GoRouter router = GoRouter(
   initialLocation: '/home',
   navigatorKey: navigatorKey,
@@ -127,6 +129,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/qr_scanner',
       builder: (context, state) => const QRScannerScreen(),
+    ),
+    GoRoute(
+      path: '/qr_scanner_add_balance',
+      builder: (context, state) => const QRScannerScreenAddBalance(),
+    ),
+    GoRoute(
+      path: '/user_info_drawer',
+      builder: (context, state) => const UserInfoDrawer(),
     ),
   ],
   redirect: (context, state) async {

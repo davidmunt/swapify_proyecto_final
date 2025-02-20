@@ -274,4 +274,27 @@ class FirebaseAuthDataSource {
     final user = auth.currentUser;
     return user?.email;
   }
+
+  Future<void> addBalanceToUser({
+    required String userId,
+    required int balanceToAdd,
+  }) async {
+    try {
+      final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+      final url = Uri.parse('$baseUrl/user/addBallance');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "id_user": userId,
+          "balance": balanceToAdd,
+        }),
+      );
+      if (response.statusCode != 201) {
+        throw Exception('Error al añadir el saldo al usuario');
+      }
+    } catch (e) {
+      throw ServerFailure();
+    }
+  }
 }

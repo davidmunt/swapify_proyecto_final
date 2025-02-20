@@ -203,4 +203,20 @@ class UserRepositoryImpl implements UserRepository {
       return Left(AuthFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, void>> addBalanceToUser({
+    required String userId,
+    required int balanceToAdd,
+  }) async {
+    try {
+      await dataSource.addBalanceToUser(
+        userId: userId,
+        balanceToAdd: balanceToAdd,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
 }

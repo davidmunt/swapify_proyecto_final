@@ -54,6 +54,7 @@
   "errorUserIdNotFount": "User ID not found",
   "saveUserAvatar": "Save user avatar",
   "changeUserInfo": "Modify user information",
+  "change": "Modify data",
   "userInfoChanged": "User information updated",
   "name": "Name",
   "surnames": "Surnames",

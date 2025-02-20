@@ -52,6 +52,7 @@
   "errorUserIdNotFount": "ID utilisateur introuvable",
   "saveUserAvatar": "Enregistrer l'avatar de l'utilisateur",
   "changeUserInfo": "Modifier les informations de l'utilisateur",
+  "change": "Modificar datos",
   "userInfoChanged": "Informations utilisateur mises à jour",
   "name": "Nom",
   "surnames": "Prénoms",

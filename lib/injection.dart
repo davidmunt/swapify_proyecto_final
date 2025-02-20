@@ -19,6 +19,7 @@ import 'package:swapify/domain/repositories/product_sale_state_repository.dart';
 import 'package:swapify/domain/repositories/product_state_repository.dart';
 import 'package:swapify/domain/repositories/qr_repository.dart';
 import 'package:swapify/domain/repositories/user_repository.dart';
+import 'package:swapify/domain/usecases/add_balance_to_user_usecase.dart';
 import 'package:swapify/domain/usecases/buy_product_usecase.dart';
 import 'package:swapify/domain/usecases/change_password_user_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_avatar_usecase.dart';
@@ -55,6 +56,7 @@ import 'package:swapify/domain/usecases/update_product_usecase.dart';
 import 'package:swapify/domain/usecases/upload_product_images_usecase.dart';
 import 'package:swapify/presentation/blocs/chat/chat_bloc.dart';
 import 'package:swapify/presentation/blocs/language/language_bloc.dart';
+import 'package:swapify/presentation/blocs/navigation_bar/navigation_bar_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
@@ -70,7 +72,7 @@ final GetIt sl = GetIt.instance;
 Future<void> configureDependencies() async {
 
   sl.registerFactory<UserBloc>(
-    () => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    () => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory<ProductCategoryBloc>(
@@ -99,6 +101,10 @@ Future<void> configureDependencies() async {
 
   sl.registerFactory<LanguageBloc>(
     () => LanguageBloc(),
+  );
+
+  sl.registerFactory<NavigationBarBloc>(
+    () => NavigationBarBloc(),
   );
 
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
@@ -199,6 +205,9 @@ Future<void> configureDependencies() async {
   );
   sl.registerLazySingleton<ChangeUserInfoUseCase>(
     () => ChangeUserInfoUseCase(sl()),
+  );
+  sl.registerLazySingleton<AddBalanceToUserUseCase>(
+    () => AddBalanceToUserUseCase(sl()),
   );
   sl.registerLazySingleton<SaveUserNotificationTokenUseCase>(
     () => SaveUserNotificationTokenUseCase(sl()),

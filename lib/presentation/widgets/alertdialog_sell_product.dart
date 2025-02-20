@@ -19,7 +19,7 @@ class AlertSell extends StatefulWidget {
 }
 
 class _AlertSellState extends State<AlertSell> {
-  bool _isProcessing = false; // Para controlar el estado de carga
+  bool _isProcessing = false; 
 
   @override
   Widget build(BuildContext context) {
@@ -32,25 +32,17 @@ class _AlertSellState extends State<AlertSell> {
             listener: (context, state) async {
               if (state.purchaseSuccess == true) {
                 setState(() {
-                  _isProcessing = false; // Se detiene la carga
+                  _isProcessing = false;
                 });
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(AppLocalizations.of(context)!.productSoldSuccesfully)),
-                );
-
-                /// ✅ Cierra los diálogos abiertos
-                Navigator.of(context).pop(); // Cierra el diálogo de venta
-                Navigator.of(context).pop(); // Cierra el escáner QR
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.productSoldSuccesfully)));
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
                 context.pop(); 
               } else if (state.errorMessage != null) {
                 setState(() {
-                  _isProcessing = false; // Se detiene la carga en caso de error
+                  _isProcessing = false;
                 });
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(AppLocalizations.of(context)!.notEnoughBalance)),
-                );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.notEnoughBalance)));
               }
             },
             builder: (context, state) {
@@ -61,24 +53,19 @@ class _AlertSellState extends State<AlertSell> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop(); // Cierra el diálogo
+                        Navigator.of(context).pop();
                       },
                       child: Text(AppLocalizations.of(context)!.cancel),
                     ),
                     TextButton(
                       onPressed: () async {
                         if (_isProcessing) {
-                          return; // Si ya está procesando, evitar múltiples clics
+                          return;
                         }
-
-                        if (widget.productId != null &&
-                            widget.userId.isNotEmpty &&
-                            sellerId != null) {
-                          
+                        if (widget.productId != null && widget.userId.isNotEmpty && sellerId != null) {
                           setState(() {
-                            _isProcessing = true; // Iniciar la carga
+                            _isProcessing = true; 
                           });
-
                           context.read<ProductBloc>().add(
                             BuyProductButtonPressed(
                               productId: widget.productId,
@@ -87,17 +74,15 @@ class _AlertSellState extends State<AlertSell> {
                             ),
                           );
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(AppLocalizations.of(context)!.qrInvalid)),
-                          );
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.qrInvalid)));
                         }
                       },
                       child: Column(
                         children: [
                           if (_isProcessing)
-                            const CircularProgressIndicator(), // Muestra carga si está procesando
+                            const CircularProgressIndicator(),
                           if (!_isProcessing)
-                            Text(AppLocalizations.of(context)!.sell), // Muestra el texto si no está cargando
+                            Text(AppLocalizations.of(context)!.sell),
                         ],
                       ),
                     ),

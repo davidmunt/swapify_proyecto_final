@@ -2,6 +2,7 @@ import 'package:swapify/presentation/blocs/chat/chat_bloc.dart';
 import 'package:swapify/presentation/blocs/language/language_bloc.dart';
 import 'package:swapify/presentation/blocs/language/language_event.dart';
 import 'package:swapify/presentation/blocs/language/language_state.dart';
+import 'package:swapify/presentation/blocs/navigation_bar/navigation_bar_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
@@ -72,6 +73,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => sl<QRBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => sl<NavigationBarBloc>(),
         ),
         BlocProvider(
           create: (_) {

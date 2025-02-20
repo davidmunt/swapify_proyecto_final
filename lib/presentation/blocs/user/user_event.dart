@@ -107,6 +107,19 @@ class ResetPasswordButtonPressed extends UserEvent {
   ResetPasswordButtonPressed({required this.email});
 }
 
+class AddBalanceToUserButtonPressed extends UserEvent {
+  final String userId;
+  final int balanceToAdd;
+
+  AddBalanceToUserButtonPressed({
+    required this.userId,
+    required this.balanceToAdd,
+  });
+
+  @override
+  List<Object?> get props => [userId, balanceToAdd];
+}
+
 class ChangePasswordButtonPressed extends UserEvent {
   final String password;
 

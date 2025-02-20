@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swapify/core/usecase.dart';
 import 'package:swapify/domain/entities/user.dart';
+import 'package:swapify/domain/usecases/add_balance_to_user_usecase.dart';
 import 'package:swapify/domain/usecases/change_password_user_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_avatar_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_info_usecase.dart';
@@ -31,6 +32,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final GetCurrentUserUseCase getCurrentUserUseCase;
   final GetUsersInfoUseCase getUsersInfoUseCase;
   final SaveUserNotificationTokenUseCase saveUserNotificationTokenUseCase;
+  final AddBalanceToUserUseCase addBalanceToUserUseCase;
 
   UserBloc(
     this.signInUserUseCase,
@@ -46,6 +48,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     this.deleteUserUseCase,
     this.getUsersInfoUseCase,
     this.saveUserNotificationTokenUseCase,
+    this.addBalanceToUserUseCase,
   ) : super(UserState.initial()) {
 
     on<LoginButtonPressed>((event, emit) async {
@@ -249,6 +252,31 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           emit(UserState.initial());
         },
       );
+    });
+
+    on<AddBalanceToUserButtonPressed>((event, emit) async {
+      emit(UserState.loading());
+      try {
+        final result = await addBalanceToUserUseCase(AddBalanceToUserParams(
+          userId: event.userId,
+          balanceToAdd: event.balanceToAdd,
+        ));
+        await result.fold(
+          (failure) async {
+            emit(UserState.failure("Error al añadir el saldo al usuario"));
+          },
+          (_) async {
+            try {
+              final updatedUser = await getUserInfoUseCase(GetUserInfoParams(uid: event.userId));
+              emit(UserState.success(updatedUser));
+            } catch (e) {
+              emit(UserState.failure("Error inesperado al obtener la informacion actualizada: $e"));
+            }
+          },
+        );
+      } catch (e) {
+        emit(UserState.failure("Error inesperado: $e"));
+      }
     });
   }
 }

@@ -202,19 +202,6 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                           },
                         ),
                         const SizedBox(height: 12),
-                        if (widget.productId != null)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: TextButton(
-                              onPressed: () {
-                                context.read<ProductBloc>().add(DeleteProductButtonPressed(id: widget.productId!));
-                                context.push('/home');
-                              },
-                              style: TextButton.styleFrom(backgroundColor: Colors.black, minimumSize: const Size(double.infinity, 70), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                              child: Text(AppLocalizations.of(context)!.deleteProduct, style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
-                            ),
-                          ),
-                        const SizedBox(height: 12),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: TextButton(
@@ -317,6 +304,19 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                             ),
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        if (widget.productId != null)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: TextButton(
+                              onPressed: () {
+                                context.read<ProductBloc>().add(DeleteProductButtonPressed(id: widget.productId!));
+                                context.push('/home');
+                              },
+                              style: TextButton.styleFrom(backgroundColor: Colors.black, minimumSize: const Size(double.infinity, 70), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                              child: Text(AppLocalizations.of(context)!.deleteProduct, style: const TextStyle(color: Color.fromARGB(255, 10, 185, 121), fontSize: 20, fontWeight: FontWeight.bold)),
+                            ),
+                          ),
                         const SizedBox(height: 12),
                       ],
                     ),

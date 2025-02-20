@@ -58,7 +58,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                   const SizedBox(height: 12),
                   TextButton(
                     onPressed: () {
-                      context.push('/profile');
+                      context.push('/user_info_drawer');
                     },
                     child: Row(
                       children: [
@@ -91,6 +91,19 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         Icon(Icons.qr_code_scanner),
                         SizedBox(width: 10),
                         Text("Vender producto"),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () {
+                      context.push('/qr_scanner_add_balance');
+                    },
+                    child: const Row(
+                      children: [
+                        Icon(Icons.qr_code_scanner),
+                        SizedBox(width: 10),
+                        Text("Añadir saldo"),
                       ],
                     ),
                   ),
