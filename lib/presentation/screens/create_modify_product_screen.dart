@@ -253,8 +253,13 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                 Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
                                 double latitudeCreated = position.latitude;
                                 double longitudeCreated = position.longitude;
-                                List<Placemark> placemarks = await placemarkFromCoordinates(latitudeCreated, longitudeCreated);
-                                String nameCityCreated = placemarks.first.locality ?? AppLocalizations.of(context)!.unknownCity;
+                                String nameCityCreated;
+                                try {
+                                  List<Placemark> placemarks = await placemarkFromCoordinates(latitudeCreated, longitudeCreated);
+                                  nameCityCreated = placemarks.isNotEmpty ? (placemarks.first.locality ?? "Ciudad desconocida") : "Ciudad desconocida";
+                                } catch (e) {
+                                  nameCityCreated = "Ciudad desconocida"; 
+                                }
                                 if (widget.productId == null) {
                                   context.read<ProductBloc>().add(CreateProductButtonPressed(
                                     productModel: modelo,

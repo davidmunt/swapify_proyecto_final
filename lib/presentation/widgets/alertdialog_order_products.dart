@@ -22,8 +22,6 @@ class _OrdenarProductosState extends State<OrdenarProductosWidget> {
   void initState() {
     super.initState();
     final productBloc = context.read<ProductBloc>().state;
-
-    // Restaurar valores del estado actual
     selectedOrder = productBloc.currentSortCriteria;
     selectedDirection = productBloc.currentSortDirection;
   }

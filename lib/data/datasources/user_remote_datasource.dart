@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:swapify/data/models/user_model.dart';
@@ -9,6 +10,8 @@ import 'dart:convert' show jsonDecode, jsonEncode;
 import 'package:swapify/core/failure.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http_parser/http_parser.dart';
 
 class FirebaseAuthDataSource {
   final FirebaseAuth auth;
@@ -169,7 +172,18 @@ class FirebaseAuthDataSource {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/upload');
       final request = http.MultipartRequest('POST', url);
-      request.files.add(await http.MultipartFile.fromPath('file', image.path));
+      // request.files.add(await http.MultipartFile.fromPath('file', image.path));
+      if (kIsWeb) {
+        Uint8List imageBytes = await image.readAsBytes();
+        request.files.add(http.MultipartFile.fromBytes(
+          'file',
+          imageBytes,
+          filename: 'avatar.png', 
+          contentType: MediaType('image', 'png'),
+        ));
+      } else {
+        request.files.add(await http.MultipartFile.fromPath('file', image.path));
+      }
       request.fields['id_user'] = uid;
       final response = await request.send();
       if (response.statusCode != 200 && response.statusCode != 201) {

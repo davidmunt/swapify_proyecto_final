@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
@@ -23,9 +24,11 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
 
   Future<void> _selectImage() async {
     final pickedImage = await _picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      selectedImage = pickedImage;
-    });
+    if (pickedImage != null) {
+      setState(() {
+        selectedImage = pickedImage;
+      });
+    }
   }
 
   @override
@@ -49,7 +52,31 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 70),
+                  const SizedBox(height: 30),
+                  if (selectedImage != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(50),
+                      child: kIsWeb
+                          ? Image.network(
+                              selectedImage!.path, 
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.file(
+                              File(selectedImage!.path),
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                    )
+                  else
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey[300],
+                      child: Icon(Icons.person, size: 50, color: Colors.grey[700]),
+                    ),
+                  const SizedBox(height: 30),
                   TextButton(
                     onPressed: _selectImage,
                     style: TextButton.styleFrom(
@@ -59,7 +86,14 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    child: Text(AppLocalizations.of(context)!.selectImageUserAvatar, style: const TextStyle(fontSize: 16, color: Color.fromARGB(255, 10, 185, 121), fontWeight: FontWeight.bold)),
+                    child: Text(
+                      AppLocalizations.of(context)!.selectImageUserAvatar,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Color.fromARGB(255, 10, 185, 121),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 30),
                   Padding(
@@ -80,10 +114,8 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
                       },
                       style: TextButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 10, 185, 121),
-                        minimumSize: const Size(double.infinity, 70), 
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                        minimumSize: const Size(double.infinity, 70),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.saveUserAvatar,

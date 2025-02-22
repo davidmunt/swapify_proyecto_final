@@ -17,17 +17,16 @@ class SendMessageWidget extends StatefulWidget {
 class _SendMessageWidgetState extends State<SendMessageWidget> {
   final TextEditingController _messageController = TextEditingController();
   XFile? _selectedImage;
-  Uint8List? _webImageBytes; // Para almacenar la imagen en Web
+  Uint8List? _webImageBytes;
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
     if (image != null) {
       if (kIsWeb) {
         final bytes = await image.readAsBytes();
         setState(() {
-          _webImageBytes = bytes; // Guardamos la imagen en Web
+          _webImageBytes = bytes;
           _selectedImage = image;
         });
       } else {
@@ -44,7 +43,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
     setState(() {
       _messageController.clear();
       _selectedImage = null;
-      _webImageBytes = null; // Limpiar la imagen en Web también
+      _webImageBytes = null; 
     });
   }
 
@@ -63,7 +62,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
                         width: 50,
                         height: 50,
                         fit: BoxFit.cover,
-                      ) // ✅ En Web, usa Image.memory
+                      ) 
                     : Image.file(
                         File(_selectedImage!.path),
                         width: 50,
@@ -75,7 +74,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
                   onPressed: () {
                     setState(() {
                       _selectedImage = null;
-                      _webImageBytes = null; // Limpiar en Web también
+                      _webImageBytes = null; 
                     });
                   },
                 ),

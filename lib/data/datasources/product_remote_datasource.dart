@@ -6,6 +6,11 @@ import 'package:swapify/core/failure.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swapify/data/models/product_model.dart';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProductDataSource {
 
@@ -166,8 +171,18 @@ class ProductDataSource {
       final url = Uri.parse('$baseUrl/upload/product');
       final request = http.MultipartRequest('PUT', url);
       for (final image in images) {
-        final fullPath = image.path.startsWith('/upload') ? '$baseUrl${image.path}' : image.path;
-        request.files.add(await http.MultipartFile.fromPath('file', fullPath));
+        if (kIsWeb) {
+          Uint8List imageBytes = await image.readAsBytes();
+          request.files.add(http.MultipartFile.fromBytes(
+            'file',
+            imageBytes,
+            filename: 'updated_product_image.png',
+            contentType: MediaType('image', 'png'),
+          ));
+        } else {
+          final fullPath = image.path.startsWith('/upload') ? '$baseUrl${image.path}' : image.path;
+          request.files.add(await http.MultipartFile.fromPath('file', fullPath));
+        }
       }
       request.fields['product'] = productId.toString();
       final response = await request.send();
@@ -233,16 +248,49 @@ class ProductDataSource {
       final url = Uri.parse('$baseUrl/upload/product');
       final request = http.MultipartRequest('POST', url);
       for (final image in images) {
-        request.files.add(await http.MultipartFile.fromPath('file', image.path));
+        if (kIsWeb) {
+          Uint8List imageBytes = await image.readAsBytes();
+          request.files.add(http.MultipartFile.fromBytes(
+            'file',
+            imageBytes,
+            filename: 'product_image.png', 
+            contentType: MediaType('image', 'png'), 
+          ));
+        } else {
+          request.files.add(await http.MultipartFile.fromPath('file', image.path));
+        }
       }
       request.fields['product'] = productId.toString();
       final response = await request.send();
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        throw Exception('Error al subir imagenes del producto');
+      if (response.statusCode != 201) {
+        throw Exception('Error al subir imágenes del producto');
       }
     } catch (e) {
       debugPrint("Error en uploadProductImages: $e");
       throw ServerFailure();
     }
   }
+
+
+  // Future<void> uploadProductImages({
+  //   required int productId,
+  //   required List<XFile> images,
+  // }) async {
+  //   try {
+  //     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+  //     final url = Uri.parse('$baseUrl/upload/product');
+  //     final request = http.MultipartRequest('POST', url);
+  //     for (final image in images) {
+  //       request.files.add(await http.MultipartFile.fromPath('file', image.path));
+  //     }
+  //     request.fields['product'] = productId.toString();
+  //     final response = await request.send();
+  //     if (response.statusCode != 200 && response.statusCode != 201) {
+  //       throw Exception('Error al subir imagenes del producto');
+  //     }
+  //   } catch (e) {
+  //     debugPrint("Error en uploadProductImages: $e");
+  //     throw ServerFailure();
+  //   }
+  // }
 }

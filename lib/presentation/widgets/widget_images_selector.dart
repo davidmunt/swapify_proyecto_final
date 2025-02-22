@@ -73,29 +73,20 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
           runSpacing: 8.0,
           children: widget.selectedImages.map((image) {
             final isLocalFile = image.path.startsWith('/data') || image.path.startsWith('file://');
+            final isWebBlob = image.path.startsWith('blob:');
             return Stack(
               children: [
                 isLocalFile
-                    ? Image.file(
-                        File(image.path),
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.network(
-                        '${widget.baseUrl}${image.path}',
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+                    ? Image.file(File(image.path), width: 100, height: 100, fit: BoxFit.cover)
+                    : isWebBlob
+                        ? Image.network(image.path, width: 100, height: 100, fit: BoxFit.cover) 
+                        : Image.network('${widget.baseUrl}${image.path}', width: 100, height: 100, fit: BoxFit.cover),
                 Positioned(
                   top: 0,
                   right: 0,
                   child: GestureDetector(
                     onTap: () {
-                      final updatedImages = List<File>.from(widget.selectedImages)
-                        ..remove(image);
-
+                      final updatedImages = List<File>.from(widget.selectedImages)..remove(image);
                       setState(() {
                         widget.onImagesUpdated(updatedImages);
                       });

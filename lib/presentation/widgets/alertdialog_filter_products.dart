@@ -30,8 +30,6 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
     super.initState();
     context.read<ProductCategoryBloc>().add(GetProductCategoryButtonPressed());
     final productBloc = context.read<ProductBloc>().state;
-
-    // Restaurar valores del estado actual
     searchController.text = productBloc.currentSearchTerm ?? '';
     minPriceController.text = productBloc.currentMinPrice?.toString() ?? '';
     maxPriceController.text = productBloc.currentMaxPrice?.toString() ?? '';
