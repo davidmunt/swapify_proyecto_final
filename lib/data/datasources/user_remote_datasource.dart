@@ -10,7 +10,6 @@ import 'dart:convert' show jsonDecode, jsonEncode;
 import 'package:swapify/core/failure.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter/foundation.dart';
 import 'package:http_parser/http_parser.dart';
 
 class FirebaseAuthDataSource {

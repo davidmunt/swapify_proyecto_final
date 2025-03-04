@@ -21,7 +21,9 @@ class MyProductsScreen extends StatefulWidget {
 class _MyProductsScreenState extends State<MyProductsScreen> {
   @override
   Widget build(BuildContext context) {
-    context.read<ProductBloc>().add(GetProductsButtonPressed());
+    final userId = context.read<UserBloc>().state.user!.id;
+    final productBloc = context.read<ProductBloc>();
+    productBloc.add(GetYoureProductsButtonPressed(userId: userId));
     return Scaffold(
       appBar: AppBar(
         title: const Text("Swapify"),
@@ -39,8 +41,8 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
               builder: (context, productState) {
                 if (productState.isLoading) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (productState.products != null) {
-                  final userProducts = productState.products!.where((product) => product.userId == userId && product.idSaleStateProduct != 4).toList();
+                } else if (productState.youreProducts != null) {
+                  final userProducts = productState.youreProducts!.where((product) => product.userId == userId && product.idSaleStateProduct != 4).toList();
                   if (userProducts.isEmpty) {
                     return Center(
                       child: Text(AppLocalizations.of(context)!.youDontHaveProducts, style: const TextStyle(fontSize: 16)),

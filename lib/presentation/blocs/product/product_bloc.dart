@@ -1,12 +1,14 @@
 import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:swapify/domain/entities/product.dart';
 import 'package:swapify/domain/usecases/buy_product_usecase.dart';
 import 'package:swapify/domain/usecases/delete_product_usecase.dart';
 import 'package:swapify/domain/usecases/get_filtered_products_usecase.dart';
 import 'package:swapify/domain/usecases/get_product_usecase.dart';
 import 'package:swapify/domain/usecases/get_products_usecase.dart';
 import 'package:swapify/domain/usecases/create_product_usecase.dart';
+import 'package:swapify/domain/usecases/get_youre_envolvment_products_usecase.dart';
+import 'package:swapify/domain/usecases/get_youre_liked_products_usecase.dart';
+import 'package:swapify/domain/usecases/get_youre_products_usecase.dart';
 import 'package:swapify/domain/usecases/like_product_usecase.dart';
 import 'package:swapify/domain/usecases/unlike_product_usecase.dart';
 import 'package:swapify/domain/usecases/update_product_images_usecase.dart';
@@ -19,6 +21,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final GetProductsUseCase getProductsUseCase;
   final GetProductUseCase getProductUseCase;
   final GetFilteredProductsUseCase getFilteredProductsUseCase;
+  final GetYoureProductsUseCase getYoureProductsUseCase;
+  final GetYoureLikedProductsUseCase getYoureLikedProductsUseCase;
+  final GetYoureEnvolvmentProductsUseCase getYoureEnvolvmentProductsUseCase;
   final CreateProductUseCase createProductUseCase;
   final UploadProductImagesUseCase uploadProductImagesUseCase;
   final DeleteProductUseCase deleteProductUseCase;
@@ -32,6 +37,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     this.getProductsUseCase, 
     this.getProductUseCase, 
     this.getFilteredProductsUseCase, 
+    this.getYoureProductsUseCase, 
+    this.getYoureLikedProductsUseCase, 
+    this.getYoureEnvolvmentProductsUseCase, 
     this.createProductUseCase, 
     this.deleteProductUseCase, 
     this.likeProductUseCase, 
@@ -44,40 +52,144 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<GetProductsButtonPressed>((event, emit) async {
       emit(ProductState.loading());
       try {
-        final products = await getFilteredProductsUseCase.call(GetFilteredProductsParams());
-        emit(ProductState.success(products));
+        add(FilterProductsButtonPressed());
       } catch (e) {
         emit(ProductState.failure("Fallo al obtener los productos: $e"));
       }
     });
 
     on<FilterProductsButtonPressed>((event, emit) async {
-      emit(ProductState.loading());
-      try {
-        final products = await getFilteredProductsUseCase.call(GetFilteredProductsParams(
-          filters: {
-            if (event.searchTerm != null) 'busqueda': event.searchTerm,
-            if (event.minPrice != null) 'precioMin': event.minPrice.toString(),
-            if (event.maxPrice != null) 'precioMax': event.maxPrice.toString(),
-            if (event.proximity != null) 'proximidad': event.proximity.toString(),
-            if (event.categoryId != null) 'categoriaProd': event.categoryId.toString(),
-            'latitud_usuario': event.userLatitude.toString(),
-            'longitud_usuario': event.userLongitude.toString(),
-          },
-        ));
-        emit(state.copyWith(
-          isLoading: false,
-          products: products,
-          currentSearchTerm: event.searchTerm,
-          currentMinPrice: event.minPrice,
-          currentMaxPrice: event.maxPrice,
-          currentProximity: event.proximity,
-          currentCategoryId: event.categoryId,
-        ));
-      } catch (e) {
-        emit(ProductState.failure("Fallo al filtrar los productos: $e"));
-      }
-    });
+  emit(ProductState.loading());
+  try {
+    // Usar valores del estado si event no proporciona los parámetros
+    final searchTerm = event.searchTerm ?? state.currentSearchTerm;
+    final minPrice = event.minPrice ?? state.currentMinPrice;
+    final maxPrice = event.maxPrice ?? state.currentMaxPrice;
+    final proximity = event.proximity ?? state.currentProximity;
+    final categoryId = event.categoryId ?? state.currentCategoryId;
+    final criteria = event.criteria?.isNotEmpty == true && event.criteria != "sinOrden"
+        ? event.criteria
+        : state.currentSortCriteria;
+    final direction = event.direction ?? state.currentSortDirection;
+    final userLatitude = event.userLatitude;
+    final userLongitude = event.userLongitude;
+
+    final products = await getFilteredProductsUseCase.call(GetFilteredProductsParams(
+      filters: {
+        if (searchTerm != null) 'busqueda': searchTerm,
+        if (minPrice != null) 'precioMin': minPrice.toString(),
+        if (maxPrice != null) 'precioMax': maxPrice.toString(),
+        if (proximity != null) 'proximidad': proximity.toString(),
+        if (categoryId != null) 'categoriaProd': categoryId.toString(),
+        'latitud_usuario': userLatitude.toString(),
+        'longitud_usuario': userLongitude.toString(),
+      },
+    ));
+
+    if (criteria != null && criteria.isNotEmpty) {
+      products.sort((a, b) {
+        if (criteria == "fecha") {
+          return direction == "asc" ? a.createdAt.compareTo(b.createdAt) : b.createdAt.compareTo(a.createdAt);
+        } else if (criteria == "precio") {
+          return direction == "asc" ? a.price.compareTo(b.price) : b.price.compareTo(a.price);
+        } else if (criteria == "distancia") {
+          const double earthRadius = 6371;
+          double calcularDistancia(double lat1, double lon1, double lat2, double lon2) {
+            double dLat = (lat2 - lat1) * (pi / 180);
+            double dLon = (lon2 - lon1) * (pi / 180);
+            double a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(lat1 * (pi / 180)) * cos(lat2 * (pi / 180)) *
+                sin(dLon / 2) * sin(dLon / 2);
+            double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+            return earthRadius * c;
+          }
+
+          double distanceA = calcularDistancia(a.latitudeCreated, a.longitudeCreated, userLatitude!, userLongitude!);
+          double distanceB = calcularDistancia(b.latitudeCreated, b.longitudeCreated, userLatitude, userLongitude);
+
+          return direction == "asc" ? distanceA.compareTo(distanceB) : distanceB.compareTo(distanceA);
+        }
+        return 0;
+      });
+    }
+
+    emit(state.copyWith(
+      isLoading: false,
+      products: products,
+      currentSearchTerm: searchTerm,
+      currentMinPrice: minPrice,
+      currentMaxPrice: maxPrice,
+      currentProximity: proximity,
+      currentCategoryId: categoryId,
+      currentSortCriteria: criteria,
+      currentSortDirection: direction,
+    ));
+  } catch (e) {
+    emit(ProductState.failure("Fallo al filtrar los productos: $e"));
+  }
+});
+
+
+    // on<FilterProductsButtonPressed>((event, emit) async {
+    //   emit(ProductState.loading());
+    //   try {
+    //     final products = await getFilteredProductsUseCase.call(GetFilteredProductsParams(
+    //       filters: {
+    //         if (event.searchTerm != null) 'busqueda': event.searchTerm,
+    //         if (event.minPrice != null) 'precioMin': event.minPrice.toString(),
+    //         if (event.maxPrice != null) 'precioMax': event.maxPrice.toString(),
+    //         if (event.proximity != null) 'proximidad': event.proximity.toString(),
+    //         if (event.categoryId != null) 'categoriaProd': event.categoryId.toString(),
+    //         'latitud_usuario': event.userLatitude.toString(),
+    //         'longitud_usuario': event.userLongitude.toString(),
+    //       },
+    //     ));
+    //     if (event.criteria != "" && event.criteria!.isNotEmpty && event.criteria != "sinOrden") {
+    //       products.sort((a, b) {
+    //         if (event.criteria == "fecha") {
+    //           return event.direction == "asc" ? a.createdAt.compareTo(b.createdAt) : b.createdAt.compareTo(a.createdAt);
+    //         } else if (event.criteria == "precio") {
+    //           return event.direction == "asc" ? a.price.compareTo(b.price) : b.price.compareTo(a.price);
+    //         } else if (event.criteria == "distancia") {
+    //           const double earthRadius = 6371; 
+    //           double distanceA = (() {
+    //             double dLat = (a.latitudeCreated - event.userLatitude) * (pi / 180);
+    //             double dLon = (a.longitudeCreated - event.userLongitude) * (pi / 180);
+    //             double _a = sin(dLat / 2) * sin(dLat / 2) +
+    //                 cos(event.userLatitude * (pi / 180)) * cos(a.latitudeCreated * (pi / 180)) *
+    //                 sin(dLon / 2) * sin(dLon / 2);
+    //             double c = 2 * atan2(sqrt(_a), sqrt(1 - _a));
+    //             return earthRadius * c;
+    //           })();
+    //           double distanceB = (() {
+    //             double dLat = (b.latitudeCreated - event.userLatitude) * (pi / 180);
+    //             double dLon = (b.longitudeCreated - event.userLongitude) * (pi / 180);
+    //             double _a = sin(dLat / 2) * sin(dLat / 2) +
+    //                 cos(event.userLatitude * (pi / 180)) * cos(b.latitudeCreated * (pi / 180)) *
+    //                 sin(dLon / 2) * sin(dLon / 2);
+    //             double c = 2 * atan2(sqrt(_a), sqrt(1 - _a));
+    //             return earthRadius * c;
+    //           })();
+    //           return event.direction == "asc" ? distanceA.compareTo(distanceB) : distanceB.compareTo(distanceA);
+    //         }
+    //         return 0;
+    //       });
+    //     }
+    //     emit(state.copyWith(
+    //       isLoading: false,
+    //       products: products,
+    //       currentSearchTerm: event.searchTerm,
+    //       currentMinPrice: event.minPrice,
+    //       currentMaxPrice: event.maxPrice,
+    //       currentProximity: event.proximity,
+    //       currentCategoryId: event.categoryId,
+    //       currentSortCriteria: event.criteria,
+    //       currentSortDirection: event.direction,
+    //     ));
+    //   } catch (e) {
+    //     emit(ProductState.failure("Fallo al filtrar los productos: $e"));
+    //   }
+    // });
 
     on<GetProductButtonPressed>((event, emit) async {
       emit(state.copyWith(isLoading: true));
@@ -96,13 +208,123 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
-    // on<GetProductButtonPressed>((event, emit) async {
+    // on<GetYoureProductsButtonPressed>((event, emit) async {
     //   emit(ProductState.loading());
     //   try {
-    //     final product = await getProductUseCase(GetProductParams(productId: event.productId));
-    //     emit(ProductState.successSingle(product));
+    //     final products = await getYoureProductsUseCase.call(GetYoureProductsParams(userId: event.userId));
+    //     emit(state.copyWith(
+    //       products: state.products,
+    //       youreProducts: products,
+    //       youreEnvolvmentProducts: state.youreEnvolvmentProducts,
+    //       youreLikedProducts: state.youreLikedProducts,
+    //       product: state.product,
+    //       currentSearchTerm: state.currentSearchTerm,
+    //       currentMinPrice: state.currentMinPrice,
+    //       currentMaxPrice: state.currentMaxPrice,
+    //       currentProximity: state.currentProximity,
+    //       currentCategoryId: state.currentCategoryId,
+    //       currentSortCriteria: state.currentSortCriteria,
+    //       currentSortDirection: state.currentSortDirection,
+    //       errorMessage: null,
+    //       isLoading: false,
+    //     ));
     //   } catch (e) {
-    //     emit(ProductState.failure("Fallo al obtener el producto: $e"));
+    //     emit(ProductState.failure("Fallo al obtener tus productos: $e"));
+    //   }
+    // });
+
+    on<GetYoureProductsButtonPressed>((event, emit) async {
+      try {
+        final userProducts = await getYoureProductsUseCase.call(GetYoureProductsParams(userId: event.userId));
+        emit(state.copyWith(
+          youreProducts: userProducts, 
+          isLoading: false,
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: "Fallo al obtener tus productos: $e",
+        ));
+      }
+    });
+
+    // on<GetYoureLikedProductsButtonPressed>((event, emit) async {
+    //   emit(ProductState.loading());
+    //   try {
+    //     final products = await getYoureLikedProductsUseCase.call(GetYoureLikedProductsParams(userId: event.userId));
+    //     emit(state.copyWith(
+    //       products: state.products,
+    //       youreProducts: state.youreProducts,
+    //       youreEnvolvmentProducts: state.youreEnvolvmentProducts,
+    //       youreLikedProducts: products,
+    //       product: state.product,
+    //       currentSearchTerm: state.currentSearchTerm,
+    //       currentMinPrice: state.currentMinPrice,
+    //       currentMaxPrice: state.currentMaxPrice,
+    //       currentProximity: state.currentProximity,
+    //       currentCategoryId: state.currentCategoryId,
+    //       currentSortCriteria: state.currentSortCriteria,
+    //       currentSortDirection: state.currentSortDirection,
+    //       errorMessage: null,
+    //       isLoading: false,
+    //     ));
+    //   } catch (e) {
+    //     emit(ProductState.failure("Fallo al obtener tus productos: $e"));
+    //   }
+    // });
+
+    on<GetYoureLikedProductsButtonPressed>((event, emit) async {
+      try {
+        final likedProducts = await getYoureLikedProductsUseCase.call(GetYoureLikedProductsParams(userId: event.userId));
+        emit(state.copyWith(
+          youreLikedProducts: likedProducts, 
+          isLoading: false,
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: "Fallo al obtener tus productos: $e",
+        ));
+      }
+    });
+
+    on<GetYoureEnvolvmentProductsButtonPressed>((event, emit) async {
+      try {
+        final envolvmentProducts = await getYoureEnvolvmentProductsUseCase.call(GetYoureEnvolvmentProductsParams(userId: event.userId));
+        emit(state.copyWith(
+          youreEnvolvmentProducts: envolvmentProducts, 
+          isLoading: false,
+        ));
+      } catch (e) {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: "Fallo al obtener tus productos: $e",
+        ));
+      }
+    });
+
+    // on<GetYoureEnvolvmentProductsButtonPressed>((event, emit) async {
+    //   emit(ProductState.loading());
+    //   try {
+    //     final products = await getYoureEnvolvmentProductsUseCase.call(GetYoureEnvolvmentProductsParams(userId: event.userId));
+    //     emit(state.copyWith(
+    //       products: state.products,
+    //       youreProducts: state.youreProducts,
+    //       youreEnvolvmentProducts: products,
+    //       youreLikedProducts: state.youreLikedProducts,
+    //       product: state.product,
+    //       currentSearchTerm: state.currentSearchTerm,
+    //       currentMinPrice: state.currentMinPrice,
+    //       currentMaxPrice: state.currentMaxPrice,
+    //       currentProximity: state.currentProximity,
+    //       currentCategoryId: state.currentCategoryId,
+    //       currentSortCriteria: state.currentSortCriteria,
+    //       currentSortDirection: state.currentSortDirection,
+    //       errorMessage: null,
+    //       isLoading: false,
+    //     ));
+    //   } catch (e) {
+    //     emit(ProductState.failure("Fallo al obtener tus productos: $e"));
     //   }
     // });
 
@@ -139,63 +361,68 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     });
 
     on<LikeProductButtonPressed>((event, emit) async {
-      emit(ProductState.loading());
       try {
         await likeProductUseCase(LikeProductParams(userId: event.userId, productId: event.productId));
-        add(GetProductsButtonPressed());
+        add(FilterProductsButtonPressed(
+          searchTerm: state.currentSearchTerm,
+          minPrice: state.currentMinPrice,
+          maxPrice: state.currentMaxPrice,
+          proximity: state.currentProximity,
+          categoryId: state.currentCategoryId,
+          criteria: state.currentSortCriteria,
+          direction: state.currentSortDirection,
+          userLatitude: event.userLatitude,
+          userLongitude: event.userLongitude,
+        ));
+
+        add(GetYoureLikedProductsButtonPressed(userId: event.userId));
       } catch (e) {
-        emit(ProductState.failure("Fallo al dar like al producto: $e"));
+        emit(state.copyWith(errorMessage: "Fallo al dar like al producto: $e"));
       }
     });
 
     on<UnlikeProductButtonPressed>((event, emit) async {
-      emit(ProductState.loading());
       try {
         await unlikeProductUseCase(UnlikeProductParams(userId: event.userId, productId: event.productId));
-        add(GetProductsButtonPressed());
+        add(FilterProductsButtonPressed(
+          searchTerm: state.currentSearchTerm,
+          minPrice: state.currentMinPrice,
+          maxPrice: state.currentMaxPrice,
+          proximity: state.currentProximity,
+          categoryId: state.currentCategoryId,
+          criteria: state.currentSortCriteria,
+          direction: state.currentSortDirection,
+          userLatitude: event.userLatitude,
+          userLongitude: event.userLongitude,
+        ));
+        add(GetYoureLikedProductsButtonPressed(userId: event.userId));
       } catch (e) {
-        emit(ProductState.failure("Fallo al quitar like al producto: $e"));
+        emit(state.copyWith(errorMessage: "Fallo al quitar like al producto: $e"));
       }
     });
 
-    on<SortProductsButtonPressed>((event, emit) async {
-      final currentProducts = state.products ?? [];
-      List<ProductEntity> sortedProducts = List.from(currentProducts);
-      sortedProducts.sort((a, b) {
-        if (event.criteria == "fecha") {
-          return event.direction == "asc" ? a.createdAt.compareTo(b.createdAt) : b.createdAt.compareTo(a.createdAt);
-        } else if (event.criteria == "precio") {
-          return event.direction == "asc" ? a.price.compareTo(b.price) : b.price.compareTo(a.price);
-        } else if (event.criteria == "distancia") {
-          const double earthRadius = 6371; 
-          double distanceA = (() {
-            double dLat = (a.latitudeCreated - event.userLatitude) * (pi / 180);
-            double dLon = (a.longitudeCreated - event.userLongitude) * (pi / 180);
-            double _a = sin(dLat / 2) * sin(dLat / 2) +
-                cos(event.userLatitude * (pi / 180)) * cos(a.latitudeCreated * (pi / 180)) *
-                sin(dLon / 2) * sin(dLon / 2);
-            double c = 2 * atan2(sqrt(_a), sqrt(1 - _a));
-            return earthRadius * c;
-          })();
-          double distanceB = (() {
-            double dLat = (b.latitudeCreated - event.userLatitude) * (pi / 180);
-            double dLon = (b.longitudeCreated - event.userLongitude) * (pi / 180);
-            double _a = sin(dLat / 2) * sin(dLat / 2) +
-                cos(event.userLatitude * (pi / 180)) * cos(b.latitudeCreated * (pi / 180)) *
-                sin(dLon / 2) * sin(dLon / 2);
-            double c = 2 * atan2(sqrt(_a), sqrt(1 - _a));
-            return earthRadius * c;
-          })();
-          return event.direction == "asc" ? distanceA.compareTo(distanceB) : distanceB.compareTo(distanceA);
-        }
-        return 0;
-      });
-      emit(state.copyWith(
-        products: sortedProducts,
-        currentSortCriteria: event.criteria,
-        currentSortDirection: event.direction,
-      ));
-    });
+
+    // on<LikeProductButtonPressed>((event, emit) async {
+    //   emit(ProductState.loading());
+    //   try {
+    //     await likeProductUseCase(LikeProductParams(userId: event.userId, productId: event.productId));
+    //     add(GetProductsButtonPressed());
+    //     add(GetYoureLikedProductsButtonPressed(userId: event.userId));
+    //   } catch (e) {
+    //     emit(ProductState.failure("Fallo al dar like al producto: $e"));
+    //   }
+    // });
+
+    // on<UnlikeProductButtonPressed>((event, emit) async {
+    //   emit(ProductState.loading());
+    //   try {
+    //     await unlikeProductUseCase(UnlikeProductParams(userId: event.userId, productId: event.productId));
+    //     add(GetProductsButtonPressed());
+    //     add(GetYoureLikedProductsButtonPressed(userId: event.userId));
+    //   } catch (e) {
+    //     emit(ProductState.failure("Fallo al quitar like al producto: $e"));
+    //   }
+    // });
 
     on<ResetFiltersButtonPressed>((event, emit) async {
       emit(state.copyWith(
@@ -208,18 +435,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         currentSortDirection: null,
       ));
       add(GetProductsButtonPressed());
-    });
-
-    on<ResetSortButtonPressed>((event, emit) async {
-      emit(state.copyWith(
-        currentSortCriteria: null,
-        currentSortDirection: null,
-        currentSearchTerm: state.currentSearchTerm,
-        currentMinPrice: state.currentMinPrice,
-        currentMaxPrice: state.currentMaxPrice,
-        currentCategoryId: state.currentCategoryId,
-        currentProximity: state.currentProximity,
-      ));
     });
 
     on<CreateProductButtonPressed>((event, emit) async {
@@ -243,7 +458,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             images: event.images,
           ));
         }
-        add(GetProductsButtonPressed());
+        add(GetYoureProductsButtonPressed(userId: event.userId));
       } catch (e) {
         emit(ProductState.failure("Error al crear el producto: $e"));
       }
@@ -268,7 +483,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             images: event.images,
           ));
         }
-        add(GetProductsButtonPressed());
+        add(GetYoureProductsButtonPressed(userId: event.userId));
       } catch (e) {
         emit(ProductState.failure("Error al modificar el producto: $e"));
       }

@@ -19,6 +19,7 @@ import 'package:swapify/presentation/screens/qr_scanner_add_balance_to_account_s
 import 'package:swapify/presentation/screens/qr_scanner_screen.dart';
 import 'package:swapify/presentation/screens/reset_password_screen.dart';
 import 'package:swapify/presentation/screens/user_info_drawer_screen.dart';
+import 'package:swapify/presentation/screens/youre_envolvments_screen.dart';
 final GoRouter router = GoRouter(
   initialLocation: '/home',
   navigatorKey: navigatorKey,
@@ -137,6 +138,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/user_info_drawer',
       builder: (context, state) => const UserInfoDrawer(),
+    ),
+    GoRoute(
+      path: '/youre_envolvment',
+      builder: (context, state) => const YoureEnvolvmentScreen(),
     ),
   ],
   redirect: (context, state) async {

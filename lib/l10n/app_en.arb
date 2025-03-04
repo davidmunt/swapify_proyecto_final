@@ -46,7 +46,7 @@
   "shortPassword": "The password is too short",
   "notEqualsPasswords": "Passwords do not match",
   "changeUserAvatar": "Change user avatar",
-  "foto": "Foto",
+  "foto": "Photo",
   "chatNotYetStarted": "Start chat",
   "userAvatarChanged": "User avatar updated",
   "selectImageUserAvatar": "Select the user avatar image",
@@ -141,16 +141,43 @@
   "errorObtainingProducts": "Error loading  products", 
   "errorNoChats": "No open chats", 
   "chat": "Chat", 
-  "confirmSell": "Confirma Sold", 
+  "confirmSell": "Confirm Sell", 
   "qrInvalid": "QR code invalid", 
-  "scanQRToConfirmSell": "Scan the QR code to confirm sold", 
+  "scanQRToConfirmSell": "Scan the QR code to confirm sale", 
   "cameraNoAutorized": "Unautorized camera", 
   "productSoldSuccesfully": "The product has been successfuly sold", 
   "sell": "Sell", 
-  "selled": "Selled", 
+  "selled": "Sold", 
   "reserved": "Reserved", 
   "dateCreated": "Created on {fecha}",
   "@dateCreated": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateSold": "Sold on {fecha}",
+  "@dateSold": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateBought": "Bought on {fecha}",
+  "@dateBought": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateSwaped": "Swapped on {fecha}",
+  "@dateSwaped": {
     "placeholders": {
       "fecha": {
         "type": "DateTime",

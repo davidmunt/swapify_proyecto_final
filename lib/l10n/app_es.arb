@@ -17,7 +17,7 @@
   "direction": "Direccion",
   "ascending": "Ascendente",
   "descending": "Descendente",
-  "order": "Order",
+  "order": "Ordenar",
   "selectTheFieldsApplySorting": "Selecciona los dos campos para aplicar el orden",
   "search": "Busqueda",
   "enterSearchTerm": "Introduce un termino de busqueda",
@@ -151,6 +151,33 @@
   "reserved": "Reservado", 
   "dateCreated": "Creado el {fecha}",
   "@dateCreated": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateSold": "Vendido el {fecha}",
+  "@dateSold": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateBought": "Comprado el {fecha}",
+  "@dateBought": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateSwaped": "Intercambiado el {fecha}",
+  "@dateSwaped": {
     "placeholders": {
       "fecha": {
         "type": "DateTime",

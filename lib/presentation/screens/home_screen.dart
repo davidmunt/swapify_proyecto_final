@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/navigation_bar/navigation_bar_bloc.dart';
 import 'package:swapify/presentation/blocs/navigation_bar/navigation_bar_event.dart';
 import 'package:swapify/presentation/blocs/navigation_bar/navigation_bar_state.dart';
+import 'package:swapify/presentation/screens/like_products_screen.dart';
 import 'package:swapify/presentation/screens/search_products_screen.dart';
 import 'package:swapify/presentation/screens/my_products_screen.dart';
 import 'package:swapify/presentation/screens/messages_screen.dart';
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final PageStorageBucket bucket = PageStorageBucket();
   final List<Widget> pages = [
     const SearchProductsScreen(key: PageStorageKey('SearchProductsScreen')),
+    const LikeProductsScreen(key: PageStorageKey('LikeProductsScreen')),
     const MyProductsScreen(key: PageStorageKey('MyProductsScreen')),
     const MessagesScreen(key: PageStorageKey('MessagesScreen')),
   ];
@@ -48,6 +50,11 @@ class _HomeScreenState extends State<HomeScreen> {
               NavigationDestination(
                 selectedIcon: const Icon(Icons.home, color: Color.fromARGB(255, 12, 104, 70)),
                 icon: const Icon(Icons.home_outlined),
+                label: AppLocalizations.of(context)!.home,
+              ),
+              NavigationDestination(
+                selectedIcon: const Icon(Icons.favorite, color: Color.fromARGB(255, 12, 104, 70)),
+                icon: const Icon(Icons.favorite_border),
                 label: AppLocalizations.of(context)!.home,
               ),
               NavigationDestination(

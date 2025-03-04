@@ -52,7 +52,7 @@
   "errorUserIdNotFount": "ID utilisateur introuvable",
   "saveUserAvatar": "Enregistrer l'avatar de l'utilisateur",
   "changeUserInfo": "Modifier les informations de l'utilisateur",
-  "change": "Modificar datos",
+  "change": "Modifier les données",
   "userInfoChanged": "Informations utilisateur mises à jour",
   "name": "Nom",
   "surnames": "Prénoms",
@@ -120,8 +120,8 @@
   "changeUserData": "Modifier les données de l'utilisateur",
   "createdUser": "Utilisateur créé",
   "changeUserAvatar": "Changer la photo de profil",
-  "foto": "Foto",
-  "chatNotYetStarted": "Empezar chat",
+  "foto": "Photo",
+  "chatNotYetStarted": "Démarrer une conversation",
   "areYouSureDeleteUserAccount": "Êtes-vous sûr de vouloir supprimer le compte ?",
   "deleteUserAcount": "Supprimer le compte",
   "deleteProduct": "Supprimer le produit",
@@ -134,27 +134,54 @@
   "errorObtainingChat": "Erreur de chargement du chat", 
   "sendAMessage": "Ecrire un message...", 
   "errorObtainingUserInfoChat": "Erreur lors du chargement des informations utilisateur", 
-  "onlyOneMessageAllowed": "Solo puedes enviar una cosa a la vez", 
-  "resetFilters": "Reiniciar filtros", 
-  "resetOrder": "Reiniciar orden", 
-  "errorObtainingChats": "Error loading chats", 
-  "errorObtainingProducts": "Error loading  products", 
-  "errorNoChats": "No open chats", 
+  "onlyOneMessageAllowed": "Vous ne pouvez envoyer qu'un seul message à la fois", 
+  "resetFilters": "Réinitialiser les filtres", 
+  "resetOrder": "Réinitialiser le tri", 
+  "errorObtainingChats": "Erreur de chargement des chats", 
+  "errorObtainingProducts": "Erreur de chargement des produits", 
+  "errorNoChats": "Aucune conversation ouverte", 
   "chat": "Chat", 
-  "confirmSell": "Confirma Sold", 
-  "qrInvalid": "QR code invalid", 
-  "scanQRToConfirmSell": "Scan the QR code to confirm sold", 
-  "cameraNoAutorized": "Unautorized camera", 
-  "productSoldSuccesfully": "The product has been successfuly sold", 
-  "sell": "Sell", 
-  "selled": "Vendido", 
-  "reserved": "Reservado", 
+  "confirmSell": "Confirmer la vente", 
+  "qrInvalid": "Code QR invalide", 
+  "scanQRToConfirmSell": "Scannez le code QR pour confirmer la vente", 
+  "cameraNoAutorized": "Caméra non autorisée", 
+  "productSoldSuccesfully": "Le produit a été vendu avec succès", 
+  "sell": "Vendre", 
+  "selled": "Vendu", 
+  "reserved": "Réservé", 
   "dateCreated": "Créé le {fecha}",
   "@dateCreated": {
     "placeholders": {
       "fecha": {
         "type": "DateTime",
-        "format": "d MMMM y"
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateSold": "Vendu le {fecha}",
+  "@dateSold": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateBought": "Acheté le {fecha}",
+  "@dateBought": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
+  "dateSwaped": "Échangé le {fecha}",
+  "@dateSwaped": {
+    "placeholders": {
+      "fecha": {
+        "type": "DateTime",
+        "format": "yMMMMd"
       }
     }
   },

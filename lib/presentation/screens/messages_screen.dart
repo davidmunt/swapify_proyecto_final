@@ -29,7 +29,7 @@ class MessagesScreen extends StatefulWidget {
 class _MessagesScreenState extends State<MessagesScreen> {
   bool _usersInfoLoaded = false;
 
-    Future<void> _getUsersInfo() async {
+  Future<void> _getUsersInfo() async {
     if (!_usersInfoLoaded) {
       context.read<UserBloc>().add(GetUsersInfoButtonPressed());
       _usersInfoLoaded = true;

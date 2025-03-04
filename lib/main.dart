@@ -3,6 +3,7 @@ import 'package:swapify/presentation/blocs/language/language_bloc.dart';
 import 'package:swapify/presentation/blocs/language/language_event.dart';
 import 'package:swapify/presentation/blocs/language/language_state.dart';
 import 'package:swapify/presentation/blocs/navigation_bar/navigation_bar_bloc.dart';
+import 'package:swapify/presentation/blocs/position/position_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
@@ -18,6 +19,7 @@ import 'package:swapify/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swapify/config/theme/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:swapify/config/router/routes.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
@@ -28,6 +30,9 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsFlutterBinding.ensureInitialized());
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -76,6 +81,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (_) => sl<NavigationBarBloc>(),
+        ),
+        BlocProvider( 
+          create: (_) => sl<PositionBloc>(),
         ),
         BlocProvider(
           create: (_) {

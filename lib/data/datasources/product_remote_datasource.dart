@@ -7,10 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swapify/data/models/product_model.dart';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ProductDataSource {
 
@@ -58,6 +55,42 @@ class ProductDataSource {
       return ProductModel.fromMap(data);
     } else {
       throw Exception('Error al obtener el producto');
+    }
+  }
+
+  Future<List<ProductModel>> getYoureLikedProducts(String userId) async {
+    final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+    final url = Uri.parse('$baseUrl/product/likesProduct/$userId');
+    final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+      return data.map((product) => ProductModel.fromMap(product as Map<String, dynamic>)).toList();
+    } else {
+      throw Exception('Error al obtener productos');
+    }
+  }
+
+  Future<List<ProductModel>> getYoureEnvolvmentProducts(String userId) async {
+    final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+    final url = Uri.parse('$baseUrl/product/envolvement/$userId');
+    final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+      return data.map((product) => ProductModel.fromMap(product as Map<String, dynamic>)).toList();
+    } else {
+      throw Exception('Error al obtener productos');
+    }
+  }
+
+  Future<List<ProductModel>> getYoureProducts(String userId) async {
+    final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+    final url = Uri.parse('$baseUrl/product/user/$userId');
+    final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
+      return data.map((product) => ProductModel.fromMap(product as Map<String, dynamic>)).toList();
+    } else {
+      throw Exception('Error al obtener productos');
     }
   }
 

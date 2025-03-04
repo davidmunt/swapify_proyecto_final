@@ -17,7 +17,9 @@ class ProductModel {
   final int idSaleStateProduct;
   final List<XFile> images;
   final DateTime createdAt;
+  final DateTime lastUpdated;
   final List<String> likes;
+  final int? productExangedId;
 
   ProductModel({
     required this.productId,
@@ -35,7 +37,9 @@ class ProductModel {
     required this.idSaleStateProduct,
     required this.images,
     required this.createdAt,
+    required this.lastUpdated,
     required this.likes,
+    this.productExangedId,
   });
 
   factory ProductModel.fromMap(Map<String, dynamic> map) {
@@ -54,8 +58,10 @@ class ProductModel {
       idStateProduct: map['product_state']['id_state_product'] as int,
       idSaleStateProduct: map['product_sale_state']['id_sale_state_product'] as int,
       images: (map['images'] as List).map((img) => XFile(img['path'] as String)).toList(),
-      createdAt: DateTime.parse(map['created_at'] as String),
+      createdAt: DateTime.parse(map['created_at'] as String),  
+      lastUpdated: DateTime.parse(map['last_updated'] as String),
       likes: (map['likes'] as List).map((like) => like['user']['id_user'] as String).toList(),
+      productExangedId: map['exchangedWith'] != null ? map['exchangedWith']['id_product'] as int? : null,
     );
   }
 
@@ -76,7 +82,9 @@ class ProductModel {
       idSaleStateProduct: idSaleStateProduct,
       images: images,
       createdAt: createdAt,
+      lastUpdated: lastUpdated,
       likes: likes,
+      productExangedId: productExangedId,
     );
   }
 
@@ -97,7 +105,9 @@ class ProductModel {
       idSaleStateProduct: idSaleStateProduct,
       images: images,
       createdAt: createdAt,
+      lastUpdated: lastUpdated,
       likes: likes,
+      productExangedId: productExangedId,
     );
   }
 }

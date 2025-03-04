@@ -13,9 +13,11 @@ class ProductEntity {
   final int idCategoryProduct;
   final int idStateProduct;
   final int idSaleStateProduct;
-  final List<XFile> images;
+  final List<XFile> images; 
   final DateTime createdAt;
+  final DateTime lastUpdated;
   final List<String> likes;
+  final int? productExangedId;
 
   ProductEntity({
     required this.productId,
@@ -33,6 +35,8 @@ class ProductEntity {
     required this.idSaleStateProduct,
     required this.images,
     required this.createdAt,
+    required this.lastUpdated,
     required this.likes,
+    this.productExangedId,
   });
 }

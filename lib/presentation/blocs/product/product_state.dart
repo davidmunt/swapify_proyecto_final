@@ -2,7 +2,10 @@ import 'package:swapify/domain/entities/product.dart';
 
 class ProductState {
   final bool isLoading;
-  final List<ProductEntity>? products;
+  final List<ProductEntity>? products; 
+  final List<ProductEntity>? youreProducts;
+  final List<ProductEntity>? youreLikedProducts;
+  final List<ProductEntity>? youreEnvolvmentProducts;
   final ProductEntity? product;
   final String? currentSortCriteria;
   final String? currentSortDirection;
@@ -17,6 +20,9 @@ class ProductState {
   const ProductState({
     this.isLoading = false,
     this.products,
+    this.youreProducts,
+    this.youreLikedProducts,
+    this.youreEnvolvmentProducts,
     this.product,
     this.currentSortCriteria,
     this.currentSortDirection,
@@ -32,6 +38,9 @@ class ProductState {
   ProductState copyWith({
     bool? isLoading,
     List<ProductEntity>? products,
+    final List<ProductEntity>? youreProducts,
+    final List<ProductEntity>? youreLikedProducts,
+    final List<ProductEntity>? youreEnvolvmentProducts,
     ProductEntity? product,
     String? currentSortCriteria,
     String? currentSortDirection,
@@ -46,6 +55,9 @@ class ProductState {
     return ProductState(
       isLoading: isLoading ?? this.isLoading,
       products: products ?? this.products,
+      youreProducts: youreProducts ?? this.youreProducts,
+      youreLikedProducts: youreLikedProducts ?? this.youreLikedProducts,
+      youreEnvolvmentProducts: youreEnvolvmentProducts ?? this.youreEnvolvmentProducts,
       product: product ?? this.product,
       currentSortCriteria: currentSortCriteria ?? this.currentSortCriteria,
       currentSortDirection: currentSortDirection ?? this.currentSortDirection,
@@ -65,6 +77,17 @@ class ProductState {
 
   factory ProductState.success(List<ProductEntity> products) {
     return ProductState(products: products);
+  }
+  factory ProductState.successLikes(List<ProductEntity> youreLikedProducts) {
+    return ProductState(youreLikedProducts: youreLikedProducts);
+  }
+
+  factory ProductState.successYoure(List<ProductEntity> youreProducts) {
+    return ProductState(youreProducts: youreProducts);
+  }
+
+  factory ProductState.successEnvolvment(List<ProductEntity> youreEnvolvmentProducts) {
+    return ProductState(youreEnvolvmentProducts: youreEnvolvmentProducts);
   }
 
   factory ProductState.successSingle(ProductEntity product) {

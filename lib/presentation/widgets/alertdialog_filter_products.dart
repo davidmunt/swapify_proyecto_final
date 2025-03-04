@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:swapify/presentation/blocs/position/position_bloc.dart';
+import 'package:swapify/presentation/blocs/position/position_event.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_event.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
@@ -8,7 +10,7 @@ import 'package:swapify/presentation/blocs/product_category/product_category_eve
 import 'package:swapify/presentation/blocs/product_category/product_category_state.dart';
 
 class FiltrarProductosWidget extends StatefulWidget {
-  final Function(String? searchTerm, double? minPrice, double? maxPrice, double? proximity, int? categoryId) onApplyFilters;
+  final Function(String? searchTerm, double? minPrice, double? maxPrice, double? proximity, int? categoryId, String criteria, String direction) onApplyFilters;
 
   const FiltrarProductosWidget({super.key, required this.onApplyFilters});
 
@@ -24,6 +26,8 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
 
   int? selectedCategoryId;
   String? errorMessage;
+  String? selectedOrder;
+  String? selectedDirection;
 
   @override
   void initState() {
@@ -35,6 +39,18 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
     maxPriceController.text = productBloc.currentMaxPrice?.toString() ?? '';
     proximityController.text = productBloc.currentProximity?.toString() ?? '';
     selectedCategoryId = productBloc.currentCategoryId;
+    selectedOrder = productBloc.currentSortCriteria;
+    if (selectedOrder == null || selectedOrder!.isEmpty) {
+      selectedOrder = "sinOrden";
+    }
+    selectedDirection = productBloc.currentSortDirection;
+    if (selectedDirection == null || selectedDirection!.isEmpty) {
+      selectedDirection = "asc"; 
+    }
+    final positionState = context.read<PositionBloc>().state;
+    if (positionState.latitude == null || positionState.longitude == null) {
+      context.read<PositionBloc>().add(GetPositionButtonPressed());
+    }
   }
 
   bool _esNumero(String value) {
@@ -50,7 +66,14 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Text(AppLocalizations.of(context)!.filter, style: const TextStyle(
+              fontSize: 22, 
+              fontWeight: FontWeight.bold, 
+              color: Colors.black, 
+            )),
+            const SizedBox(height: 15),
             Text(AppLocalizations.of(context)!.search),
+            const SizedBox(height: 8),
             TextField(
               controller: searchController,
               decoration: InputDecoration(
@@ -60,6 +83,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
             ),
             const SizedBox(height: 12),
             Text(AppLocalizations.of(context)!.rangePrice),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
@@ -87,6 +111,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
             ),
             const SizedBox(height: 12),
             Text(AppLocalizations.of(context)!.productCategory),
+            const SizedBox(height: 8),
             BlocBuilder<ProductCategoryBloc, ProductCategoryState>(
               builder: (context, state) {
                 if (state.isLoading) {
@@ -116,8 +141,9 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                 }
               },
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 15),
             Text(AppLocalizations.of(context)!.rangeProximity),
+            const SizedBox(height: 15),
             TextField(
               controller: proximityController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -126,7 +152,55 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                 labelText: AppLocalizations.of(context)!.proximity,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 25),
+            Text(AppLocalizations.of(context)!.order, style: const TextStyle(
+              fontSize: 22, 
+              fontWeight: FontWeight.bold, 
+              color: Colors.black, 
+            )),
+            const SizedBox(height: 15),
+            Text(AppLocalizations.of(context)!.orderBy),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: selectedOrder,
+              items: [
+                DropdownMenuItem(value: "sinOrden", child: Text("Sin orden")),
+                DropdownMenuItem(value: "fecha", child: Text(AppLocalizations.of(context)!.dateUpload)),
+                DropdownMenuItem(value: "distancia", child: Text(AppLocalizations.of(context)!.distance)),
+                DropdownMenuItem(value: "precio", child: Text(AppLocalizations.of(context)!.price)),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedOrder = value;
+                  errorMessage = null;
+                });
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: AppLocalizations.of(context)!.criterion,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(AppLocalizations.of(context)!.direction),
+            const SizedBox(height: 8),
+            DropdownButtonFormField<String>(
+              value: selectedDirection != "asc" && selectedDirection != "desc" ? "asc" : selectedDirection,
+              items: [
+                DropdownMenuItem(value: "asc", child: Text(AppLocalizations.of(context)!.ascending)),
+                DropdownMenuItem(value: "desc", child: Text(AppLocalizations.of(context)!.descending)),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedDirection = value;
+                  errorMessage = null;
+                });
+              },
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: AppLocalizations.of(context)!.order,
+              ),
+            ),
+            const SizedBox(height: 16),
             if (errorMessage != null)
               Text(
                 errorMessage!,
@@ -175,12 +249,19 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                       });
                       return;
                     }
+                    String finalOrder = selectedOrder ?? "sinOrden"; 
+                    String finalDirection = selectedDirection ?? "asc"; 
+                    if (finalOrder == "sinOrden") {
+                      finalDirection = "sinOrden";
+                    }
                     widget.onApplyFilters(
                       searchController.text.isEmpty ? null : searchController.text,
                       minPrice,
                       maxPrice,
                       proximity,
                       selectedCategoryId,
+                      finalOrder,
+                      finalDirection,
                     );
                     Navigator.of(context).pop();
                   },

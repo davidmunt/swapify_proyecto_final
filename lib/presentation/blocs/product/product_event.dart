@@ -13,22 +13,26 @@ class FilterProductsButtonPressed extends ProductEvent {
   final double? minPrice;
   final double? maxPrice;
   final double? proximity;
-  final double userLatitude;
-  final double userLongitude;
+  final double? userLatitude;
+  final double? userLongitude;
   final int? categoryId;
+  final String? criteria;
+  final String? direction;
 
   FilterProductsButtonPressed({
     this.searchTerm,
     this.minPrice,
     this.maxPrice,
     this.proximity,
-    required this.userLatitude,
-    required this.userLongitude,
+    this.userLatitude,
+    this.userLongitude,
     this.categoryId,
+    this.criteria,
+    this.direction,
   });
 
   @override
-  List<Object?> get props => [searchTerm, minPrice, maxPrice, proximity, userLatitude, userLongitude, categoryId];
+  List<Object?> get props => [searchTerm, minPrice, maxPrice, proximity, userLatitude, userLongitude, categoryId, criteria, direction];
 }
 
 class GetProductButtonPressed extends ProductEvent {
@@ -38,6 +42,33 @@ class GetProductButtonPressed extends ProductEvent {
 
   @override
   List<Object?> get props => [productId];
+}
+
+class GetYoureProductsButtonPressed extends ProductEvent {
+  final String userId;
+
+  GetYoureProductsButtonPressed({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class GetYoureLikedProductsButtonPressed extends ProductEvent {
+  final String userId;
+
+  GetYoureLikedProductsButtonPressed({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class GetYoureEnvolvmentProductsButtonPressed extends ProductEvent {
+  final String userId;
+
+  GetYoureEnvolvmentProductsButtonPressed({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
 }
 
 class DeleteProductButtonPressed extends ProductEvent {
@@ -52,8 +83,10 @@ class DeleteProductButtonPressed extends ProductEvent {
 class LikeProductButtonPressed extends ProductEvent {
   final String userId;
   final int productId;
+  final double userLatitude;
+  final double userLongitude;
 
-  LikeProductButtonPressed({required this.userId, required this.productId});
+  LikeProductButtonPressed({required this.userId, required this.productId, required this.userLatitude, required this.userLongitude});
 
   @override
   List<Object?> get props => [userId, productId];
@@ -61,13 +94,13 @@ class LikeProductButtonPressed extends ProductEvent {
 
 class ResetFiltersButtonPressed extends ProductEvent {}
 
-class ResetSortButtonPressed extends ProductEvent {}
-
 class UnlikeProductButtonPressed extends ProductEvent {
   final String userId;
   final int productId;
+  final double userLatitude;
+  final double userLongitude;
 
-  UnlikeProductButtonPressed({required this.userId, required this.productId});
+  UnlikeProductButtonPressed({required this.userId, required this.productId, required this.userLatitude, required this.userLongitude});
 
   @override
   List<Object?> get props => [userId, productId];
@@ -82,23 +115,6 @@ class BuyProductButtonPressed extends ProductEvent {
 
   @override
   List<Object?> get props => [productId, userId];
-}
-
-class SortProductsButtonPressed extends ProductEvent {
-  final String criteria;
-  final String direction;
-  final double userLatitude;
-  final double userLongitude;
-
-  SortProductsButtonPressed({
-    required this.criteria,
-    required this.direction,
-    required this.userLatitude,
-    required this.userLongitude,
-  });
-
-  @override
-  List<Object?> get props => [criteria, direction, userLatitude, userLongitude];
 }
 
 class CreateProductButtonPressed extends ProductEvent {
@@ -142,6 +158,7 @@ class UpdateProductButtonPressed extends ProductEvent {
   final int idStateProduct;
   final int idSaleStateProduct;
   final List<XFile> images;
+  final String userId;
 
   UpdateProductButtonPressed({
     required this.productModel,
@@ -153,6 +170,7 @@ class UpdateProductButtonPressed extends ProductEvent {
     required this.idStateProduct,
     required this.idSaleStateProduct,
     required this.images,
+    required this.userId,
   });
 
   @override

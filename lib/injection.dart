@@ -39,6 +39,9 @@ import 'package:swapify/domain/usecases/get_products_usecase.dart';
 import 'package:swapify/domain/usecases/get_qr_product_payment_usecase.dart';
 import 'package:swapify/domain/usecases/get_user_info_usecase.dart';
 import 'package:swapify/domain/usecases/get_users_info_usecase.dart';
+import 'package:swapify/domain/usecases/get_youre_envolvment_products_usecase.dart';
+import 'package:swapify/domain/usecases/get_youre_liked_products_usecase.dart';
+import 'package:swapify/domain/usecases/get_youre_products_usecase.dart';
 import 'package:swapify/domain/usecases/like_product_usecase.dart';
 import 'package:swapify/domain/usecases/reset_password_user_usecase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -57,6 +60,7 @@ import 'package:swapify/domain/usecases/upload_product_images_usecase.dart';
 import 'package:swapify/presentation/blocs/chat/chat_bloc.dart';
 import 'package:swapify/presentation/blocs/language/language_bloc.dart';
 import 'package:swapify/presentation/blocs/navigation_bar/navigation_bar_bloc.dart';
+import 'package:swapify/presentation/blocs/position/position_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
@@ -88,7 +92,7 @@ Future<void> configureDependencies() async {
   );
 
   sl.registerFactory<ProductBloc>(
-    () => ProductBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    () => ProductBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory<ChatBloc>(
@@ -105,6 +109,10 @@ Future<void> configureDependencies() async {
 
   sl.registerFactory<NavigationBarBloc>(
     () => NavigationBarBloc(),
+  );
+
+  sl.registerFactory<PositionBloc>(
+    () => PositionBloc(),
   );
 
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
@@ -226,6 +234,15 @@ Future<void> configureDependencies() async {
   );
   sl.registerLazySingleton<GetProductsUseCase>(
     () => GetProductsUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetYoureProductsUseCase>(
+    () => GetYoureProductsUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetYoureLikedProductsUseCase>(
+    () => GetYoureLikedProductsUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetYoureEnvolvmentProductsUseCase>(
+    () => GetYoureEnvolvmentProductsUseCase(sl()),
   );
   sl.registerLazySingleton<GetFilteredProductsUseCase>(
     () => GetFilteredProductsUseCase(sl()),

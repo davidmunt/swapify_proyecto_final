@@ -5,6 +5,9 @@ import 'package:image_picker/image_picker.dart';
 
 abstract class ProductRepository {
   Future<Either<Failure, List<ProductEntity>>> getProducts();
+  Future<Either<Failure, List<ProductEntity>>> getYoureLikedProducts(String userId);
+  Future<Either<Failure, List<ProductEntity>>> getYoureEnvolvmentProducts(String userId);
+  Future<Either<Failure, List<ProductEntity>>> getYoureProducts(String userId);
   Future<Either<Failure, ProductEntity>> getProduct(int productId);
   Future<Either<Failure, void>> deleteProduct(int id);
   Future<int> createProduct({

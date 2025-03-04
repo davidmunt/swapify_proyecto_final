@@ -104,7 +104,7 @@ class _UserInfoDrawerState extends State<UserInfoDrawer> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 50),
+                  const SizedBox(height: 40),
                   TextButton(
                     onPressed: () {
                       context.push('/profile');
@@ -115,6 +115,20 @@ class _UserInfoDrawerState extends State<UserInfoDrawer> {
                         const Icon(Icons.edit_note_rounded),
                         const SizedBox(width: 10),
                         Text(AppLocalizations.of(context)!.change),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () {
+                      context.push('/youre_envolvment');
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.accessibility_rounded),
+                        const SizedBox(width: 10),
+                        Text("Youre envolvment"),
                       ],
                     ),
                   ),
