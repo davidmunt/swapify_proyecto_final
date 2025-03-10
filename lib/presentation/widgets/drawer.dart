@@ -50,9 +50,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                       backgroundImage: AssetImage('assets/images/user_logo.png'),
                     ),
                   const SizedBox(height: 12),
-                  Text(state.user?.email ?? "Email desconocido"),
+                  Text(state.user?.email ?? AppLocalizations.of(context)!.unknownEmail),
                   const SizedBox(height: 12),
-                  Text(state.user?.name ?? "Nombre desconocido"),
+                  Text(state.user?.name ?? AppLocalizations.of(context)!.unknownName),
                   const SizedBox(height: 12),
                   const Divider(color: Color.fromARGB(255, 84, 84, 84)),
                   const SizedBox(height: 12),
@@ -86,11 +86,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     onPressed: () {
                       context.push('/qr_scanner');
                     },
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.qr_code_scanner),
-                        SizedBox(width: 10),
-                        Text("Vender producto"),
+                        const Icon(Icons.qr_code_scanner),
+                        const SizedBox(width: 10),
+                        Text(AppLocalizations.of(context)!.sellProduct),
                       ],
                     ),
                   ),
@@ -99,11 +99,11 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     onPressed: () {
                       context.push('/qr_scanner_add_balance');
                     },
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.qr_code_scanner),
-                        SizedBox(width: 10),
-                        Text("Añadir saldo"),
+                        const Icon(Icons.qr_code_scanner),
+                        const SizedBox(width: 10),
+                        Text(AppLocalizations.of(context)!.addBalance),
                       ],
                     ),
                   ),

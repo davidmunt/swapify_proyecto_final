@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swapify/injection.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product/product_event.dart';
@@ -20,6 +22,7 @@ import 'package:swapify/presentation/blocs/product_state/product_state_state.dar
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
+import 'package:swapify/presentation/widgets/alertdialog_rate_user_afther_product_bought.dart';
 import 'package:swapify/presentation/widgets/alertdialog_show_qr_purchase.dart';
 
 class ProductScreen extends StatefulWidget {
@@ -96,6 +99,17 @@ class _ProductScreenState extends State<ProductScreen> {
           if (state.purchaseSuccess == true) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
             context.push('/home');
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: AlertRateUser(
+                    userId: widget.userId, 
+                    productId: widget.id,
+                  ),
+                );
+              },
+            );
           } else if (state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.notEnoughBalance)));
           }
@@ -106,6 +120,7 @@ class _ProductScreenState extends State<ProductScreen> {
               return const CircularProgressIndicator();
             } else if (userState.users != null && userState.users!.isNotEmpty) {
             final userOwner = userState.users?.firstWhere((user) => user.id == widget.userId);
+            final youreBalance = userState.user!.balance;
             return SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(18.0),
@@ -155,27 +170,63 @@ class _ProductScreenState extends State<ProductScreen> {
                       ],
                     ),
                     const SizedBox(height: 25),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        RatingBarIndicator(
+                          rating: userOwner.rating ?? 0.0, 
+                          itemBuilder: (context, index) => const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          itemCount: 5,
+                          itemSize: 25.0, 
+                          direction: Axis.horizontal,
+                        ),
+                        const SizedBox(width: 8), 
+                        Text(
+                          "${userOwner.rating?.toStringAsFixed(2) ?? '0.00'} de 5 (${userOwner.totalRating} valoraciones)",
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), 
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 25),
                     if (widget.userId != id)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: TextButton(
                           onPressed: () async {
-                          showDialog(
-                            context: context,
-                            builder: (_) => AlertShowQRPurchase(productId: widget.id, userId: id!),
-                          ).then((_) async {
-                            final previousState = context.read<ProductBloc>().state;
-                            context.read<ProductBloc>().add(GetProductButtonPressed(productId: widget.id));
-                            final productState = await context.read<ProductBloc>().stream.firstWhere(
-                              (state) => state.product != null && state.product!.productId == widget.id && state.product != previousState.product,
-                            );
-                            final updatedProduct = productState.product; 
-                            if (updatedProduct != null && updatedProduct.idSaleStateProduct == 4 && updatedProduct.buyerId == id) {
-                              context.read<ProductBloc>().add(GetProductsButtonPressed());
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
-                              context.pop();
-                            }
-                          });
+                          if (widget.precio > youreBalance!) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.notEnoughBalance)));
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (_) => AlertShowQRPurchase(productId: widget.id, userId: id!),
+                            ).then((_) async {
+                              final previousState = context.read<ProductBloc>().state;
+                              context.read<ProductBloc>().add(GetProductButtonPressed(productId: widget.id));
+                              final productState = await context.read<ProductBloc>().stream.firstWhere(
+                                (state) => state.product != null && state.product!.productId == widget.id && state.product != previousState.product,
+                              );
+                              final updatedProduct = productState.product; 
+                              if (updatedProduct != null && updatedProduct.idSaleStateProduct == 4 && updatedProduct.buyerId == id) {
+                                context.read<ProductBloc>().add(GetProductsButtonPressed());
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
+                                context.pop();
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return AlertDialog(
+                                      content: AlertRateUser(
+                                        userId: widget.userId, 
+                                        productId: widget.id,
+                                      ),
+                                    );
+                                  },
+                                );
+                              }
+                            });
+                          }
                         },
                         style: TextButton.styleFrom(
                           backgroundColor: Colors.black,

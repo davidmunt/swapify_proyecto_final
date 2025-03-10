@@ -42,7 +42,7 @@ class _QRScannerScreenAddBalanceState extends State<QRScannerScreenAddBalance> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Center(child: Text("Añadir saldo")),
+              title: Center(child: Text(AppLocalizations.of(context)!.addBalance)),
               content: AlertAddBallance(balance: balance),
             ),
           );
@@ -59,7 +59,7 @@ class _QRScannerScreenAddBalanceState extends State<QRScannerScreenAddBalance> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("¿Estas seguro de añadir el saldo?"),
+        title: Text(AppLocalizations.of(context)!.areYouSureAddBalance),
         centerTitle: true,
       ),
       body: Column(

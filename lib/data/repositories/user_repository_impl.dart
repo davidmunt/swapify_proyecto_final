@@ -219,4 +219,24 @@ class UserRepositoryImpl implements UserRepository {
       return Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, void>> addRatingToUser({
+    required String userId,
+    required String customerId,
+    required int productId,
+    required int rating,
+  }) async {
+    try {
+      await dataSource.addRatingToUser(
+        userId: userId,
+        customerId: customerId,
+        productId: productId,
+        rating: rating,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
 }

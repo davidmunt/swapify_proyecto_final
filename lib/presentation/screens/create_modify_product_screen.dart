@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,6 +66,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
   late int? selectedSaleStateId;
   final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
   final List<File> _selectedImages = [];
+  bool isFree = false;
 
   @override
   void initState() {
@@ -157,9 +159,36 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                             WidgetTextoFormulario(texto: AppLocalizations.of(context)!.model, iconoHint: const Icon(Icons.style), controller: modeloController),
                             const SizedBox(height: 12),
                             WidgetTextoFormulario(texto: AppLocalizations.of(context)!.description, iconoHint: const Icon(Icons.article), controller: descripcionController),
-                            const SizedBox(height: 12),
-                            WidgetTextoPrecio(texto: AppLocalizations.of(context)!.price, controller: precioController), 
-                            const SizedBox(height: 12),
+                            if (isFree != true)
+                              const SizedBox(height: 12),
+                            if (isFree != true)
+                              WidgetTextoPrecio(texto: AppLocalizations.of(context)!.price, controller: precioController), 
+                            const SizedBox(height: 16),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16), 
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start, 
+                                children: [
+                                  Checkbox(
+                                    value: isFree,
+                                    onChanged: (bool? newValue) {
+                                      setState(() {
+                                        isFree = newValue ?? false;
+                                        if (isFree) {
+                                          precioController.text = '0.00';
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  const SizedBox(width: 5), 
+                                  Text(
+                                    AppLocalizations.of(context)!.free,
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
                             WidgetDropdownCategory(
                               items: categories,
                               selectedItemId: selectedCategoryId,
@@ -219,7 +248,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                   final marca = marcaController.text.trim();
                                   final modelo = modeloController.text.trim();
                                   final descripcion = descripcionController.text.trim();
-                                  final precio = precioController.text.trim();
+                                  final precio = isFree ? '0.00' : precioController.text.trim();
                                   double? precioParsed = double.tryParse(precio);
                                   if (_selectedImages.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldImages)));
@@ -239,7 +268,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                   } else if (precio.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldPrice)));
                                     return;
-                                  } else if (precioParsed == null) {
+                                  } else if (!isFree && (precioParsed == null || precioParsed <= 0)) {
                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorFieldPriceNumber)));
                                     return;
                                   } else if (selectedCategoryId == null) {
@@ -262,7 +291,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                         idStateProduct: selectedStateId ?? 0,
                                         idCategoryProduct: selectedCategoryId ?? 0,
                                         description: descripcion,
-                                        price: precioParsed,
+                                        price: precioParsed ?? 0.00,
                                         latitudeCreated: latitudeCreated ?? 0.00000000000,
                                         longitudeCreated: longitudeCreated ?? 0.00000000000,
                                         nameCityCreated: nameCityCreated ?? "Ciudad desconocida",
@@ -270,6 +299,15 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                         images: _selectedImages.map((file) => XFile(file.path)).toList(),
                                       ));
                                     } else {
+                                      List<XFile> imageFiles = [];
+                                        for (var file in _selectedImages) {
+                                          if (kIsWeb) {
+                                            Uint8List bytes = await file.readAsBytes();
+                                            imageFiles.add(XFile.fromData(bytes, mimeType: 'image/png')); 
+                                          } else {
+                                            imageFiles.add(XFile(file.path));
+                                          }
+                                        }
                                       context.read<ProductBloc>().add(UpdateProductButtonPressed(
                                         productId: widget.productId!,
                                         productModel: modelo,
@@ -278,8 +316,8 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                         idSaleStateProduct: selectedSaleStateId ?? 0,
                                         idCategoryProduct: selectedCategoryId ?? 0,
                                         description: descripcion,
-                                        price: precioParsed,
-                                        images: _selectedImages.map((file) => XFile(file.path)).toList(),
+                                        price: precioParsed ?? 0.00,
+                                        images: imageFiles,
                                         userId: userProductId ?? "No hay id",
                                       ));
                                     }

@@ -42,7 +42,7 @@ class _AlertSellState extends State<AlertSell> {
                 setState(() {
                   _isProcessing = false;
                 });
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.notEnoughBalance)));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.error)));
               }
             },
             builder: (context, state) {

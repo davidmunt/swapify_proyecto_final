@@ -310,4 +310,31 @@ class FirebaseAuthDataSource {
       throw ServerFailure();
     }
   }
+
+  Future<void> addRatingToUser({
+    required String userId,
+    required String customerId,
+    required int productId,
+    required int rating,
+  }) async {
+    try {
+      final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+      final url = Uri.parse('$baseUrl/user/addRating');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "id_user": userId, 
+          "id_customer": customerId,
+          "id_product": productId,
+          "rating": rating,
+        }),
+      );
+      if (response.statusCode != 201) {
+        throw Exception('Error al añadir la valoracion al usuario');
+      }
+    } catch (e) {
+      throw ServerFailure();
+    }
+  }
 }

@@ -9,6 +9,8 @@ class UserEntity {
   final DateTime? dateBirth; 
   final String? linkAvatar;
   final double? balance;
+  final double? rating;
+  final int? totalRating;
 
   UserEntity({
     required this.id,
@@ -21,5 +23,7 @@ class UserEntity {
     this.dateBirth,
     this.linkAvatar,
     this.balance,
+    this.rating,
+    this.totalRating,
   });
 }

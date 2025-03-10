@@ -20,6 +20,7 @@ import 'package:swapify/domain/repositories/product_state_repository.dart';
 import 'package:swapify/domain/repositories/qr_repository.dart';
 import 'package:swapify/domain/repositories/user_repository.dart';
 import 'package:swapify/domain/usecases/add_balance_to_user_usecase.dart';
+import 'package:swapify/domain/usecases/add_rating_to_user_usecase.dart';
 import 'package:swapify/domain/usecases/buy_product_usecase.dart';
 import 'package:swapify/domain/usecases/change_password_user_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_avatar_usecase.dart';
@@ -76,7 +77,7 @@ final GetIt sl = GetIt.instance;
 Future<void> configureDependencies() async {
 
   sl.registerFactory<UserBloc>(
-    () => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    () => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory<ProductCategoryBloc>(
@@ -291,5 +292,8 @@ Future<void> configureDependencies() async {
   );
   sl.registerLazySingleton<GetQRProductPaymentUseCase>(
     () => GetQRProductPaymentUseCase(sl()),
+  );
+  sl.registerLazySingleton<AddRatingToUserUseCase>(
+    () => AddRatingToUserUseCase(sl()),
   );
 }

@@ -12,6 +12,8 @@ class UserModel {
   final DateTime? dateBirth;
   final String? linkAvatar;
   final double? balance; 
+  final double? rating;
+  final int? totalRating;
 
   UserModel({
     required this.id,
@@ -24,6 +26,8 @@ class UserModel {
     this.dateBirth,
     this.linkAvatar,
     this.balance,
+    this.rating,
+    this.totalRating,
   });
 
   static UserModel fromUserCredential(UserCredential userCredentials) {
@@ -44,6 +48,8 @@ class UserModel {
       tokenNotifications: map['tokenNotifications'],
       dateBirth: map['dateBirth'] != null ? DateTime.tryParse(map['dateBirth']) : null,
       balance: map['balance'] is double ? map['balance'] : double.tryParse(map['balance']?.toString() ?? '0.0'),
+      rating: map['rating'] is double ? map['rating'] : double.tryParse(map['rating']?.toString() ?? '0.0'),
+      totalRating: map['num_rating'] is int ? map['num_rating'] : int.tryParse(map['num_rating']?.toString() ?? '0'),
     );
   }
 
@@ -61,6 +67,8 @@ class UserModel {
       dateBirth: dateBirth,
       linkAvatar: linkAvatar ?? this.linkAvatar,
       balance: balance,
+      rating: rating,
+      totalRating: totalRating,
     );
   }
 
@@ -76,6 +84,8 @@ class UserModel {
       dateBirth: dateBirth,
       linkAvatar: linkAvatar,
       balance: balance,
+      rating: rating,
+      totalRating: totalRating,
     );
   }
 }

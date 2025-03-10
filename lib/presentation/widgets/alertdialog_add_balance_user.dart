@@ -33,7 +33,7 @@ class _AlertAddBallanceState extends State<AlertAddBallance> {
           setState(() {
             _isProcessing = false;
           });
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Saldo añadido correctamente")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.balanceAddedSuscesfully)));
           if (Navigator.of(context).canPop()) {
             Navigator.of(context).pop();
           }

@@ -100,7 +100,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                   final isProductOwner = chat.productOwnerId == userId;
                                   final otherUserId = isProductOwner ? chat.potBuyerId : chat.productOwnerId;
                                   final otherUser = userState.users?.firstWhere((user) => user.id == otherUserId);
-                                  final otherUserName = otherUser?.name ?? "Usuario desconocido";
+                                  final otherUserName = otherUser?.name ?? AppLocalizations.of(context)!.unknownUser;
                                   ProductEntity? product;
                                   try {
                                     product = products.firstWhere((p) => p.productId == chat.productId);
@@ -109,9 +109,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                   }
                                   final timestamp = chat.messages.last['dateMessageSent'];
                                   final dateMessageSent = timestamp?.toDate();
-                                  final formattedDate = dateMessageSent != null ? DateFormat('dd/MM/yyyy HH:mm').format(dateMessageSent) : 'Fecha desconocida';
+                                  final formattedDate = dateMessageSent != null ? DateFormat('dd/MM/yyyy HH:mm').format(dateMessageSent) : AppLocalizations.of(context)!.unavailableDate;
                                   final productImage = product?.images.isNotEmpty == true ? "$baseUrl${product!.images.first.path}" : null;
-                                  final productTitle = product != null ? "${product.productBrand} ${product.productModel}" : "Producto desconocido";
+                                  final productTitle = product != null ? "${product.productBrand} ${product.productModel}" : AppLocalizations.of(context)!.unknownProduct;
                                   return GestureDetector(
                                     onTap: () {
                                       context.push(

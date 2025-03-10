@@ -10,7 +10,7 @@ import 'package:swapify/presentation/blocs/product_category/product_category_eve
 import 'package:swapify/presentation/blocs/product_category/product_category_state.dart';
 
 class FiltrarProductosWidget extends StatefulWidget {
-  final Function(String? searchTerm, double? minPrice, double? maxPrice, double? proximity, int? categoryId, String criteria, String direction) onApplyFilters;
+  final Function(String? searchTerm, double? minPrice, double? maxPrice, double? proximity, int? categoryId, String criteria, String direction, bool isFree) onApplyFilters;
 
   const FiltrarProductosWidget({super.key, required this.onApplyFilters});
 
@@ -23,11 +23,11 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
   final TextEditingController minPriceController = TextEditingController();
   final TextEditingController maxPriceController = TextEditingController();
   final TextEditingController proximityController = TextEditingController();
-
   int? selectedCategoryId;
   String? errorMessage;
   String? selectedOrder;
   String? selectedDirection;
+  bool isFree = false;
 
   @override
   void initState() {
@@ -37,6 +37,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
     searchController.text = productBloc.currentSearchTerm ?? '';
     minPriceController.text = productBloc.currentMinPrice?.toString() ?? '';
     maxPriceController.text = productBloc.currentMaxPrice?.toString() ?? '';
+    isFree = productBloc.isFree ?? false;
     proximityController.text = productBloc.currentProximity?.toString() ?? '';
     selectedCategoryId = productBloc.currentCategoryId;
     selectedOrder = productBloc.currentSortCriteria;
@@ -83,32 +84,60 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
             ),
             const SizedBox(height: 12),
             Text(AppLocalizations.of(context)!.rangePrice),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: minPriceController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.min,
+            if (isFree != true)
+              const SizedBox(height: 8),
+            if (isFree != true)
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: minPriceController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: AppLocalizations.of(context)!.min,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: TextField(
-                    controller: maxPriceController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: AppLocalizations.of(context)!.max,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      controller: maxPriceController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        labelText: AppLocalizations.of(context)!.max,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            const SizedBox(height: 12),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16), 
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start, 
+                                children: [
+                                  Checkbox(
+                                    value: isFree,
+                                    onChanged: (bool? newValue) {
+                                      setState(() {
+                                        isFree = newValue ?? false;
+                                        if (isFree) {
+                                          maxPriceController.text = '0.00';
+                                          minPriceController.text = '0.00';
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  const SizedBox(width: 5), 
+                                  Text(
+                                    AppLocalizations.of(context)!.free,
+                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                            ),
             const SizedBox(height: 12),
             Text(AppLocalizations.of(context)!.productCategory),
             const SizedBox(height: 8),
@@ -262,6 +291,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                       selectedCategoryId,
                       finalOrder,
                       finalDirection,
+                      isFree,
                     );
                     Navigator.of(context).pop();
                   },

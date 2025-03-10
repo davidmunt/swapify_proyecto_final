@@ -55,17 +55,16 @@ class _YoureEnvolvmentScreenState extends State<YoureEnvolvmentScreen> {
                     final bool isBuyer = product.buyerId == userId;
                     final String transactionText;
                     if (isBuyer) {
-                      transactionText = "Has comprado el producto";
+                      transactionText = AppLocalizations.of(context)!.youHadBoughtTheProduct;
                     } else {
-                      transactionText = "Has vendido el producto";
+                      transactionText = AppLocalizations.of(context)!.youHadSoldTheProduct;
                     }
                     final Color transactionColor = isBuyer ? Colors.blue : Colors.green;
-                    final Color priceColor = isBuyer ? Colors.red : Colors.green;
-                    final String pricePrefix;
-                    if (isBuyer) {
-                      pricePrefix = "-";
-                    } else {
-                      pricePrefix = "+";
+                    var priceColor = isBuyer ? Colors.red : Colors.green; 
+                    var pricePrefix = isBuyer ? "-" : "+"; 
+                    if (product.price == 0) {
+                      priceColor = Colors.orange;
+                      pricePrefix = "";
                     }
                     return Card(
                       margin: const EdgeInsets.only(bottom: 16),
@@ -114,7 +113,9 @@ class _YoureEnvolvmentScreenState extends State<YoureEnvolvmentScreen> {
                                   const SizedBox(height: 8),
                                   if (product.productExangedId == null)
                                     Text(
-                                      "$pricePrefix${AppLocalizations.of(context)!.productPrice(product.price)}",
+                                      product.price == 0
+                                        ? AppLocalizations.of(context)!.free
+                                        : "$pricePrefix${AppLocalizations.of(context)!.productPrice(product.price)}",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14,

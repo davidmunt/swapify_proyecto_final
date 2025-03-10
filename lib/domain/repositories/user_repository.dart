@@ -40,4 +40,10 @@ abstract class UserRepository {
     required String userId,
     required int balanceToAdd,
   });
+  Future<Either<Failure, void>> addRatingToUser({
+    required String userId,
+    required String customerId,
+    required int productId,
+    required int rating,
+  });
 }

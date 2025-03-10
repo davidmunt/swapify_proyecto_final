@@ -120,6 +120,23 @@ class AddBalanceToUserButtonPressed extends UserEvent {
   List<Object?> get props => [userId, balanceToAdd];
 }
 
+class AddRatingToUserButtonPressed extends UserEvent {
+  final String userId;
+  final String customerId;
+  final int productId;
+  final int rating;
+
+  AddRatingToUserButtonPressed({
+    required this.userId,
+    required this.customerId,
+    required this.productId,
+    required this.rating,
+  });
+
+  @override
+  List<Object?> get props => [userId, customerId, productId, rating];
+}
+
 class ChangePasswordButtonPressed extends UserEvent {
   final String password;
 

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swapify/core/usecase.dart';
 import 'package:swapify/domain/entities/user.dart';
 import 'package:swapify/domain/usecases/add_balance_to_user_usecase.dart';
+import 'package:swapify/domain/usecases/add_rating_to_user_usecase.dart';
 import 'package:swapify/domain/usecases/change_password_user_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_avatar_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_info_usecase.dart';
@@ -33,6 +34,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   final GetUsersInfoUseCase getUsersInfoUseCase;
   final SaveUserNotificationTokenUseCase saveUserNotificationTokenUseCase;
   final AddBalanceToUserUseCase addBalanceToUserUseCase;
+  final AddRatingToUserUseCase addRatingToUserUseCase;
 
   UserBloc(
     this.signInUserUseCase,
@@ -49,6 +51,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     this.getUsersInfoUseCase,
     this.saveUserNotificationTokenUseCase,
     this.addBalanceToUserUseCase,
+    this.addRatingToUserUseCase,
   ) : super(UserState.initial()) {
 
     on<LoginButtonPressed>((event, emit) async {
@@ -274,6 +277,19 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             }
           },
         );
+      } catch (e) {
+        emit(UserState.failure("Error inesperado: $e"));
+      }
+    });
+
+    on<AddRatingToUserButtonPressed>((event, emit) async {
+      try {
+        addRatingToUserUseCase(AddRatingToUserParams(
+          userId: event.userId,
+          customerId: event.customerId,
+          productId: event.productId,
+          rating: event.rating,
+        ));
       } catch (e) {
         emit(UserState.failure("Error inesperado: $e"));
       }

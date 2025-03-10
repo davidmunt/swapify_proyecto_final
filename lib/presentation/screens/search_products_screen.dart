@@ -249,7 +249,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
                           context: context,
                           builder: (context) {
                             return FiltrarProductosWidget(
-                              onApplyFilters: (searchTerm, minPrice, maxPrice, proximity, categoryId, selectedOrder, selectedDirection) {
+                              onApplyFilters: (searchTerm, minPrice, maxPrice, proximity, categoryId, selectedOrder, selectedDirection, isFree) {
                                 context.read<ProductBloc>().add(FilterProductsButtonPressed(
                                   searchTerm: searchTerm,
                                   minPrice: minPrice,
@@ -260,6 +260,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
                                   categoryId: categoryId,
                                   criteria: selectedOrder,
                                   direction: selectedDirection,
+                                  isFree: isFree,
                                 ));
                               },
                             );

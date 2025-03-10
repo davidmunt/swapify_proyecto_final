@@ -9,6 +9,7 @@ import 'package:swapify/presentation/blocs/product/product_event.dart';
 import 'package:swapify/presentation/blocs/product/product_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:swapify/presentation/widgets/alertdialog_rate_user_afther_product_bought.dart';
 
 class AlertShowQRPurchase extends StatefulWidget {
   final int productId;
@@ -46,6 +47,17 @@ class _AlertShowQRPurchaseState extends State<AlertShowQRPurchase> {
             context.read<ProductBloc>().add(GetProductsButtonPressed());
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
             context.pop();
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  content: AlertRateUser(
+                    userId: updatedProduct.userId, 
+                    productId: updatedProduct.productId,
+                  ),
+                );
+              },
+            );
           }
         },
         child: GestureDetector(
@@ -84,8 +96,8 @@ class _AlertShowQRPurchaseState extends State<AlertShowQRPurchase> {
                   ),
                 );
               } else {
-                return const Center(
-                  child: Text("Error al generar el codigo QR", textAlign: TextAlign.center),
+                return Center(
+                  child: Text(AppLocalizations.of(context)!.errorGeneratingQR, textAlign: TextAlign.center),
                 );
               }
             },

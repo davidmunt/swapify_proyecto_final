@@ -100,13 +100,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    otherUser.name ?? "Usuario desconocido",
+                    otherUser.name ?? AppLocalizations.of(context)!.unknownUser,
                     style: const TextStyle(fontSize: 18, overflow: TextOverflow.ellipsis),
                   ),
                 ],
               );
             } else {
-              return const Text("Chat");
+              return Text(AppLocalizations.of(context)!.chat);
             }
           },
         ),

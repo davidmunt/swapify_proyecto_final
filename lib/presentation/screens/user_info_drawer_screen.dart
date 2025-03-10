@@ -86,7 +86,7 @@ class _UserInfoDrawerState extends State<UserInfoDrawer> {
                               title: Text(
                                 state.user!.dateBirth != null 
                                     ? DateFormat('dd/MM/yyyy').format(state.user!.dateBirth!) 
-                                    : 'Fecha no disponible',
+                                    : AppLocalizations.of(context)!.unavailableDate,
                                 style: const TextStyle(fontSize: 16),
                               ),
                             ),
@@ -128,7 +128,7 @@ class _UserInfoDrawerState extends State<UserInfoDrawer> {
                       children: [
                         const Icon(Icons.accessibility_rounded),
                         const SizedBox(width: 10),
-                        Text("Youre envolvment"),
+                        Text(AppLocalizations.of(context)!.youreEnvolvment),
                       ],
                     ),
                   ),

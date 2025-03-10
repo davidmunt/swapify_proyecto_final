@@ -10,8 +10,9 @@ class ProductState {
   final String? currentSortCriteria;
   final String? currentSortDirection;
   final String? currentSearchTerm;
-  final double? currentMinPrice;
+  final double? currentMinPrice; 
   final double? currentMaxPrice;
+  final bool? isFree;
   final int? currentCategoryId;
   final double? currentProximity;
   final bool? purchaseSuccess;
@@ -29,6 +30,7 @@ class ProductState {
     this.currentSearchTerm,
     this.currentMinPrice,
     this.currentMaxPrice,
+    this.isFree,
     this.currentCategoryId,
     this.currentProximity,
     this.purchaseSuccess,
@@ -47,6 +49,7 @@ class ProductState {
     String? currentSearchTerm,
     double? currentMinPrice,
     double? currentMaxPrice,
+    bool? isFree,
     int? currentCategoryId,
     double? currentProximity,
     bool? purchaseSuccess,
@@ -64,6 +67,7 @@ class ProductState {
       currentSearchTerm: currentSearchTerm ?? this.currentSearchTerm,
       currentMinPrice: currentMinPrice ?? this.currentMinPrice,
       currentMaxPrice: currentMaxPrice ?? this.currentMaxPrice,
+      isFree: isFree ?? this.isFree,
       currentCategoryId: currentCategoryId ?? this.currentCategoryId,
       currentProximity: currentProximity ?? this.currentProximity,
       purchaseSuccess: purchaseSuccess ?? this.purchaseSuccess,
