@@ -97,6 +97,21 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
+  Future<void> exchangeProduct({
+    required int productId,
+    required int producExchangedtId,
+    required String userId, 
+    required String sellerId,
+  }) async {
+    try {
+      await dataSource.exchangeProduct(productId: productId, producExchangedtId: producExchangedtId, userId: userId, sellerId: sellerId);
+      return;
+    } catch (e) {
+      throw ServerFailure();
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> deleteProduct(int id) async {
     try {
       await dataSource.deleteProduct(id);

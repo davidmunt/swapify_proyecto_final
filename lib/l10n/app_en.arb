@@ -166,7 +166,8 @@
   "rate": "Rate", 
   "rateUser": "Rate user",
   "rateExperience": "Rate you're experience",
-  "rate": "Rate user",
+  "exchangeProduct": "Exchange Product",  
+  "favourites": "Favourites",
   "dateCreated": "Created on {fecha}",
   "@dateCreated": {
     "placeholders": {

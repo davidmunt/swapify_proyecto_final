@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:swapify/presentation/widgets/alertdialog_exchange_product.dart';
 import 'package:swapify/presentation/widgets/alertdialog_sell_product.dart';
 
 class QRScannerScreen extends StatefulWidget {
@@ -39,19 +40,38 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       });
       try {
         final Map<String, dynamic> qrData = jsonDecode(scannedCode);
-        final int productId = qrData['productId'];
-        final String userId = qrData['userId'];
-        if (productId != null && userId.isNotEmpty) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Center(child: Text(AppLocalizations.of(context)!.confirmSell)),
-              content: AlertSell(productId: productId, userId: userId),
-            ),
-          );
-        } else {
-          throw Exception(AppLocalizations.of(context)!.qrInvalid);
+        if (qrData.length == 2){
+          final int productId = qrData['productId'];
+          final String userId = qrData['userId'];
+          if (productId != null && userId.isNotEmpty) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Center(child: Text(AppLocalizations.of(context)!.confirmSell)),
+                content: AlertSell(productId: productId, userId: userId),
+              ),
+            );
+          } else {
+            throw Exception(AppLocalizations.of(context)!.qrInvalid);
+          }
         }
+        else if (qrData.length == 3){
+          final int productId = qrData['productId'];
+          final int producExchangedtId = qrData['productExchangedId'];
+          final String userId = qrData['userId'];
+          if (productId != null && producExchangedtId != null && userId.isNotEmpty) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Center(child: Text(AppLocalizations.of(context)!.confirmSell)),
+                content: AlertExchange(productId: productId, producExchangedtId: producExchangedtId, userId: userId),
+              ),
+            );
+          } else {
+            throw Exception(AppLocalizations.of(context)!.qrInvalid);
+          }
+        }
+        
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
       }

@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
               NavigationDestination(
                 selectedIcon: const Icon(Icons.favorite, color: Color.fromARGB(255, 12, 104, 70)),
                 icon: const Icon(Icons.favorite_border),
-                label: AppLocalizations.of(context)!.home,
+                label: AppLocalizations.of(context)!.favourites,
               ),
               NavigationDestination(
                 selectedIcon: const Icon(Icons.list_sharp, color: Color.fromARGB(255, 12, 104, 70)),

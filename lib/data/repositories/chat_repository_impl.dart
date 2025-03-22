@@ -42,6 +42,8 @@ class ChatRepositoryImpl implements ChatRepository {
     required int productId,
     String? message,
     String? imagePath,
+    int? idProduct, 
+    String? productImage,
     required DateTime dateMessageSent,
   }) async {
     try {
@@ -52,7 +54,31 @@ class ChatRepositoryImpl implements ChatRepository {
         message: message,
         senderId: senderId,
         imagePath: imagePath,
+        idProduct: idProduct,
+        productImage: productImage,
         dateMessageSent: dateMessageSent,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateExchangeStatus({
+    required String productOwnerId,
+    required String potBuyerId,
+    required int productId,
+    required int idProduct,
+    required bool accepted,
+  }) async {
+    try {
+      await dataSource.updateExchangeStatus(
+        productOwnerId: productOwnerId,
+        potBuyerId: potBuyerId,
+        productId: productId,
+        idProduct: idProduct,
+        accepted: accepted,
       );
       return const Right(null);
     } catch (e) {

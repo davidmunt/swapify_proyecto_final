@@ -13,6 +13,8 @@ abstract class ChatRepository {
     required String senderId,
     String? message,
     String? imagePath,
+    int? idProduct, 
+    String? productImage,
     required DateTime dateMessageSent,
   });
   Future<Either<Failure, String>> uploadMessageImage({
@@ -23,5 +25,12 @@ abstract class ChatRepository {
     required String? text,
     required String sender,
     required String reciver,
+  });
+  Future<Either<Failure, void>> updateExchangeStatus({
+    required String productOwnerId,
+    required String potBuyerId,
+    required int productId,
+    required int idProduct,
+    required bool accepted,
   });
 }

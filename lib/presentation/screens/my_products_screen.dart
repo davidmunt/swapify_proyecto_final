@@ -91,7 +91,7 @@ class _MyProductsScreenState extends State<MyProductsScreen> {
                                       const SizedBox(width: 16),
                                       Container(
                                         padding: const EdgeInsets.symmetric(vertical: 16),
-                                        child: product.images != null && product.images.isNotEmpty 
+                                        child: product.images.isNotEmpty 
                                         ? Image.network(
                                             '$baseUrl${product.images.first.path}',
                                             width: 125,

@@ -119,6 +119,18 @@ class BuyProductButtonPressed extends ProductEvent {
   List<Object?> get props => [productId, userId];
 }
 
+class ExchangeProductButtonPressed extends ProductEvent {
+  final int productId;
+  final int producExchangedtId;
+  final String userId; 
+  final String sellerId;
+
+  ExchangeProductButtonPressed({required this.productId, required this.userId, required this.sellerId, required this.producExchangedtId});
+
+  @override
+  List<Object?> get props => [productId, producExchangedtId, userId, sellerId];
+}
+
 class CreateProductButtonPressed extends ProductEvent {
   final String productModel;
   final String productBrand;

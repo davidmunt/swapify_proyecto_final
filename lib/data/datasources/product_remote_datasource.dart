@@ -134,6 +134,34 @@ class ProductDataSource {
     }
   }
 
+  Future<void> exchangeProduct({
+    required int productId,
+    required int producExchangedtId,
+    required String userId,
+    required String sellerId,
+  }) async {
+    try {
+      final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+      final url = Uri.parse('$baseUrl/product/swap');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'productId': producExchangedtId,
+          'productSwapedId': productId,
+          'buyerId': userId,
+          'sellerId': sellerId
+        }),
+      );
+      if (response.statusCode != 201) {
+        throw Exception('Error al intercambiar el producto');
+      }
+    } catch (e) {
+      debugPrint("Error en exchangeProduct: $e");
+      throw ServerFailure();
+    }
+  }
+
   Future<void> likeProduct({required int productId, required String userId}) async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product_like');

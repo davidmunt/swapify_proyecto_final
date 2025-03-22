@@ -3,14 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:swapify/domain/entities/user.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapify/presentation/blocs/chat/chat_bloc.dart';
 import 'package:swapify/presentation/blocs/chat/chat_event.dart';
+import 'package:swapify/presentation/blocs/product/product_bloc.dart';
+import 'package:swapify/presentation/blocs/product/product_event.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
+import 'package:swapify/presentation/widgets/alertdialog_rate_user_afther_product_bought.dart';
 import 'package:swapify/presentation/widgets/alertdialog_show_image_chat.dart';
+import 'package:swapify/presentation/widgets/alertdialog_show_qr_exchange.dart';
 import 'package:swapify/presentation/widgets/widget_send_message.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -48,20 +53,21 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _sendMessage(String message, XFile? image) {
+  void _sendMessage(String message, XFile? image, int? idProduct, String? productImage) {
     final userId = context.read<UserBloc>().state.user!.id;
     context.read<ChatBloc>().add(
-          SendMessageButtonPressed(
-            productOwnerId: widget.productOwnerId,
-            potBuyerId: widget.potBuyerId,
-            productId: widget.productId,
-            message: message.isEmpty ? null : message,
-            image: image,
-            senderId: userId,
-            dateMessageSent: DateTime.now(),
-          ),
-        );
-
+      SendMessageButtonPressed(
+        productOwnerId: widget.productOwnerId,
+        potBuyerId: widget.potBuyerId,
+        productId: widget.productId,
+        message: message.isEmpty ? null : message,
+        image: image,
+        idProduct: idProduct,
+        senderId: userId,
+        productImage: productImage, 
+        dateMessageSent: DateTime.now(),
+      ),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
     });
@@ -79,16 +85,7 @@ class _ChatScreenState extends State<ChatScreen> {
               final otherUserId = userState.user!.id == widget.productOwnerId ? widget.potBuyerId : widget.productOwnerId;
               final otherUser = userState.users!.firstWhere(
                 (user) => user.id == otherUserId,
-                orElse: () => UserEntity(
-                  id: "unknown",
-                  email: "unknown",
-                  name: "Usuario desconocido",
-                  surname: null,
-                  telNumber: null,
-                  avatarId: null,
-                  dateBirth: null,
-                  linkAvatar: null,
-                ),
+                orElse: () => UserEntity(id: "unknown", email: "unknown", name: "Usuario desconocido", surname: null, telNumber: null, avatarId: null, dateBirth: null, linkAvatar: null),
               );
               final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
               final avatar = otherUser.linkAvatar != null ? NetworkImage("$baseUrl${otherUser.linkAvatar}") : null;
@@ -123,7 +120,13 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: Text(AppLocalizations.of(context)!.chatNotYetStarted),
                   ),
                 ),
-                SendMessageWidget(onSendMessage: _sendMessage),
+                SendMessageWidget(
+                  userId: userId, 
+                  productOwnerId: widget.productOwnerId,
+                  onSendMessage: (message, image, idProduct, productImage) {
+                    _sendMessage(message, image, idProduct, productImage);
+                  },
+                ),
               ],
             );
           }
@@ -143,7 +146,82 @@ class _ChatScreenState extends State<ChatScreen> {
                     final message = messages[index];
                     final isSender = message['senderId'] == userId;
                     Widget messageContent;
-                    if (message['imagePath'] != null && message['imagePath'].trim().isNotEmpty) {
+                    if (message['idProduct'] != null && message['productImage'] != null) {
+                      messageContent = Column(
+                        mainAxisSize: MainAxisSize.min, 
+                        crossAxisAlignment: CrossAxisAlignment.center, 
+                        children: [
+                          SizedBox(
+                            width: 220, 
+                            height: 250,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.network(
+                                "${dotenv.env['BASE_API_URL']}${message['productImage']}",
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          if (message['accepted'] == null && widget.productOwnerId != userId) ...[
+                            SizedBox(
+                              width: 120, 
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (_) => AlertShowQRExchange(productId: widget.productId, userId: userId, productExchangedId: message['idProduct']),
+                                    ).then((_) async {
+                                      final previousState = context.read<ProductBloc>().state;
+                                      context.read<ProductBloc>().add(GetProductButtonPressed(productId: widget.productId));
+                                      final productState = await context.read<ProductBloc>().stream.firstWhere(
+                                        (state) => state.product != null && state.product!.productId == widget.productId && state.product != previousState.product,
+                                      );
+                                      final updatedProduct = productState.product; 
+                                      if (updatedProduct != null && updatedProduct.idSaleStateProduct == 4 && updatedProduct.buyerId == userId) {
+                                        context.read<ChatBloc>().add(UpdateExchangeStatusChatButtonPressed(productOwnerId: widget.productOwnerId, potBuyerId: widget.potBuyerId, productId: widget.productId, idProduct: message['idProduct'], accepted: true));
+                                        context.read<ProductBloc>().add(GetProductsButtonPressed());
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.saleRealized)));
+                                        context.pop();
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return Dialog(
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), 
+                                              child: AlertRateUser(
+                                                userId: userId,
+                                                productId: widget.productId,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      }
+                                    });
+                                },
+                                child: const Text("Intercambiar"),
+                              ),
+                            ),
+                          ] else if (message['accepted'] == null && widget.productOwnerId == userId) ...[
+                            const Chip(
+                              label: Text("Escanea su QR"),
+                              backgroundColor: Color.fromARGB(255, 238, 255, 82),
+                            ),
+                          ] else if (message['accepted'] == false) ...[
+                            const Chip(
+                              label: Text("Intercambio rechazado"),
+                              backgroundColor: Colors.redAccent,
+                            ),
+                          ] else if (message['accepted'] == true) ...[
+                            const Chip(
+                              label: Text("Intercambio acceptado"),
+                              backgroundColor: Colors.greenAccent,
+                            ),
+                          ],
+                        ],
+                      );
+                    } else if (message['imagePath'] != null && message['imagePath'].trim().isNotEmpty) {
                       messageContent = GestureDetector(
                         onTap: () {
                           showDialog(
@@ -184,7 +262,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                           children: [
                             messageContent,
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 10),
                             Text(
                               message['dateMessageSent'] != null ? DateFormat('dd/MM/yyyy HH:mm').format((message['dateMessageSent'] as Timestamp).toDate()) : 'Sin fecha',
                               style: const TextStyle(fontSize: 10, color: Colors.grey),
@@ -196,7 +274,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               ),
-              SendMessageWidget(onSendMessage: _sendMessage),
+              SendMessageWidget(
+                userId: userId, 
+                productOwnerId: widget.productOwnerId,
+                onSendMessage: (message, image, idProduct, productImage) {
+                  _sendMessage(message, image, idProduct, productImage);
+                },
+              ),
             ],
           );
         },

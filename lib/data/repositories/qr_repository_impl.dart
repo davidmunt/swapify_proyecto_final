@@ -20,4 +20,15 @@ class QRRepositoryImpl implements QRRepository {
       return Left(ServerFailure());
     }
   }
+
+  @override
+  Future<Either<Failure, QREntity>> getQRProductExchange(String userId, int productId, int productExchangedId) async {
+    try {
+      final qrPath = await dataSource.getQRProductExchange(userId: userId, productId: productId, productExchangedId: productExchangedId);
+      final qrEntity = QRModel(qrPath: qrPath).toEntity();
+      return Right(qrEntity);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
 }

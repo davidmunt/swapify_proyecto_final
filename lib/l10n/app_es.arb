@@ -166,6 +166,8 @@
   "rate": "Valorar",
   "rateUser": "Valora al usuario",
   "rateExperience": "Valora tu experiencia",
+  "exchangeProduct": "Intercambiar Produco",  
+  "favourites": "Favoritos",
   "dateCreated": "Creado el {fecha}",
   "@dateCreated": {
     "placeholders": {

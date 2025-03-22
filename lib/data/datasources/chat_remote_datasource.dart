@@ -18,6 +18,8 @@ class ChatDataSource {
     required int productId,
     String? message,
     String? imagePath,
+    int? idProduct, 
+    String? productImage,
     required String senderId,
     required DateTime dateMessageSent,
   }) async {
@@ -26,8 +28,11 @@ class ChatDataSource {
       final newMessage = {
         'senderId': senderId,
         'dateMessageSent': Timestamp.fromDate(dateMessageSent),
-        'message': message,
-        'imagePath': imagePath,
+        'message': idProduct == null ? message : null, 
+        'imagePath': idProduct == null ? imagePath : null, 
+        'idProduct': idProduct, 
+        'productImage': productImage, 
+        'accepted': null, 
       };
       final chatDocRef = firestore.collection('chats').doc(chatId);
       final chatDoc = await chatDocRef.get();
@@ -80,6 +85,37 @@ class ChatDataSource {
     } catch (e) {
       debugPrint("Error en getChat: $e");
       throw Exception("Error al obtener el chat");
+    }
+  }
+
+  Future<void> updateExchangeStatus({
+    required String productOwnerId,
+    required String potBuyerId,
+    required int productId,
+    required int idProduct,
+    required bool accepted,
+  }) async {
+    try {
+      final chatId = "$productOwnerId$potBuyerId$productId";
+      final chatDocRef = firestore.collection('chats').doc(chatId);
+      final chatDoc = await chatDocRef.get();
+      if (!chatDoc.exists) {
+        throw Exception("El chat no existe");
+      }
+      final chatData = chatDoc.data();
+      if (chatData == null || !chatData.containsKey('messages')) {
+        throw Exception("El chat no tiene mensajes");
+      }
+      List<dynamic> messages = List.from(chatData['messages']);
+      int index = messages.indexWhere((msg) => msg['idProduct'] == idProduct);
+      if (index == -1) {
+        throw Exception("No se ha encontrado el mensaje con el idProduct");
+      }
+      messages[index]['accepted'] = accepted;
+      await chatDocRef.update({'messages': messages});
+    } catch (e) {
+      debugPrint("Error en updateExchangeStatus: $e");
+      throw Exception("Error al actualizar el estado de intercambio");
     }
   }
 

@@ -4,14 +4,12 @@ class ChatState {
   final bool isLoading;
   final List<ChatEntity>? chats;
   final ChatEntity? chat;
-  final bool? purchaseSuccess;
   final String? errorMessage;
 
   const ChatState({
     this.isLoading = false,
     this.chats,
     this.chat,
-    this.purchaseSuccess,
     this.errorMessage,
   });
 
@@ -19,14 +17,12 @@ class ChatState {
     bool? isLoading,
     List<ChatEntity>? chats,
     ChatEntity? chat,
-    bool? purchaseSuccess,
     String? errorMessage,
   }) {
     return ChatState(
       isLoading: isLoading ?? this.isLoading,
       chats: chats ?? this.chats,
       chat: chat ?? this.chat,
-      purchaseSuccess: purchaseSuccess ?? this.purchaseSuccess,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

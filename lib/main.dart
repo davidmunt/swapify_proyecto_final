@@ -10,6 +10,7 @@ import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state
 import 'package:swapify/presentation/blocs/product_state/product_state_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:swapify/presentation/blocs/qr/qr_bloc.dart';
+import 'package:swapify/presentation/blocs/recomendation_price/recomendation_price_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -82,6 +83,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => sl<NavigationBarBloc>(),
         ),
+        BlocProvider(
+          create: (_) => sl<RecomendationPriceBloc>(),
+        ),
         BlocProvider( 
           create: (_) => sl<PositionBloc>(),
         ),
@@ -91,7 +95,7 @@ class MyApp extends StatelessWidget {
             if (language != null) {
               languageBloc.add(ChangeLanguageEvent(Locale(language!)));
             } else {
-              languageBloc.add(ChangeLanguageEvent(const Locale('es')));
+              languageBloc.add(ChangeLanguageEvent(const Locale('es'))); 
             }
             return languageBloc;
           },

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swapify/domain/usecases/buy_product_usecase.dart';
 import 'package:swapify/domain/usecases/delete_product_usecase.dart';
+import 'package:swapify/domain/usecases/exchange_product_usecase.dart';
 import 'package:swapify/domain/usecases/get_filtered_products_usecase.dart';
 import 'package:swapify/domain/usecases/get_product_usecase.dart';
 import 'package:swapify/domain/usecases/get_products_usecase.dart';
@@ -30,6 +31,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final LikeProductUseCase likeProductUseCase;
   final UnlikeProductUseCase unlikeProductUseCase;
   final BuyProductUseCase buyProductUseCase;
+  final ExchangeProductUseCase exchangeProductUseCase;
   final UpdateProductUseCase updateProductUseCase;
   final UpdateProductImagesUseCase updateProductImagesUseCase;
 
@@ -46,6 +48,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     this.unlikeProductUseCase, 
     this.uploadProductImagesUseCase, 
     this.buyProductUseCase,
+    this.exchangeProductUseCase,
     this.updateProductUseCase,
     this.updateProductImagesUseCase): super(ProductState.initial()) {
 
@@ -201,6 +204,29 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         emit(state.copyWith(
           purchaseSuccess: false,
           errorMessage: "Error al comprar el producto: $e (saldo insuficiente)",
+        ));
+      }
+    });
+
+    on<ExchangeProductButtonPressed>((event, emit) async {
+      emit(ProductState.loading());
+      try {
+        await exchangeProductUseCase.call(ExchangeProductParams(
+          productId: event.productId,
+          producExchangedtId: event.producExchangedtId,
+          userId: event.userId,
+          sellerId: event.sellerId,
+        ));
+        emit(state.copyWith(
+          products: state.products,
+          purchaseSuccess: true,
+          errorMessage: null,
+        ));
+        add(GetProductsButtonPressed());
+      } catch (e) {
+        emit(state.copyWith(
+          purchaseSuccess: false,
+          errorMessage: "Error al intercambiar el producto: $e",
         ));
       }
     });
