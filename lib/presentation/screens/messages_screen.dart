@@ -74,7 +74,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  context.read<ChatBloc>().add(GetMyChatsButtonPressed(userId: userId));
                   return BlocBuilder<ChatBloc, ChatState>(
                     builder: (context, chatState) {
                       if (chatState.isLoading) {
@@ -162,12 +161,40 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
                                                 const SizedBox(height: 4),
-                                                Text(
-                                                  chat.messages.last['message'] ?? AppLocalizations.of(context)!.foto,
-                                                  style: const TextStyle(fontSize: 14),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
+                                                Builder(
+  builder: (_) {
+    final lastMessage = chat.messages.last;
+    if (lastMessage['message'] != null && lastMessage['message'].toString().isNotEmpty) {
+      return Text(
+        lastMessage['message'],
+        style: const TextStyle(fontSize: 14),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    } else if (lastMessage['imagePath'] != null && lastMessage['imagePath'].toString().isNotEmpty) {
+      return Text(
+        AppLocalizations.of(context)!.foto,
+        style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    } else if (lastMessage['idProduct'] != null) {
+      return Text(
+        "Propuesta de intercambio", // ✅ Traducción para "Propuesta de intercambio"
+        style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    } else {
+      return Text(
+        "Sin contenido", // Traducción para mensaje vacío o sin reconocer
+        style: const TextStyle(fontSize: 14),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+  },
+),
                                               ],
                                             ),
                                           ),

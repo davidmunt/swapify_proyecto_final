@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:swapify/domain/entities/chat.dart';
+import 'package:swapify/domain/usecases/delete_chat_where_is_product_usecase.dart';
 import 'package:swapify/domain/usecases/get_chat_usecse.dart';
 import 'package:swapify/domain/usecases/get_my_chats_usecase.dart';
 import 'package:swapify/domain/usecases/save_message_image_usecase.dart';
@@ -16,6 +17,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final GetChatUseCase getChatUseCase;
   final SendNotificationToOtherUserUseCase sendNotificationToOtherUserUseCase;
   final UpdateExchangeStatusChatUseCase updateExchangeStatusChatUseCase;
+  final DeleteChatWhereIsProductUsecase deleteChatWhereIsProductUsecase;
 
   ChatBloc(
     this.sendMessageChatUsecase,
@@ -24,6 +26,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     this.getChatUseCase,
     this.sendNotificationToOtherUserUseCase,
     this.updateExchangeStatusChatUseCase,
+    this.deleteChatWhereIsProductUsecase,
   ) : super(ChatState.initial()) {
     
     on<GetMyChatsButtonPressed>((event, emit) async {
@@ -49,6 +52,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           ),
         );
         final updatedChats = await getMyChatsUseCase.call(GetMyChatsParams(userId: event.productOwnerId));
+        emit(ChatState.success(updatedChats));
+      } catch (e) {
+        emit(ChatState.failure("Error al actualizar el estado del intercambio: $e"));
+      }
+    });
+
+    on<DeleteChatWhereIsProductButtonPressed>((event, emit) async {
+      emit(ChatState.loading());
+      try {
+        await deleteChatWhereIsProductUsecase.call(
+          DeleteChatWhereIsProductParams(
+            productId: event.productId,
+          ),
+        );
+        final updatedChats = await getMyChatsUseCase.call(GetMyChatsParams(userId: event.userId));
         emit(ChatState.success(updatedChats));
       } catch (e) {
         emit(ChatState.failure("Error al actualizar el estado del intercambio: $e"));

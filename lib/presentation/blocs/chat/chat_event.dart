@@ -55,6 +55,16 @@ class UpdateExchangeStatusChatButtonPressed extends ChatEvent {
   List<Object?> get props => [productOwnerId, potBuyerId, productId, idProduct, accepted];
 }
 
+class DeleteChatWhereIsProductButtonPressed extends ChatEvent {
+  final int productId;
+  final String userId;
+
+  DeleteChatWhereIsProductButtonPressed({required this.productId, required this.userId});
+
+  @override
+  List<Object?> get props => [productId, userId];
+}
+
 class UploadMessageImageButtonPressed extends ChatEvent {
   final XFile image;
 

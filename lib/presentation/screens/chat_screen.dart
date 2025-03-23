@@ -112,6 +112,11 @@ class _ChatScreenState extends State<ChatScreen> {
         stream: FirebaseFirestore.instance.collection('chats').doc(chatId).snapshots(),
         builder: (context, snapshot) {
           final userId = context.read<UserBloc>().state.user!.id;
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(AppLocalizations.of(context)!.error),
+            );
+          }
           if (!snapshot.hasData || !snapshot.data!.exists) {
             return Column(
               children: [

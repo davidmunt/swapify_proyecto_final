@@ -6,7 +6,16 @@ abstract class ProductEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class GetProductsButtonPressed extends ProductEvent {}
+class GetProductsButtonPressed extends ProductEvent {
+  final String? userId;
+
+  GetProductsButtonPressed({
+    this.userId,
+  });
+
+  @override
+  List<Object?> get props => [userId];
+}
 
 class FilterProductsButtonPressed extends ProductEvent {
   final String? searchTerm;
@@ -19,6 +28,7 @@ class FilterProductsButtonPressed extends ProductEvent {
   final int? categoryId;
   final String? criteria;
   final String? direction;
+  final String? userId;
 
   FilterProductsButtonPressed({
     this.searchTerm,
@@ -31,10 +41,11 @@ class FilterProductsButtonPressed extends ProductEvent {
     this.categoryId,
     this.criteria,
     this.direction,
+    this.userId
   });
 
   @override
-  List<Object?> get props => [searchTerm, minPrice, maxPrice, isFree, proximity, userLatitude, userLongitude, categoryId, criteria, direction];
+  List<Object?> get props => [searchTerm, minPrice, maxPrice, isFree, proximity, userLatitude, userLongitude, categoryId, criteria, direction, userId];
 }
 
 class GetProductButtonPressed extends ProductEvent {
@@ -75,11 +86,12 @@ class GetYoureEnvolvmentProductsButtonPressed extends ProductEvent {
 
 class DeleteProductButtonPressed extends ProductEvent {
   final int id;
+  final String userId;
 
-  DeleteProductButtonPressed({required this.id});
+  DeleteProductButtonPressed({required this.id, required this.userId});
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, userId];
 }
 
 class LikeProductButtonPressed extends ProductEvent {
@@ -94,7 +106,14 @@ class LikeProductButtonPressed extends ProductEvent {
   List<Object?> get props => [userId, productId];
 }
 
-class ResetFiltersButtonPressed extends ProductEvent {}
+class ResetFiltersButtonPressed extends ProductEvent {
+  final String userId;
+
+  ResetFiltersButtonPressed({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
 
 class UnlikeProductButtonPressed extends ProductEvent {
   final String userId;

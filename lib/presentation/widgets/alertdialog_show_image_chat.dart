@@ -10,7 +10,7 @@ class AlertShowImageChat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(10), 
+      insetPadding: const EdgeInsets.all(10),
       child: LayoutBuilder(
         builder: (context, constraints) {
           return Container(
@@ -18,11 +18,20 @@ class AlertShowImageChat extends StatelessWidget {
               maxHeight: constraints.maxHeight * 0.9,
               maxWidth: constraints.maxWidth * 0.9,
             ),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.black.withOpacity(0.9),
+            ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                "${dotenv.env['BASE_API_URL']}$imagenMostrar",
-                fit: BoxFit.contain, 
+              child: InteractiveViewer(
+                panEnabled: true,
+                minScale: 1.0,
+                maxScale: 4.0,
+                child: Image.network(
+                  "${dotenv.env['BASE_API_URL']}$imagenMostrar",
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           );

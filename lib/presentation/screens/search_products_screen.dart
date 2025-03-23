@@ -51,9 +51,10 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
       context.read<PositionBloc>().add(GetPositionButtonPressed());
     }
     final productBloc = context.read<ProductBloc>();
-    if (productBloc.state.products == null) {
-      productBloc.add(GetProductsButtonPressed());
-    }
+    // final userId = context.read<UserBloc>().state.user!.id;
+    // if (productBloc.state.products == null) {
+    //   productBloc.add(GetProductsButtonPressed(userId: userId));
+    // }
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     return BlocBuilder<PositionBloc, PositionState>(
   builder: (context, positionState) {
@@ -73,6 +74,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
           } else if (userState.errorMessage == null && userState.user != null) {
             _checkAndUpdateFCMToken(userState);
             final userId = userState.user!.id;
+            productBloc.add(GetProductsButtonPressed(userId: userId));
             return BlocBuilder<ProductBloc, ProductState>(
               builder: (context, productState) {
                 final products = productState.products?.where((p) => p.userId != userId && p.idSaleStateProduct == 1).toList() ?? [];
@@ -224,65 +226,71 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            BlocBuilder<ProductBloc, ProductState>(
-              builder: (context, state) {
-                final filterCount = [
-                  if (state.currentSearchTerm?.isNotEmpty ?? false) true,
-                  if (state.currentMaxPrice != null || state.currentMinPrice != null) true,
-                  if (state.currentProximity != null) true,
-                  if (state.currentCategoryId != null) true,
-                  if (state.currentSortCriteria != null && state.currentSortCriteria != "sinOrden") true,
-                ].length;
-                return Stack(
-                  children: [
-                    FloatingActionButton(
-                      onPressed: () async {
-                        if (_isFilterOpen) return;
-                          _isFilterOpen = true;
-                          final positionState = context.read<PositionBloc>().state;
-                          if (positionState.latitude == null || positionState.longitude == null) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorUbication)));
-                            _isFilterOpen = false; 
-                            return;
-                        }
-                        showModalBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return FiltrarProductosWidget(
-                              onApplyFilters: (searchTerm, minPrice, maxPrice, proximity, categoryId, selectedOrder, selectedDirection, isFree) {
-                                context.read<ProductBloc>().add(FilterProductsButtonPressed(
-                                  searchTerm: searchTerm,
-                                  minPrice: minPrice,
-                                  maxPrice: maxPrice,
-                                  proximity: proximity,
-                                  userLatitude: positionState.latitude ?? 0.0000000,
-                                  userLongitude: positionState.longitude ?? 0.0000000,
-                                  categoryId: categoryId,
-                                  criteria: selectedOrder,
-                                  direction: selectedDirection,
-                                  isFree: isFree,
-                                ));
+            BlocBuilder<UserBloc, UserState>(
+              builder: (context, userState) {
+                return BlocBuilder<ProductBloc, ProductState>(
+                  builder: (context, state) {
+                    final filterCount = [
+                      if (state.currentSearchTerm?.isNotEmpty ?? false) true,
+                      if (state.currentMaxPrice != null || state.currentMinPrice != null) true,
+                      if (state.currentProximity != null) true,
+                      if (state.currentCategoryId != null) true,
+                      if (state.currentSortCriteria != null && state.currentSortCriteria != "sinOrden") true,
+                    ].length;
+                    return Stack(
+                      children: [
+                        FloatingActionButton(
+                          onPressed: () async {
+                            if (_isFilterOpen) return;
+                              _isFilterOpen = true;
+                              final positionState = context.read<PositionBloc>().state;
+                              if (positionState.latitude == null || positionState.longitude == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.errorUbication)));
+                                _isFilterOpen = false; 
+                                return;
+                            }
+                            final userId = userState.user!.id;
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return FiltrarProductosWidget(
+                                  onApplyFilters: (searchTerm, minPrice, maxPrice, proximity, categoryId, selectedOrder, selectedDirection, isFree) {
+                                    context.read<ProductBloc>().add(FilterProductsButtonPressed(
+                                      searchTerm: searchTerm,
+                                      minPrice: minPrice,
+                                      maxPrice: maxPrice,
+                                      proximity: proximity,
+                                      userLatitude: positionState.latitude ?? 0.0000000,
+                                      userLongitude: positionState.longitude ?? 0.0000000,
+                                      categoryId: categoryId,
+                                      criteria: selectedOrder,
+                                      direction: selectedDirection,
+                                      isFree: isFree,
+                                      userId: userId
+                                    ));
+                                  },
+                                );
                               },
-                            );
+                            ).whenComplete(() {
+                              _isFilterOpen = false; 
+                            });
                           },
-                        ).whenComplete(() {
-                          _isFilterOpen = false; 
-                        });
-                      },
-                      child: const Icon(Icons.filter_alt),
-                    ),
-                    if (filterCount > 0)
-                      Positioned(
-                        right: 0, top: 0,
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Colors.red,
-                          child: Text(filterCount.toString(), style: const TextStyle(color: Colors.white, fontSize: 12)),
+                          child: const Icon(Icons.filter_alt),
                         ),
-                      ),
-                  ],
+                        if (filterCount > 0)
+                          Positioned(
+                            right: 0, top: 0,
+                            child: CircleAvatar(
+                              radius: 10,
+                              backgroundColor: Colors.red,
+                              child: Text(filterCount.toString(), style: const TextStyle(color: Colors.white, fontSize: 12)),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 );
-              },
+              }
             ),
           ],
         ),
@@ -294,6 +302,5 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
     }
   },
 );
-
   }
 }

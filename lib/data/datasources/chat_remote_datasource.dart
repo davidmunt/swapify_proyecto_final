@@ -119,6 +119,30 @@ class ChatDataSource {
     }
   }
 
+  Future<void> deleteChatAndExchangeProposal({
+    required int productId,
+  }) async {
+    try {
+      final chatCollection = await firestore.collection('chats').get();
+      for (final doc in chatCollection.docs) {
+        final data = doc.data();
+        final docId = doc.id;
+        if (data['productId'] == productId) {
+          await firestore.collection('chats').doc(docId).delete();
+        } else if (data['messages'] != null) {
+          List<dynamic> messages = List.from(data['messages']);
+          List<dynamic> updatedMessages = messages.where((msg) => msg['idProduct'] != productId).toList();
+          if (updatedMessages.length != messages.length) {
+            await firestore.collection('chats').doc(docId).update({'messages': updatedMessages});
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint("Error al eliminar chat o propuesta de intercambio: $e");
+      throw Exception("No se pudo eliminar el chat o propuesta");
+    }
+  }
+
   Future<String> uploadMessageImage({
     required XFile image,
   }) async {

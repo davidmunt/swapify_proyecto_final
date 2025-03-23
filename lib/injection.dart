@@ -3,6 +3,7 @@ import 'package:swapify/data/datasources/product_category_remote_datasource.dart
 import 'package:swapify/data/datasources/product_remote_datasource.dart';
 import 'package:swapify/data/datasources/product_sale_state_remote_datasource.dart';
 import 'package:swapify/data/datasources/product_state_remote_datasource.dart';
+import 'package:swapify/data/datasources/product_view_remote_datasource.dart';
 import 'package:swapify/data/datasources/qr_remote_datasource.dart';
 import 'package:swapify/data/datasources/recomendation_price_remote_datasource.dart';
 import 'package:swapify/data/datasources/user_remote_datasource.dart';
@@ -11,6 +12,7 @@ import 'package:swapify/data/repositories/product_category_repository_impl.dart'
 import 'package:swapify/data/repositories/product_repository_impl.dart';
 import 'package:swapify/data/repositories/product_sale_state_repository_impl.dart';
 import 'package:swapify/data/repositories/product_state_repository_impl.dart';
+import 'package:swapify/data/repositories/product_view_repository_impl.dart';
 import 'package:swapify/data/repositories/qr_repository_impl.dart';
 import 'package:swapify/data/repositories/recomendation_price_repisitory_impl.dart';
 import 'package:swapify/data/repositories/user_repository_impl.dart';
@@ -19,6 +21,7 @@ import 'package:swapify/domain/repositories/product_category_repository.dart';
 import 'package:swapify/domain/repositories/product_repository.dart';
 import 'package:swapify/domain/repositories/product_sale_state_repository.dart';
 import 'package:swapify/domain/repositories/product_state_repository.dart';
+import 'package:swapify/domain/repositories/product_view_repository.dart';
 import 'package:swapify/domain/repositories/qr_repository.dart';
 import 'package:swapify/domain/repositories/recomendation_price_repository.dart';
 import 'package:swapify/domain/repositories/user_repository.dart';
@@ -29,6 +32,7 @@ import 'package:swapify/domain/usecases/change_password_user_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_avatar_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_info_usecase.dart';
 import 'package:swapify/domain/usecases/create_product_usecase.dart';
+import 'package:swapify/domain/usecases/delete_chat_where_is_product_usecase.dart';
 import 'package:swapify/domain/usecases/delete_product_usecase.dart';
 import 'package:swapify/domain/usecases/delete_user_usecase.dart';
 import 'package:swapify/domain/usecases/exchange_product_usecase.dart';
@@ -53,6 +57,7 @@ import 'package:swapify/domain/usecases/like_product_usecase.dart';
 import 'package:swapify/domain/usecases/reset_password_user_usecase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:swapify/domain/usecases/save_message_image_usecase.dart';
+import 'package:swapify/domain/usecases/save_product_view_usecase.dart';
 import 'package:swapify/domain/usecases/save_user_info_usecase.dart';
 import 'package:swapify/domain/usecases/save_user_notification_token_usecase.dart';
 import 'package:swapify/domain/usecases/send_message_chat_usecase.dart';
@@ -73,6 +78,7 @@ import 'package:swapify/presentation/blocs/product/product_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_sale_state/product_sale_state_bloc.dart';
 import 'package:swapify/presentation/blocs/product_state/product_state_bloc.dart';
+import 'package:swapify/presentation/blocs/product_view/product_view_bloc.dart';
 import 'package:swapify/presentation/blocs/qr/qr_bloc.dart';
 import 'package:swapify/presentation/blocs/recomendation_price/recomendation_price_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
@@ -105,11 +111,15 @@ Future<void> configureDependencies() async {
   );
 
   sl.registerFactory<ChatBloc>(
-    () => ChatBloc(sl(), sl(), sl(), sl(), sl(), sl()),
+    () => ChatBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory<QRBloc>(
     () => QRBloc(sl(), sl()),
+  );
+
+  sl.registerFactory<ProductViewBloc>(
+    () => ProductViewBloc(sl()),
   );
 
   sl.registerFactory<RecomendationPriceBloc>(
@@ -166,6 +176,10 @@ Future<void> configureDependencies() async {
     () => QRDataSource(),
   );
 
+  sl.registerLazySingleton<ProductViewDataSource>(
+    () => ProductViewDataSource(),
+  );
+
   sl.registerLazySingleton<RecomendationPriceDataSource>(
     () => RecomendationPriceDataSource(),
   );
@@ -200,6 +214,10 @@ Future<void> configureDependencies() async {
 
   sl.registerLazySingleton<RecomendationPriceRepository>(
     () => RecomendationPriceRepositoryImpl(sl<RecomendationPriceDataSource>()),
+  );
+
+  sl.registerLazySingleton<ProductViewRepository>(
+    () => ProductViewRepositoryImpl(sl<ProductViewDataSource>()),
   );
 
   sl.registerLazySingleton<SigninUserUseCase>(
@@ -327,5 +345,11 @@ Future<void> configureDependencies() async {
   );
   sl.registerLazySingleton<AddRatingToUserUseCase>(
     () => AddRatingToUserUseCase(sl()),
+  );
+  sl.registerLazySingleton<SaveProductViewUsecase>(
+    () => SaveProductViewUsecase(sl()),
+  );
+  sl.registerLazySingleton<DeleteChatWhereIsProductUsecase>(
+    () => DeleteChatWhereIsProductUsecase(sl()),
   );
 }

@@ -18,6 +18,8 @@ import 'package:swapify/presentation/blocs/product_category/product_category_sta
 import 'package:swapify/presentation/blocs/product_state/product_state_bloc.dart';
 import 'package:swapify/presentation/blocs/product_state/product_state_event.dart';
 import 'package:swapify/presentation/blocs/product_state/product_state_state.dart';
+import 'package:swapify/presentation/blocs/product_view/product_view_bloc.dart';
+import 'package:swapify/presentation/blocs/product_view/product_view_event.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
@@ -82,6 +84,11 @@ class _ProductScreenState extends State<ProductScreen> {
     if (stateState.productStates == null || stateState.productStates!.isEmpty) {
       context.read<ProductStateBloc>().add(GetProductStateButtonPressed());
     }
+    final userState = context.read<UserBloc>().state;
+    final userId = userState.user?.id;
+    context.read<ProductViewBloc>().add(
+      SaveProductViewButtonPressed(userId: userId ?? '', productId: widget.id),
+    );
   }
 
   @override
@@ -135,18 +142,30 @@ class _ProductScreenState extends State<ProductScreen> {
                         enableInfiniteScroll: false,
                         viewportFraction: 0.9,
                       ),
-                      items: widget.images.isNotEmpty ? widget.images.map((url) {
-                        return Builder(
-                          builder: (BuildContext context) {
-                            return ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network('$baseUrl$url', fit: BoxFit.cover, width: double.infinity),
-                            );
-                          },
-                        );
-                        }).toList() : [
-                          Center(child: Text(AppLocalizations.of(context)!.noImagesAvailable)),
-                        ],
+                      items: widget.images.isNotEmpty
+                          ? widget.images.map((url) {
+                              return Builder(
+                                builder: (BuildContext context) {
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: InteractiveViewer(
+                                      panEnabled: true, 
+                                      scaleEnabled: true,
+                                      minScale: 1,
+                                      maxScale: 4,
+                                      child: Image.network(
+                                        '$baseUrl$url',
+                                        fit: BoxFit.contain, 
+                                        width: double.infinity,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            }).toList()
+                          : [
+                              Center(child: Text(AppLocalizations.of(context)!.noImagesAvailable)),
+                            ],
                     ),
                     const SizedBox(height: 16),
                     Text(AppLocalizations.of(context)!.productPrice(widget.precio), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green)),

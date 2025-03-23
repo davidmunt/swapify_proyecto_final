@@ -8,6 +8,7 @@ import 'package:swapify/presentation/blocs/product/product_event.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_bloc.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_event.dart';
 import 'package:swapify/presentation/blocs/product_category/product_category_state.dart';
+import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 
 class FiltrarProductosWidget extends StatefulWidget {
   final Function(String? searchTerm, double? minPrice, double? maxPrice, double? proximity, int? categoryId, String criteria, String direction, bool isFree) onApplyFilters;
@@ -61,6 +62,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = context.read<UserBloc>().state.user!.id;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -241,7 +243,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
               children: [
                 TextButton(
                   onPressed: () {
-                    context.read<ProductBloc>().add(ResetFiltersButtonPressed());
+                    context.read<ProductBloc>().add(ResetFiltersButtonPressed(userId: userId));
                     Navigator.of(context).pop();
                   },
                   child: Text(AppLocalizations.of(context)!.resetFilters),
@@ -266,6 +268,18 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                     if (proximityController.text.isNotEmpty && !_esNumero(proximityController.text)) {
                       setState(() {
                         errorMessage = AppLocalizations.of(context)!.errorProximityPositive;
+                      });
+                      return;
+                    }
+                    if (double.tryParse(proximityController.text) == 0) {
+                      setState(() {
+                        errorMessage = "No puedes poner la proximidad en 0 Km";
+                      });
+                      return;
+                    }
+                    if (double.tryParse(proximityController.text)! > (40075 / 2)) {
+                      setState(() {
+                        errorMessage = "La proximidad no puede superar los ${40075 / 2} Km";
                       });
                       return;
                     }

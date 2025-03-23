@@ -33,4 +33,7 @@ abstract class ChatRepository {
     required int idProduct,
     required bool accepted,
   });
+  Future<void> deleteChatAndExchangeProposal({
+    required int productId,
+  });
 }

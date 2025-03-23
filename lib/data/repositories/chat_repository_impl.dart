@@ -99,6 +99,17 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
+  Future<void> deleteChatAndExchangeProposal({
+    required int productId,
+  }) async {
+    try {
+      await dataSource.deleteChatAndExchangeProposal(productId: productId);
+    } catch (e) {
+      throw Exception('Error al eliminar el chat y la propuesta de intercambio: $e');
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> sendNotificationToOtherUser({
     required int productId,
     required String? text,

@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapify/injection.dart';
+import 'package:swapify/presentation/blocs/chat/chat_bloc.dart';
+import 'package:swapify/presentation/blocs/chat/chat_event.dart';
 import 'package:swapify/presentation/blocs/position/position_bloc.dart';
 import 'package:swapify/presentation/blocs/position/position_event.dart';
 import 'package:swapify/presentation/blocs/position/position_state.dart';
@@ -329,7 +331,7 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                           final selectedCategoryName = categoryState.productCategories!.firstWhere((cat) => cat.idCategoryProduct == selectedCategoryId, orElse: () => categoryState.productCategories!.first).name;
                                           final selectedStateName = stateState.productStates!.firstWhere((state) => state.idStateProduct == selectedStateId, orElse: () => stateState.productStates!.first).name;
                                           final double? recomendedPrice = await fetchRecommendedPrice(marca, modelo, descripcion, precioParsed ?? 0.00, selectedCategoryName, selectedStateName);
-                                          if (recomendedPrice != null) {
+                                          if (recomendedPrice != null && recomendedPrice != 0.0) {
                                             final double lowerLimit = recomendedPrice * 0.9;
                                             final double upperLimit = recomendedPrice * 1.1;
                                             if (precioParsed! < lowerLimit || precioParsed > upperLimit) {
@@ -434,7 +436,8 @@ class _CreateModifyProductScreenState extends State<CreateModifyProductScreen> {
                                     padding: const EdgeInsets.symmetric(horizontal: 16),
                                     child: TextButton(
                                       onPressed: () {
-                                        context.read<ProductBloc>().add(DeleteProductButtonPressed(id: widget.productId!));
+                                        context.read<ProductBloc>().add(DeleteProductButtonPressed(id: widget.productId!, userId: userProductId ?? ''));
+                                        context.read<ChatBloc>().add(DeleteChatWhereIsProductButtonPressed(productId: widget.productId!, userId: userProductId ?? ''));
                                         context.push('/home');
                                       },
                                       style: TextButton.styleFrom(backgroundColor: Colors.black, minimumSize: const Size(double.infinity, 70), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
