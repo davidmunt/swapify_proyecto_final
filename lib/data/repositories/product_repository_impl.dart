@@ -22,6 +22,7 @@ class ProductRepositoryImpl implements ProductRepository {
     required String userId,
     required int idCategoryProduct,
     required int idStateProduct,
+    required String token,
   }) async {
     return await dataSource.createProduct(
       productModel: productModel,
@@ -34,6 +35,7 @@ class ProductRepositoryImpl implements ProductRepository {
       userId: userId,
       idCategoryProduct: idCategoryProduct,
       idStateProduct: idStateProduct,
+      token: token,
     );
   }
 
@@ -58,6 +60,7 @@ class ProductRepositoryImpl implements ProductRepository {
     required int idStateProduct,
     required int idSaleStateProduct,
     required int productId,
+    required String token,
   }) async {
     return await dataSource.updateProduct(
       productModel: productModel,
@@ -68,6 +71,7 @@ class ProductRepositoryImpl implements ProductRepository {
       idCategoryProduct: idCategoryProduct,
       idStateProduct: idStateProduct,
       idSaleStateProduct: idSaleStateProduct,
+      token: token,
     );
   }
 
@@ -87,9 +91,10 @@ class ProductRepositoryImpl implements ProductRepository {
     required int productId,
     required String userId, 
     required String sellerId,
+    required String token,
   }) async {
     try {
-      await dataSource.buyProduct(productId: productId, userId: userId, sellerId: sellerId);
+      await dataSource.buyProduct(productId: productId, userId: userId, sellerId: sellerId, token: token);
       return;
     } catch (e) {
       throw ServerFailure();
@@ -102,9 +107,10 @@ class ProductRepositoryImpl implements ProductRepository {
     required int producExchangedtId,
     required String userId, 
     required String sellerId,
+    required String token,
   }) async {
     try {
-      await dataSource.exchangeProduct(productId: productId, producExchangedtId: producExchangedtId, userId: userId, sellerId: sellerId);
+      await dataSource.exchangeProduct(productId: productId, producExchangedtId: producExchangedtId, userId: userId, sellerId: sellerId, token: token);
       return;
     } catch (e) {
       throw ServerFailure();
@@ -112,9 +118,9 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteProduct(int id) async {
+  Future<Either<Failure, void>> deleteProduct(int id, String token) async {
     try {
-      await dataSource.deleteProduct(id);
+      await dataSource.deleteProduct(id, token);
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure());
@@ -122,9 +128,9 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, void>> likeProduct({required int productId, required String userId}) async {
+  Future<Either<Failure, void>> likeProduct({required int productId, required String userId, required String token}) async {
     try {
-      await dataSource.likeProduct(productId: productId, userId: userId);
+      await dataSource.likeProduct(productId: productId, userId: userId, token: token);
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure());
@@ -132,9 +138,9 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, void>> unlikeProduct({required int productId, required String userId}) async {
+  Future<Either<Failure, void>> unlikeProduct({required int productId, required String userId, required String token}) async {
     try {
-      await dataSource.unlikeProduct(productId: productId, userId: userId);
+      await dataSource.unlikeProduct(productId: productId, userId: userId, token: token);
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure());
@@ -153,9 +159,9 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, List<ProductEntity>>> getYoureLikedProducts(String userId) async {
+  Future<Either<Failure, List<ProductEntity>>> getYoureLikedProducts(String userId, String token) async {
     try {
-      final productModels = await dataSource.getYoureLikedProducts(userId);
+      final productModels = await dataSource.getYoureLikedProducts(userId, token);
       final productEntities = productModels.map((model) => model.toEntity()).toList();
       return Right(productEntities);
     } catch (e) {
@@ -164,9 +170,9 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, List<ProductEntity>>> getYoureEnvolvmentProducts(String userId) async {
+  Future<Either<Failure, List<ProductEntity>>> getYoureEnvolvmentProducts(String userId, String token) async {
     try {
-      final productModels = await dataSource.getYoureEnvolvmentProducts(userId);
+      final productModels = await dataSource.getYoureEnvolvmentProducts(userId, token);
       final productEntities = productModels.map((model) => model.toEntity()).toList();
       return Right(productEntities);
     } catch (e) {
@@ -175,9 +181,9 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Either<Failure, List<ProductEntity>>> getYoureProducts(String userId) async {
+  Future<Either<Failure, List<ProductEntity>>> getYoureProducts(String userId, String token) async {
     try {
-      final productModels = await dataSource.getYoureProducts(userId);
+      final productModels = await dataSource.getYoureProducts(userId, token);
       final productEntities = productModels.map((model) => model.toEntity()).toList();
       return Right(productEntities);
     } catch (e) {

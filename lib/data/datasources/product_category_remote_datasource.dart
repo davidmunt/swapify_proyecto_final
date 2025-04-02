@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ProductCategoryDataSource {
 
+  //obtiene las categorias de los producto
   Future<List<Map<String, dynamic>>> getProductCategory() async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';

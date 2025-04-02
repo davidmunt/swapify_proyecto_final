@@ -8,6 +8,7 @@ import 'package:swapify/presentation/blocs/product/product_state.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 
+//alert para confirmar que quieres vender un producto
 class AlertSell extends StatefulWidget {
   final int productId;
   final String userId;
@@ -26,6 +27,7 @@ class _AlertSellState extends State<AlertSell> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, userState) {},
       builder: (context, userState) {
+        final String? token = userState.token;
         final String? sellerId = userState.user?.id;
         return SingleChildScrollView(
           child: BlocConsumer<ProductBloc, ProductState>(
@@ -62,7 +64,7 @@ class _AlertSellState extends State<AlertSell> {
                         if (_isProcessing) {
                           return;
                         }
-                        if (widget.productId != null && widget.userId.isNotEmpty && sellerId != null) {
+                        if (widget.userId.isNotEmpty && sellerId != null) {
                           setState(() {
                             _isProcessing = true; 
                           });
@@ -71,6 +73,7 @@ class _AlertSellState extends State<AlertSell> {
                               productId: widget.productId,
                               userId: widget.userId,
                               sellerId: sellerId,
+                              token: token ?? ''
                             ),
                           );
                         } else {

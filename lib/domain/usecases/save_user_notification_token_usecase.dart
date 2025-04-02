@@ -13,6 +13,7 @@ class SaveUserNotificationTokenUseCase implements UseCase<void, SaveUserNotifica
     return repository.saveUserNotificationToken(
       userId: params.userId,
       notificationToken: params.notificationToken,
+      token: params.token
     );
   }
 }
@@ -20,9 +21,11 @@ class SaveUserNotificationTokenUseCase implements UseCase<void, SaveUserNotifica
 class SaveUserNotificationTokenParams {
   final String userId;
   final String? notificationToken;
+  final String token;
 
   SaveUserNotificationTokenParams({
     required this.userId,
     required this.notificationToken,
+    required this.token,
   });
 }

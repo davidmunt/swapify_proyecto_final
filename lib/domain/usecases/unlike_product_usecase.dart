@@ -13,6 +13,7 @@ class UnlikeProductUseCase implements UseCase<void, UnlikeProductParams> {
     return await repository.unlikeProduct(
       productId: params.productId, 
       userId: params.userId,
+      token: params.token
     );
   }
 }
@@ -20,6 +21,7 @@ class UnlikeProductUseCase implements UseCase<void, UnlikeProductParams> {
 class UnlikeProductParams {
   final String userId;
   final int productId;
+  final String token;
 
-  UnlikeProductParams({required this.userId, required this.productId});
+  UnlikeProductParams({required this.userId, required this.productId, required this.token});
 }

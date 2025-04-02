@@ -9,7 +9,7 @@ class GetUserInfoUseCase implements UseCase<UserEntity, GetUserInfoParams> {
 
   @override
   Future<UserEntity> call(GetUserInfoParams params) async {
-    final result = await repository.getUserInfo(params.uid);
+    final result = await repository.getUserInfo(params.uid, params.token);
     return result.fold(
       (failure) {
         throw Exception('Error al obtener la informacion del usuario');
@@ -21,6 +21,7 @@ class GetUserInfoUseCase implements UseCase<UserEntity, GetUserInfoParams> {
 
 class GetUserInfoParams {
   final String uid;
+  final String token;
 
-  GetUserInfoParams({required this.uid});
+  GetUserInfoParams({required this.uid, required this.token});
 }

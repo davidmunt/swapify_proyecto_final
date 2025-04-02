@@ -26,6 +26,7 @@ import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_rate_user_afther_product_bought.dart';
 import 'package:swapify/presentation/widgets/alertdialog_show_qr_purchase.dart';
 
+//pagina que mustra la informacion del producto
 class ProductScreen extends StatefulWidget {
   final int id;
   final String marca;
@@ -86,9 +87,8 @@ class _ProductScreenState extends State<ProductScreen> {
     }
     final userState = context.read<UserBloc>().state;
     final userId = userState.user?.id;
-    context.read<ProductViewBloc>().add(
-      SaveProductViewButtonPressed(userId: userId ?? '', productId: widget.id),
-    );
+    final token = userState.token;
+    context.read<ProductViewBloc>().add( SaveProductViewButtonPressed(userId: userId ?? '', productId: widget.id, token: token ?? '') );
   }
 
   @override
@@ -203,7 +203,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         ),
                         const SizedBox(width: 8), 
                         Text(
-                          "${userOwner.rating?.toStringAsFixed(2) ?? '0.00'} de 5 (${userOwner.totalRating} valoraciones)",
+                          AppLocalizations.of(context)!.userRatingSummary(userOwner.rating ?? 0.0, userOwner.totalRating ?? 0),
                           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold), 
                         ),
                       ],
@@ -337,6 +337,7 @@ class _ProductScreenState extends State<ProductScreen> {
                     const SizedBox(height: 16),
                     Text(AppLocalizations.of(context)!.dateCreated(widget.fecha), style: const TextStyle(fontSize: 14, color: Colors.grey)),
                     const SizedBox(height: 16),
+                    //mapa
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: SizedBox(

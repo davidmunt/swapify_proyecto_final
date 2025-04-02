@@ -6,6 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:swapify/presentation/widgets/alertdialog_exchange_product.dart';
 import 'package:swapify/presentation/widgets/alertdialog_sell_product.dart';
 
+//pantalla que escane un qr para la compra o intercambio de un producto
 class QRScannerScreen extends StatefulWidget {
   const QRScannerScreen({super.key});
 
@@ -40,10 +41,11 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
       });
       try {
         final Map<String, dynamic> qrData = jsonDecode(scannedCode);
+        //si le llegan dos datos al escanear (id de tu producto y id del usuario comprador)
         if (qrData.length == 2){
           final int productId = qrData['productId'];
           final String userId = qrData['userId'];
-          if (productId != null && userId.isNotEmpty) {
+          if (userId.isNotEmpty) {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(
@@ -55,11 +57,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
             throw Exception(AppLocalizations.of(context)!.qrInvalid);
           }
         }
+        //si le llegan tres datos al escanear (id de tu producto, id del producto a intermcabiar y id del usuario comprador)
         else if (qrData.length == 3){
           final int productId = qrData['productId'];
           final int producExchangedtId = qrData['productExchangedId'];
           final String userId = qrData['userId'];
-          if (productId != null && producExchangedtId != null && userId.isNotEmpty) {
+          if (userId.isNotEmpty) {
             showDialog(
               context: context,
               builder: (context) => AlertDialog(

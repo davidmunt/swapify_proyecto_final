@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 
+//pantalla que muestra tu informacion y da algunas opciones para midificarla
 class UserInfoDrawer extends StatefulWidget {
   const UserInfoDrawer({super.key});
 

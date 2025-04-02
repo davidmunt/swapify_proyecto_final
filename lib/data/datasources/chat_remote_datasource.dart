@@ -12,6 +12,7 @@ class ChatDataSource {
 
   ChatDataSource({required this.firestore});
 
+  //envia un mensaje, iamgen o propuesta de intercambio a un chat, solo uno a la vez
   Future<void> sendMessage({
     required String productOwnerId,
     required String potBuyerId,
@@ -53,6 +54,7 @@ class ChatDataSource {
     }
   }
 
+  //obtiene todos los chats en los que participa un usuario especifico
   Future<List<Map<String, dynamic>>> getMyChats({required String userId}) async {
     try {
       final query = await firestore.collection('chats')
@@ -75,6 +77,7 @@ class ChatDataSource {
     }
   }
 
+  //obtiene los datos de un chat especifico
   Future<Map<String, dynamic>?> getChat(String chatId) async {
     try {
       final chatDoc = await firestore.collection('chats').doc(chatId).get();
@@ -88,6 +91,7 @@ class ChatDataSource {
     }
   }
 
+  //actualiza el estado de (aceptado o rechazado) de una propuesta de intercambio en un chat
   Future<void> updateExchangeStatus({
     required String productOwnerId,
     required String potBuyerId,
@@ -119,6 +123,7 @@ class ChatDataSource {
     }
   }
 
+  //elimina un chat o una propuesta de intercambio asociada a un producto
   Future<void> deleteChatAndExchangeProposal({
     required int productId,
   }) async {
@@ -143,6 +148,7 @@ class ChatDataSource {
     }
   }
 
+  //sube una imagen al servidor(mi backend) y devuelve la ruta donde fue almacenada
   Future<String> uploadMessageImage({
     required XFile image,
   }) async {
@@ -171,6 +177,7 @@ class ChatDataSource {
     }
   }
 
+  //envia una notificacion a otro usuario cuando mandan algo al chat
   Future<void> sendNotificationToOtherUser({
     required int productId,
     required String? text,

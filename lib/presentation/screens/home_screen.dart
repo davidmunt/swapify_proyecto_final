@@ -10,6 +10,7 @@ import 'package:swapify/presentation/screens/my_products_screen.dart';
 import 'package:swapify/presentation/screens/messages_screen.dart';
 import 'package:swapify/presentation/widgets/drawer.dart';
 
+//pantalla del /home, puede mostrar una de estas screens:
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -19,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final PageStorageBucket bucket = PageStorageBucket();
+  //screens
   final List<Widget> pages = [
     const SearchProductsScreen(key: PageStorageKey('SearchProductsScreen')),
     const LikeProductsScreen(key: PageStorageKey('LikeProductsScreen')),

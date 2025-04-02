@@ -16,6 +16,7 @@ class ChangeUserInfoUseCase implements UseCase<void, ChangeUserInfoParams> {
       surname: params.surname,
       telNumber: params.telNumber,
       dateBirth: params.dateBirth,
+      token: params.token,
     );
   }
 }
@@ -26,6 +27,7 @@ class ChangeUserInfoParams {
   final String surname;
   final int telNumber;
   final DateTime dateBirth;
+  final String token;
 
   ChangeUserInfoParams({
     required this.uid,
@@ -33,5 +35,6 @@ class ChangeUserInfoParams {
     required this.surname,
     required this.telNumber,
     required this.dateBirth,
+    required this.token,
   });
 }

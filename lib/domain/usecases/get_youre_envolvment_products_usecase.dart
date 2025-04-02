@@ -8,7 +8,7 @@ class GetYoureEnvolvmentProductsUseCase implements UseCase<List<ProductEntity>, 
 
   @override
   Future<List<ProductEntity>> call(GetYoureEnvolvmentProductsParams params) async {
-    final result = await repository.getYoureEnvolvmentProducts(params.userId);
+    final result = await repository.getYoureEnvolvmentProducts(params.userId, params.token);
     return result.fold(
       (failure) {
         throw Exception('Error al obtener tus productos favoritos');
@@ -20,6 +20,7 @@ class GetYoureEnvolvmentProductsUseCase implements UseCase<List<ProductEntity>, 
 
 class GetYoureEnvolvmentProductsParams {
   final String userId;
+  final String token;
 
-  GetYoureEnvolvmentProductsParams({required this.userId});
+  GetYoureEnvolvmentProductsParams({required this.userId, required this.token});
 }

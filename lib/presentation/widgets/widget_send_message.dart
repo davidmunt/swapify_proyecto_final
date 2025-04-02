@@ -5,9 +5,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
-
 import 'package:swapify/presentation/widgets/dialog_exchange_product.dart'; 
 
+//widget que permite al usuario enviar mensajes, imagenes o propuestas de intercambio de producto dentro del chat
 class SendMessageWidget extends StatefulWidget {
   final Function(String message, XFile? image, int? idProduct, String? productImage) onSendMessage;
   final String productOwnerId;
@@ -24,6 +24,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
   XFile? _selectedImage;
   Uint8List? _webImageBytes;
 
+  //muestra un dialogo para seleccionar un producto de intercambio y envia la propuesta si se selecciona uno
   Future<void> _sendExchangeProduct() async {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
@@ -34,6 +35,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
     }
   }
 
+  //permite seleccionar una imagen desde la galeria y la guarda localmente o en memoria(web) para verla seleccionada o enviarla
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -52,6 +54,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
     }
   }
 
+  //envia el mensaje de texto o imagen seleccionada
   void _sendMessage() {
     final message = _messageController.text.trim();
     if (message.isNotEmpty || _selectedImage != null) {

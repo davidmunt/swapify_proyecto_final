@@ -7,6 +7,7 @@ import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_delete_user.dart';
 
+//pagina que te muestra tu informacion y botones para modificar tu usuario
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 

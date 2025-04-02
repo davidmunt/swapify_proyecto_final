@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+//alert para mostrar una imagen de un chat
 class AlertShowImageChat extends StatelessWidget {
   final String imagenMostrar;
 

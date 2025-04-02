@@ -8,7 +8,7 @@ class GetYoureLikedProductsUseCase implements UseCase<List<ProductEntity>, GetYo
 
   @override
   Future<List<ProductEntity>> call(GetYoureLikedProductsParams params) async {
-    final result = await repository.getYoureLikedProducts(params.userId);
+    final result = await repository.getYoureLikedProducts(params.userId, params.token);
     return result.fold(
       (failure) {
         throw Exception('Error al obtener tus productos favoritos');
@@ -20,6 +20,7 @@ class GetYoureLikedProductsUseCase implements UseCase<List<ProductEntity>, GetYo
 
 class GetYoureLikedProductsParams {
   final String userId;
+  final String token;
 
-  GetYoureLikedProductsParams({required this.userId});
+  GetYoureLikedProductsParams({required this.userId, required this.token});
 }

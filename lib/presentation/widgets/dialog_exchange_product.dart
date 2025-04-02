@@ -7,6 +7,7 @@ import 'package:swapify/presentation/blocs/product/product_state.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 
+//alert para confirmar el intercambio de un producto
 class ExchangeProductDialog extends StatefulWidget {
   const ExchangeProductDialog({super.key});
 
@@ -19,9 +20,10 @@ class _ExchangeProductDialogState extends State<ExchangeProductDialog> {
   @override
   void initState() {
     super.initState();
+    final token = context.read<UserBloc>().state.token;
     final userId = context.read<UserBloc>().state.user!.id;
     final productBloc = context.read<ProductBloc>();
-    productBloc.add(GetYoureProductsButtonPressed(userId: userId));
+    productBloc.add(GetYoureProductsButtonPressed(userId: userId, token: token ?? ''));
   }
 
   @override 
@@ -37,11 +39,17 @@ class _ExchangeProductDialogState extends State<ExchangeProductDialog> {
           children: [
             BlocBuilder<ProductBloc, ProductState>(
               builder: (context, productState) {
-                final products = productState.youreProducts?.where((p) => p.idSaleStateProduct == 1).toList() ?? [];
-                if (productState.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (products.isEmpty) {
-                  return Center(child: Text(AppLocalizations.of(context)!.noProductsAvailable));
+                if (productState.isLoading || productState.youreProducts == null) {
+                  return const SizedBox(
+                    height: 200, child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                final products = productState.youreProducts!.where((p) => p.idSaleStateProduct == 1).toList();
+                if (products.isEmpty) {
+                  return const SizedBox(
+                    height: 200,
+                    child: Center(child: Text("No tienes productos disponibles")),
+                  );
                 }
                 return Expanded(
                   child: ListView.builder(

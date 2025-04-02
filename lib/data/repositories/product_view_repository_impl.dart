@@ -10,10 +10,12 @@ class ProductViewRepositoryImpl implements ProductViewRepository {
   Future<void> saveProductView({
     required String userId,
     required int productId,
+    required String token,
   }) async {
     return await dataSource.saveProductView(
       userId: userId,
       productId: productId,
+      token: token,
     );
   }
 }

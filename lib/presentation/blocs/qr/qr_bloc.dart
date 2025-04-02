@@ -9,6 +9,7 @@ class QRBloc extends Bloc<QREvent, QRState> {
   final GetQRProductExchangeUseCase getQRExchangeUseCase;
 
   QRBloc(this.getQRUseCase, this.getQRExchangeUseCase) : super(QRState.initial()) {
+    //obtiene qr para la venta de un prducto
     on<GetQRButtonPressed>((event, emit) async {
       emit(QRState.loading());
       try {
@@ -25,6 +26,7 @@ class QRBloc extends Bloc<QREvent, QRState> {
       }
     });
 
+    //obtiene qr para el intercambio entre dos productos
     on<GetQRExchangeButtonPressed>((event, emit) async {
       emit(QRState.loading());
       try {

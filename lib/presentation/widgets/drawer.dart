@@ -7,6 +7,7 @@ import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_logout.dart';
 
+//drawer
 class DrawerWidget extends StatefulWidget {
   const DrawerWidget({super.key});
 
@@ -25,6 +26,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           listener: (context, state) {
             if (state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+            }
+            if (state.user == null && state.token == null) {
+              Future.microtask(() => context.go('/login'));
             }
           },
           builder: (context, state) {

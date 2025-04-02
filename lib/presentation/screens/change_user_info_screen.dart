@@ -9,7 +9,9 @@ import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/widget_select_date.dart';
 import 'package:swapify/presentation/widgets/widget_text_form.dart';
+import 'package:flutter/services.dart';
 
+//pantalla que permite al usuario modificar su informacion como nombre, apellidos, telefono y fecha de nacimiento
 class ChangeUserInfoScreen extends StatefulWidget {
   const ChangeUserInfoScreen({super.key});
 
@@ -88,6 +90,9 @@ class ChangeUserInfoScreenState extends State<ChangeUserInfoScreen> {
                   texto: AppLocalizations.of(context)!.phone,
                   iconoHint: const Icon(Icons.phone),
                   controller: telefonoController,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
                 ),
                 const SizedBox(height: 12),
                 WidgetFechaNacimiento(

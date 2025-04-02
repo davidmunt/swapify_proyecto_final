@@ -18,6 +18,7 @@
   "ascending": "Ascendente",
   "descending": "Descendente",
   "order": "Ordenar",
+  "noOrder": "Sin orden",
   "selectTheFieldsApplySorting": "Selecciona los dos campos para aplicar el orden",
   "search": "Busqueda",
   "enterSearchTerm": "Introduce un termino de busqueda",
@@ -168,6 +169,42 @@
   "rateExperience": "Valora tu experiencia",
   "exchangeProduct": "Intercambiar Produco",  
   "favourites": "Favoritos",
+  "ignore": "Ignorar",
+  "errorProximityCero": "No puedes poner la proximidad en 0 Km",
+  "errorProximityOverpassed": "La proximidad no puede superar los 20037.5 Km",
+  "exchangeProposal": "Propuesta de intercambio",
+  "noContent": "Sin contenido",
+  "exchange": "Intercambiar",
+  "scanTheirQR": "Escanea su QR",
+  "exchangeRejected": "Intercambio rechazado",
+  "exchangeAccepted": "Intercambio aceptado",
+  "userRatingSummary": "{rating} de 5 ({total} valoraciones)",
+  "@userRatingSummary": {
+    "placeholders": {
+      "rating": {
+        "type": "double",
+        "format": "decimalPattern",
+        "optional": true
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "recommendedPriceSuggestion": "Creemos que el precio $${recommendedPrice} es más adecuado para este producto. ¿Te parece bien?",
+  "@recommendedPriceSuggestion": {
+    "placeholders": {
+      "recommendedPrice": {
+        "type": "double",
+        "format": "compactCurrency",
+        "optionalParameters": {
+          "name": "EUR",
+          "symbol": "€",
+          "decimalDigits": 2
+        }
+      }
+    }
+  },
   "dateCreated": "Creado el {fecha}",
   "@dateCreated": {
     "placeholders": {

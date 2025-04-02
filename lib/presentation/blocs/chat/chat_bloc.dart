@@ -29,6 +29,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     this.deleteChatWhereIsProductUsecase,
   ) : super(ChatState.initial()) {
     
+    //obtiene todos los chats en los que participa el usuario
     on<GetMyChatsButtonPressed>((event, emit) async {
       emit(ChatState.loading());
       try {
@@ -39,6 +40,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     });
 
+    //actualiza el estado de aceptacion de una propuesta de intercambio dentro del chat
     on<UpdateExchangeStatusChatButtonPressed>((event, emit) async {
       emit(ChatState.loading());
       try {
@@ -58,6 +60,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     });
 
+    
+    //elimina un chat o una propuesta de intercambio asociada a un producto
     on<DeleteChatWhereIsProductButtonPressed>((event, emit) async {
       emit(ChatState.loading());
       try {
@@ -73,10 +77,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     });
 
+    //reinicia el estado del ChatBloc a su estado inicial
     on<ResetChatStateEvent>((event, emit) {
       emit(ChatState.initial());
     });
 
+    //envia un mensaje, iamgen o propuesta de intercambio al chat, solo puede ser una a la vez
+    //(el id del chat se forma juntando: (productOwnerId+potBuyerId+productId))
     on<SendMessageButtonPressed>((event, emit) async {
       emit(ChatState.loading());
       try {
@@ -148,7 +155,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         emit(ChatState.failure("Error al enviar el mensaje: $e"));
       }
     });
-
+    
+    //obtiene lun chat por el id del chat
     on<GetChatButtonPressed>((event, emit) async {
       emit(ChatState.loading());
       try {

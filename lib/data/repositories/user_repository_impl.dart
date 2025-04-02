@@ -50,6 +50,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, void>> saveUserInfo({
     required String uid,
+    required String password,
     required String name,
     required String surname,
     required String email,
@@ -64,6 +65,7 @@ class UserRepositoryImpl implements UserRepository {
         email: email,
         telNumber: telNumber,
         dateBirth: dateBirth,
+        password: password,
       );
       return const Right(null);
     } catch (e) {
@@ -78,6 +80,7 @@ class UserRepositoryImpl implements UserRepository {
     required String surname,
     required int telNumber,
     required DateTime dateBirth,
+    required String token
   }) async {
     try {
       await dataSource.changeUserInfoToBackend(
@@ -86,6 +89,7 @@ class UserRepositoryImpl implements UserRepository {
         surname: surname,
         telNumber: telNumber,
         dateBirth: dateBirth,
+        token: token
       );
       return const Right(null);
     } catch (e) {
@@ -97,11 +101,13 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, void>> saveUserNotificationToken({
     required String userId,
     required String? notificationToken,
+    required String token
   }) async {
     try {
       await dataSource.saveUserNotificationToken(
         userId: userId,
         notificationToken: notificationToken,
+        token: token
       );
       return const Right(null);
     } catch (e) {
@@ -110,9 +116,25 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> getUserInfo(String uid) async {
+  Future<Either<Failure, String>> loginToGetTokenFromBackend({
+    required String email,
+    required String password,
+  }) async {
     try {
-      final userData = await dataSource.getUserInfo(uid);
+      final token = await dataSource.loginToGetTokenFromBackend(
+        email: email,
+        password: password,
+      );
+      return Right(token);
+    } catch (e) {
+      return Left(AuthFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> getUserInfo(String uid, String token) async {
+    try {
+      final userData = await dataSource.getUserInfo(uid, token);
       String? linkAvatar;
       if (userData['avatar_id'] != null) {
         linkAvatar = await dataSource.getLinkUserAvatar(userData['avatar_id'].toString());
@@ -125,9 +147,9 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, List<UserEntity>>> getUsersInfo() async {
+  Future<Either<Failure, List<UserEntity>>> getUsersInfo(String token) async {
     try {
-      final usersData = await dataSource.getUsersInfo();
+      final usersData = await dataSource.getUsersInfo(token);
       final List<UserEntity> users = [];
       for (final userData in usersData) {
         String? linkAvatar;
@@ -165,10 +187,10 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteUser(String id) async {
+  Future<Either<Failure, void>> deleteUser(String id, String token) async {
     try {
       await dataSource.deleteFirebaseUser();
-      await dataSource.deleteUserFromBackend(id);
+      await dataSource.deleteUserFromBackend(id, token);
       await prefs.remove('email');
       await prefs.remove('password');
       await prefs.remove('id');
@@ -205,14 +227,34 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<Either<Failure, void>> changeUserPassword({
+    required String userId,
+    required String password,
+    required String token
+  }) async {
+    try {
+      await dataSource.changeUserPassword(
+        userId: userId,
+        password: password,
+        token: token
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure());
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> addBalanceToUser({
     required String userId,
     required int balanceToAdd,
+    required String token
   }) async {
     try {
       await dataSource.addBalanceToUser(
         userId: userId,
         balanceToAdd: balanceToAdd,
+        token: token
       );
       return const Right(null);
     } catch (e) {
@@ -226,6 +268,7 @@ class UserRepositoryImpl implements UserRepository {
     required String customerId,
     required int productId,
     required int rating,
+    required String token
   }) async {
     try {
       await dataSource.addRatingToUser(
@@ -233,6 +276,7 @@ class UserRepositoryImpl implements UserRepository {
         customerId: customerId,
         productId: productId,
         rating: rating,
+        token: token
       );
       return const Right(null);
     } catch (e) {

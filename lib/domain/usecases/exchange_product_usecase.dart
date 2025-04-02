@@ -13,6 +13,7 @@ class ExchangeProductUseCase implements UseCase<void, ExchangeProductParams> {
       producExchangedtId: params.producExchangedtId,
       userId: params.userId,
       sellerId: params.sellerId,
+      token: params.token,
     );
   }
 }
@@ -22,11 +23,13 @@ class ExchangeProductParams {
   final int producExchangedtId;
   final String userId; 
   final String sellerId;
+  final String token;
 
   ExchangeProductParams({
     required this.productId,
     required this.producExchangedtId,
     required this.userId,
     required this.sellerId,
+    required this.token,
   });
 }

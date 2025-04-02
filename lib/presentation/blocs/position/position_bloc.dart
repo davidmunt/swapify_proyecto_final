@@ -6,6 +6,8 @@ import 'package:geocoding/geocoding.dart';
 
 class PositionBloc extends Bloc<PositionEvent, PositionState> {
   PositionBloc() : super(PositionState.initial()) {
+
+    //obtiene tu posicion (latitud y longitud)
     on<GetPositionButtonPressed>((event, emit) async {
       emit(PositionState.loading());
       try {

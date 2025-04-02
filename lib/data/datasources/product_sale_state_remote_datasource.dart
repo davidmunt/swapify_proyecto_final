@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ProductSaleStateDataSource {
 
+  //obtiene los estados de venta de los producto
   Future<List<Map<String, dynamic>>> getProductSaleState() async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';

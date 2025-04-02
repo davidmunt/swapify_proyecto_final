@@ -52,6 +52,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     this.updateProductUseCase,
     this.updateProductImagesUseCase): super(ProductState.initial()) {
 
+    //obtiene todos los productos
     on<GetProductsButtonPressed>((event, emit) async {
       emit(ProductState.loading());
       try {
@@ -61,6 +62,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
+    //obtiene los productos filtrados y tambien los ordena
     on<FilterProductsButtonPressed>((event, emit) async {
       emit(ProductState.loading());
       try {
@@ -125,6 +127,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
+    //obtiene la informacion de un solo producto
     on<GetProductButtonPressed>((event, emit) async {
       emit(state.copyWith(isLoading: true));
       try {
@@ -142,9 +145,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
+    //obtiene tus productos
     on<GetYoureProductsButtonPressed>((event, emit) async {
       try {
-        final userProducts = await getYoureProductsUseCase.call(GetYoureProductsParams(userId: event.userId));
+        final userProducts = await getYoureProductsUseCase.call(GetYoureProductsParams(userId: event.userId, token: event.token));
         emit(state.copyWith(
           youreProducts: userProducts, 
           isLoading: false,
@@ -157,9 +161,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
+    //obtiene los productos a los que les has dado like
     on<GetYoureLikedProductsButtonPressed>((event, emit) async {
       try {
-        final likedProducts = await getYoureLikedProductsUseCase.call(GetYoureLikedProductsParams(userId: event.userId));
+        final likedProducts = await getYoureLikedProductsUseCase.call(GetYoureLikedProductsParams(userId: event.userId, token: event.token));
         emit(state.copyWith(
           youreLikedProducts: likedProducts, 
           isLoading: false,
@@ -172,9 +177,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
+    //obtiene los productos que has comprado, intercambado o vendido
     on<GetYoureEnvolvmentProductsButtonPressed>((event, emit) async {
       try {
-        final envolvmentProducts = await getYoureEnvolvmentProductsUseCase.call(GetYoureEnvolvmentProductsParams(userId: event.userId));
+        final envolvmentProducts = await getYoureEnvolvmentProductsUseCase.call(GetYoureEnvolvmentProductsParams(userId: event.userId, token: event.token));
         emit(state.copyWith(
           youreEnvolvmentProducts: envolvmentProducts, 
           isLoading: false,
@@ -187,6 +193,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
+    //compra un producto
     on<BuyProductButtonPressed>((event, emit) async {
       emit(ProductState.loading());
       try {
@@ -194,6 +201,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           productId: event.productId,
           userId: event.userId,
           sellerId: event.sellerId,
+          token: event.token
         ));
         emit(state.copyWith(
           products: state.products,
@@ -209,6 +217,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
+    //intercambia un producto
     on<ExchangeProductButtonPressed>((event, emit) async {
       emit(ProductState.loading());
       try {
@@ -217,6 +226,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           producExchangedtId: event.producExchangedtId,
           userId: event.userId,
           sellerId: event.sellerId,
+          token: event.token
         ));
         emit(state.copyWith(
           products: state.products,
@@ -232,20 +242,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       }
     });
 
+    //elimina un producto
     on<DeleteProductButtonPressed>((event, emit) async {
       emit(ProductState.loading());
       try {
-        await deleteProductUseCase(DeleteProductParams(id: event.id));
+        await deleteProductUseCase(DeleteProductParams(id: event.id, token: event.token));
         add(GetProductsButtonPressed(userId: event.userId));
       } catch (e) {
         emit(ProductState.failure("Fallo al eliminar el producto: $e"));
       }
     });
 
+    //da like a un producto(tiene que volver a aplicar los filtros por que si no me daba error)
     on<LikeProductButtonPressed>((event, emit) async {
       try {
-        await likeProductUseCase(LikeProductParams(userId: event.userId, productId: event.productId));
-        final likedProducts = await getYoureLikedProductsUseCase.call(GetYoureLikedProductsParams(userId: event.userId));
+        await likeProductUseCase(LikeProductParams(userId: event.userId, productId: event.productId, token: event.token));
+        final likedProducts = await getYoureLikedProductsUseCase.call(GetYoureLikedProductsParams(userId: event.userId, token: event.token));
         final searchTerm = state.currentSearchTerm;
         final isFree = state.isFree ?? false;
         final proximity = state.currentProximity;
@@ -283,7 +295,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
                 double c = 2 * atan2(sqrt(a), sqrt(1 - a));
                 return earthRadius * c;
               }
-              double distanceA = calcularDistancia(a.latitudeCreated, a.longitudeCreated, userLatitude!, userLongitude!);
+              double distanceA = calcularDistancia(a.latitudeCreated, a.longitudeCreated, userLatitude, userLongitude);
               double distanceB = calcularDistancia(b.latitudeCreated, b.longitudeCreated, userLatitude, userLongitude);
               return direction == "asc" ? distanceA.compareTo(distanceB) : distanceB.compareTo(distanceA);
             }
@@ -303,29 +315,16 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           currentSortCriteria: criteria,
           currentSortDirection: direction,
         ));
-        // add(FilterProductsButtonPressed(
-        //   searchTerm: state.currentSearchTerm,
-        //   minPrice: state.currentMinPrice,
-        //   maxPrice: state.currentMaxPrice,
-        //   isFree: state.isFree,
-        //   proximity: state.currentProximity,
-        //   categoryId: state.currentCategoryId,
-        //   criteria: state.currentSortCriteria,
-        //   direction: state.currentSortDirection,
-        //   userLatitude: event.userLatitude,
-        //   userLongitude: event.userLongitude,
-        //   userId: event.userId,
-        // ));
-        //add(GetYoureLikedProductsButtonPressed(userId: event.userId));
       } catch (e) {
         emit(state.copyWith(errorMessage: "Fallo al dar like al producto: $e"));
       }
     });
 
+    //quita like a un producto(tiene que volver a aplicar los filtros por que si no me daba error)
     on<UnlikeProductButtonPressed>((event, emit) async {
       try {
-        await unlikeProductUseCase(UnlikeProductParams(userId: event.userId, productId: event.productId));
-        final likedProducts = await getYoureLikedProductsUseCase.call(GetYoureLikedProductsParams(userId: event.userId));
+        await unlikeProductUseCase(UnlikeProductParams(userId: event.userId, productId: event.productId, token: event.token));
+        final likedProducts = await getYoureLikedProductsUseCase.call(GetYoureLikedProductsParams(userId: event.userId, token: event.token));
         final searchTerm = state.currentSearchTerm;
         final isFree = state.isFree ?? false;
         final proximity = state.currentProximity;
@@ -363,7 +362,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
                 double c = 2 * atan2(sqrt(a), sqrt(1 - a));
                 return earthRadius * c;
               }
-              double distanceA = calcularDistancia(a.latitudeCreated, a.longitudeCreated, userLatitude!, userLongitude!);
+              double distanceA = calcularDistancia(a.latitudeCreated, a.longitudeCreated, userLatitude, userLongitude);
               double distanceB = calcularDistancia(b.latitudeCreated, b.longitudeCreated, userLatitude, userLongitude);
               return direction == "asc" ? distanceA.compareTo(distanceB) : distanceB.compareTo(distanceA);
             }
@@ -383,25 +382,12 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           currentSortCriteria: criteria,
           currentSortDirection: direction,
         ));
-        // add(FilterProductsButtonPressed(
-        //   searchTerm: state.currentSearchTerm,
-        //   minPrice: state.currentMinPrice,
-        //   maxPrice: state.currentMaxPrice,
-        //   isFree: state.isFree,
-        //   proximity: state.currentProximity,
-        //   categoryId: state.currentCategoryId,
-        //   criteria: state.currentSortCriteria,
-        //   direction: state.currentSortDirection,
-        //   userLatitude: event.userLatitude,
-        //   userLongitude: event.userLongitude,
-        //   userId: event.userId,
-        // ));
-        // add(GetYoureLikedProductsButtonPressed(userId: event.userId));
       } catch (e) {
         emit(state.copyWith(errorMessage: "Fallo al quitar like al producto: $e"));
       }
     });
 
+    //elimina los filtros
     on<ResetFiltersButtonPressed>((event, emit) async {
       emit(state.copyWith(
         currentSearchTerm: null,
@@ -416,6 +402,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       add(GetProductsButtonPressed(userId: event.userId));
     });
 
+    //crea un producto
     on<CreateProductButtonPressed>((event, emit) async {
       emit(ProductState.loading());
       try {
@@ -430,6 +417,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           userId: event.userId,
           idCategoryProduct: event.idCategoryProduct,
           idStateProduct: event.idStateProduct,
+          token: event.token
         ));
         if (event.images.isNotEmpty) {
           await uploadProductImagesUseCase.call(UploadProductImagesParams(
@@ -437,12 +425,13 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             images: event.images,
           ));
         }
-        add(GetYoureProductsButtonPressed(userId: event.userId));
+        add(GetYoureProductsButtonPressed(userId: event.userId, token: event.token));
       } catch (e) {
         emit(ProductState.failure("Error al crear el producto: $e"));
       }
     });
 
+    //modifica un producto
     on<UpdateProductButtonPressed>((event, emit) async {
       emit(ProductState.loading());
       try {
@@ -455,6 +444,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
           idCategoryProduct: event.idCategoryProduct,
           idStateProduct: event.idStateProduct,
           idSaleStateProduct: event.idSaleStateProduct,
+          token: event.token
         ));
         if (event.images.isNotEmpty) {
           await updateProductImagesUseCase.call(UpdateProductImagesParams(
@@ -462,7 +452,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             images: event.images,
           ));
         }
-        add(GetYoureProductsButtonPressed(userId: event.userId));
+        add(GetYoureProductsButtonPressed(userId: event.userId, token: event.token));
       } catch (e) {
         emit(ProductState.failure("Error al modificar el producto: $e"));
       }

@@ -18,12 +18,14 @@ class FirebaseAuthDataSource {
 
   FirebaseAuthDataSource({required this.auth, required this.firestore});
 
+  //inicia sesion con email y contraseña usando Firebase Auth
   Future<UserModel> signIn(String email, String password) async {
     UserCredential userCredentials = await auth.signInWithEmailAndPassword(email: email, password: password);
     
     return UserModel.fromUserCredential(userCredentials);
   }
 
+  //envia un correo para restablecer la contraseña del usuario
   Future<void> resetPassword(String email) async {
     try {
       await auth.sendPasswordResetEmail(email: email);
@@ -32,8 +34,10 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //guarda la informacion del usuario al backend
   Future<void> saveUserInfoToBackend({
     required String uid,
+    required String password,
     required String name,
     required String surname,
     required String email,
@@ -48,6 +52,7 @@ class FirebaseAuthDataSource {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           "id_user": uid,
+          "password": password,
           "name": name,
           "surname": surname,
           "telNumber": telNumber.toString(),
@@ -63,7 +68,37 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //hace el login al backend y obtiene el token
+  Future<String> loginToGetTokenFromBackend({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+      final url = Uri.parse('$baseUrl/auth/login');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "email": email,
+          "password": password,
+        }),
+      );
+      if (response.statusCode != 201) {
+        throw Exception('Error al hacer login en el backend');
+      }else {
+        final responseData = jsonDecode(response.body);
+        print(responseData['access_token'] as String);
+        return responseData['access_token'] as String;
+      }
+    } catch (e) {
+      throw ServerFailure();
+    }
+  }
+
+  //actualiza la informacion del usuario en el backend
   Future<void> changeUserInfoToBackend({
+    required String token,
     required String uid,
     required String name,
     required String surname,
@@ -75,7 +110,7 @@ class FirebaseAuthDataSource {
       final url = Uri.parse('$baseUrl/user/$uid');
       final response = await http.put(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode({
           "name": name,
           "surname": surname,
@@ -91,7 +126,9 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //guarda el token de notificaciones push del usuario en el backend
   Future<void> saveUserNotificationToken({
+    required String token,
     required String userId,
     required String? notificationToken,
   }) async {
@@ -100,7 +137,7 @@ class FirebaseAuthDataSource {
       final url = Uri.parse('$baseUrl/user/$userId');
       final response = await http.put(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode({
           "tokenNotifications": notificationToken
         }),
@@ -113,11 +150,12 @@ class FirebaseAuthDataSource {
     }
   }
 
-  Future<Map<String, dynamic>> getUserInfo(String uid) async {
+  //obtiene la informacion del usuario desde el backend
+  Future<Map<String, dynamic>> getUserInfo(String uid, String token) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/user/$uid');
-      final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+      final response = await http.get(url, headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'});
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
       } else {
@@ -128,12 +166,13 @@ class FirebaseAuthDataSource {
       throw ServerFailure();
     }
   }
-
-  Future<List<Map<String, dynamic>>> getUsersInfo() async {
+  
+  //obtiene la lista de todos los usuarios desde el backend
+  Future<List<Map<String, dynamic>>> getUsersInfo(String token) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/user');
-      final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+      final response = await http.get(url, headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'});
       if (response.statusCode == 200) {
         return List<Map<String, dynamic>>.from(jsonDecode(response.body));
       } else {
@@ -145,6 +184,7 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //obtiene el link de la imagen del avatar del usuario
   Future<String?> getLinkUserAvatar(String avatarId) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
@@ -163,6 +203,7 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //modifica el avatar del usuario
   Future<void> changeUserAvatar({
     required String uid,
     required XFile image,
@@ -171,7 +212,6 @@ class FirebaseAuthDataSource {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/upload');
       final request = http.MultipartRequest('POST', url);
-      // request.files.add(await http.MultipartFile.fromPath('file', image.path));
       if (kIsWeb) {
         Uint8List imageBytes = await image.readAsBytes();
         request.files.add(http.MultipartFile.fromBytes(
@@ -194,6 +234,7 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //cambia la contraseña del usuario en Firebase
   Future<void> changePassword(String password) async {
     try {
       final user = auth.currentUser;
@@ -208,6 +249,7 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //elimina al usuario desde Firebase Auth
   Future<void> deleteFirebaseUser() async {
     try {
       final user = auth.currentUser;
@@ -223,11 +265,12 @@ class FirebaseAuthDataSource {
     }
   }
 
-  Future<void> deleteUserFromBackend(String id) async {
+  //elimina al usuario desde el backend
+  Future<void> deleteUserFromBackend(String id, String token) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/user/$id');
-      final response = await http.delete(url, headers: {'Content-Type': 'application/json'});
+      final response = await http.delete(url, headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'});
       if (response.statusCode != 200) {
         throw Exception('Error al eliminar el usuario del backend');
       }
@@ -237,6 +280,7 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //guarda la informacion del usuario en Firestore(ya no la utilizo)
   Future<void> saveUserInfo({
     required String uid,
     required String name,
@@ -254,6 +298,7 @@ class FirebaseAuthDataSource {
     });
   }
 
+  //registra un nuevo usuario en Firebase Auth
   Future<void> signUp(String email, String password) async {
     try {
       await auth.createUserWithEmailAndPassword(email: email, password: password);
@@ -262,6 +307,8 @@ class FirebaseAuthDataSource {
     }
   }
 
+  
+  //inicia sesion con Google
   Future<UserModel> signInWithGoogle() async {
     if (kIsWeb) {
       GoogleAuthProvider googleProvider = GoogleAuthProvider();
@@ -279,25 +326,29 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //cierra sesion del usuario en Firebase Auth
   Future<void> logout() async {
     await auth.signOut();
   }
 
+  //devuelve el email del usuario autenticado actual
   String? getCurrentUser() {
     final user = auth.currentUser;
     return user?.email;
   }
 
+  //añade saldo a la cuenta del usuario en el backend
   Future<void> addBalanceToUser({
     required String userId,
     required int balanceToAdd,
+    required String token,
   }) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/user/addBallance');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode({
           "id_user": userId,
           "balance": balanceToAdd,
@@ -311,18 +362,45 @@ class FirebaseAuthDataSource {
     }
   }
 
+  //cambia la contraseña del usuario desde el backend
+  Future<void> changeUserPassword({
+    required String userId,
+    required String password,
+    required String token,
+  }) async {
+    try {
+      final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
+      final url = Uri.parse('$baseUrl/user/changePassword');
+      final response = await http.post(
+        url,
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
+        body: jsonEncode({
+          "id_user": userId,
+          "newPassword": password,
+        }),
+      );
+      if (response.statusCode != 201) {
+        throw Exception('Error al cambiar la contraseña del usuario');
+      }
+    } catch (e) {
+      throw ServerFailure();
+    }
+  }
+
+  //añade una valoracion al usuario despues de una compra o intercambio de producto
   Future<void> addRatingToUser({
     required String userId,
     required String customerId,
     required int productId,
     required int rating,
+    required String token,
   }) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/user/addRating');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode({
           "id_user": userId, 
           "id_customer": customerId,

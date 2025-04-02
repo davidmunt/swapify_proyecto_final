@@ -13,6 +13,7 @@ class ProductDataSource {
 
   ProductDataSource();
 
+  //obtiene todos los productos
   Future<List<ProductModel>> getProducts() async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product');
@@ -25,6 +26,7 @@ class ProductDataSource {
     }
   }
 
+  //obtiene los productos filtrados
   Future<List<ProductModel>> getFilteredProducts({Map<String, dynamic>? filters}) async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product/filters');
@@ -46,6 +48,7 @@ class ProductDataSource {
     }
   }
 
+  //obtiene la informacion de un producto
   Future<ProductModel> getProduct(int productId) async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product/$productId');
@@ -58,10 +61,11 @@ class ProductDataSource {
     }
   }
 
-  Future<List<ProductModel>> getYoureLikedProducts(String userId) async {
+  //obtiene los productos a los que le has dado like
+  Future<List<ProductModel>> getYoureLikedProducts(String userId, String token) async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product/likesProduct/$userId');
-    final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+    final response = await http.get(url, headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
       return data.map((product) => ProductModel.fromMap(product as Map<String, dynamic>)).toList();
@@ -70,10 +74,11 @@ class ProductDataSource {
     }
   }
 
-  Future<List<ProductModel>> getYoureEnvolvmentProducts(String userId) async {
+  //obtiene los productos que has comprado, vendido y intercambiado
+  Future<List<ProductModel>> getYoureEnvolvmentProducts(String userId, String token) async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product/envolvement/$userId');
-    final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+    final response = await http.get(url, headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
       return data.map((product) => ProductModel.fromMap(product as Map<String, dynamic>)).toList();
@@ -82,10 +87,11 @@ class ProductDataSource {
     }
   }
 
-  Future<List<ProductModel>> getYoureProducts(String userId) async {
+  //obtiene tus productos
+  Future<List<ProductModel>> getYoureProducts(String userId, String token) async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product/user/$userId');
-    final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+    final response = await http.get(url, headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
       return data.map((product) => ProductModel.fromMap(product as Map<String, dynamic>)).toList();
@@ -94,11 +100,12 @@ class ProductDataSource {
     }
   }
 
-  Future<void> deleteProduct(int id) async {
+  //elimina un producto
+  Future<void> deleteProduct(int id, String token) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/product/$id');
-      final response = await http.delete(url, headers: {'Content-Type': 'application/json'});
+      final response = await http.delete(url, headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'});
       if (response.statusCode != 200) {
         throw Exception('Error al eliminar el producto');
       }
@@ -108,17 +115,19 @@ class ProductDataSource {
     }
   }
 
+  //compra un producto
   Future<void> buyProduct({
     required int productId,
     required String userId,
     required String sellerId,
+    required String token,
   }) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/product/buy');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode({
           'productId': productId,
           'buyerId': userId,
@@ -134,18 +143,20 @@ class ProductDataSource {
     }
   }
 
+  //intercambia un producto por otro
   Future<void> exchangeProduct({
     required int productId,
     required int producExchangedtId,
     required String userId,
     required String sellerId,
+    required String token,
   }) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/product/swap');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode({
           'productId': producExchangedtId,
           'productSwapedId': productId,
@@ -162,12 +173,13 @@ class ProductDataSource {
     }
   }
 
-  Future<void> likeProduct({required int productId, required String userId}) async {
+  //da like a un producto
+  Future<void> likeProduct({required int productId, required String userId, required String token}) async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product_like');
     final response = await http.post(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
       body: jsonEncode({'productId': productId, 'userId': userId}),
     );
     if (response.statusCode != 201) {
@@ -175,12 +187,13 @@ class ProductDataSource {
     }
   }
 
-  Future<void> unlikeProduct({required int productId, required String userId}) async {
+  //quita el like a un producto
+  Future<void> unlikeProduct({required int productId, required String userId, required String token}) async {
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     final url = Uri.parse('$baseUrl/product_like');
     final response = await http.delete(
       url,
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
       body: jsonEncode({'productId': productId, 'userId': userId}),
     );
     if (response.statusCode != 204) {
@@ -188,6 +201,7 @@ class ProductDataSource {
     }
   }
 
+  //modifica la informacion de un producto
   Future<void> updateProduct({
     required String productModel,
     required String productBrand,
@@ -197,13 +211,14 @@ class ProductDataSource {
     required int idStateProduct,
     required int idSaleStateProduct,
     required int productId,
+    required String token,
   }) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/product/$productId');
       final response = await http.put(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode({
           'product_model': productModel,
           'product_brand': productBrand,
@@ -223,6 +238,7 @@ class ProductDataSource {
     }
   }
 
+  //modifica las imagenes de un producto
   Future<void> updateProductImages({
     required int productId,
     required List<XFile> images,
@@ -256,6 +272,7 @@ class ProductDataSource {
     }
   }
 
+  //crea un producto
   Future<int> createProduct({
     required String productModel,
     required String productBrand,
@@ -267,13 +284,14 @@ class ProductDataSource {
     required String userId,
     required int idCategoryProduct,
     required int idStateProduct,
+    required String token,
   }) async {
     try {
       final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
       final url = Uri.parse('$baseUrl/product');
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
+        headers: {'Authorization': 'Bearer $token', 'Content-Type': 'application/json'},
         body: jsonEncode({
           'product_model': productModel,
           'product_brand': productBrand,
@@ -300,6 +318,7 @@ class ProductDataSource {
     }
   }
 
+  //guarda las imagenes de un producto
   Future<void> uploadProductImages({
     required int productId,
     required List<XFile> images,
@@ -331,27 +350,4 @@ class ProductDataSource {
       throw ServerFailure();
     }
   }
-
-
-  // Future<void> uploadProductImages({
-  //   required int productId,
-  //   required List<XFile> images,
-  // }) async {
-  //   try {
-  //     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
-  //     final url = Uri.parse('$baseUrl/upload/product');
-  //     final request = http.MultipartRequest('POST', url);
-  //     for (final image in images) {
-  //       request.files.add(await http.MultipartFile.fromPath('file', image.path));
-  //     }
-  //     request.fields['product'] = productId.toString();
-  //     final response = await request.send();
-  //     if (response.statusCode != 200 && response.statusCode != 201) {
-  //       throw Exception('Error al subir imagenes del producto');
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Error en uploadProductImages: $e");
-  //     throw ServerFailure();
-  //   }
-  // }
 }

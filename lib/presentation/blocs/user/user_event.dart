@@ -23,6 +23,7 @@ class SaveUserInfoButtonPressed extends UserEvent {
   final String email;
   final int telNumber;
   final DateTime dateBirth;
+  final String password;
 
   SaveUserInfoButtonPressed({
     required this.uid,
@@ -31,10 +32,11 @@ class SaveUserInfoButtonPressed extends UserEvent {
     required this.email,
     required this.telNumber,
     required this.dateBirth,
+    required this.password,
   });
 
   @override
-  List<Object?> get props => [uid, name, surname, email, telNumber];
+  List<Object?> get props => [uid, name, surname, email, telNumber, password];
 }
 
 class ChangeUserAvatarButtonPressed extends UserEvent {
@@ -46,7 +48,6 @@ class ChangeUserAvatarButtonPressed extends UserEvent {
   @override
   List<Object?> get props => [uid, image];
 }
-
 
 class SignUpButtonPressed extends UserEvent {
   final String email;
@@ -143,7 +144,7 @@ class ChangePasswordButtonPressed extends UserEvent {
   ChangePasswordButtonPressed({required this.password});
 }
 
-class LogoutButtonPressed extends UserEvent {}
+class LogoutButtonPressed extends UserEvent {}  
 
 class GetUsersInfoButtonPressed extends UserEvent {}
 

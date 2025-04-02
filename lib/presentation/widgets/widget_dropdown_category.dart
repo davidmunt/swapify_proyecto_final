@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//WidgetDropdown para seleccionar la categoria, estado, estado de la venta
 class WidgetDropdownCategory<T> extends StatelessWidget {
   final List<T> items;
   final int? selectedItemId;

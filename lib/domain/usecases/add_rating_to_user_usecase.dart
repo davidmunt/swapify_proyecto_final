@@ -15,6 +15,7 @@ class AddRatingToUserUseCase implements UseCase<void, AddRatingToUserParams> {
       customerId: params.customerId,
       productId: params.productId,
       rating: params.rating,
+      token: params.token,
     );
   }
 }
@@ -24,11 +25,13 @@ class AddRatingToUserParams {
   final String customerId;
   final int productId;
   final int rating;
+  final String token;
 
   AddRatingToUserParams({
     required this.userId,
     required this.customerId,
     required this.productId,
     required this.rating,
+    required this.token,
   });
 }

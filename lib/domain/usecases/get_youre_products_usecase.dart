@@ -8,7 +8,7 @@ class GetYoureProductsUseCase implements UseCase<List<ProductEntity>, GetYourePr
 
   @override
   Future<List<ProductEntity>> call(GetYoureProductsParams params) async {
-    final result = await repository.getYoureProducts(params.userId);
+    final result = await repository.getYoureProducts(params.userId, params.token);
     return result.fold(
       (failure) {
         throw Exception('Error al obtener tus productos');
@@ -20,6 +20,7 @@ class GetYoureProductsUseCase implements UseCase<List<ProductEntity>, GetYourePr
 
 class GetYoureProductsParams {
   final String userId;
+  final String token;
 
-  GetYoureProductsParams({required this.userId});
+  GetYoureProductsParams({required this.userId, required this.token});
 }

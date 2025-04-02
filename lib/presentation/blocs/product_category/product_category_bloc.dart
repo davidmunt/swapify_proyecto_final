@@ -7,7 +7,7 @@ class ProductCategoryBloc extends Bloc<ProductCategoryEvent, ProductCategoryStat
   final GetProductCategoryUseCase getProductCategoryUseCase;
 
   ProductCategoryBloc(this.getProductCategoryUseCase) : super(ProductCategoryState.initial()) {
-    
+    //obtiene las categorias para los productos
     on<GetProductCategoryButtonPressed>((event, emit) async {
       emit(ProductCategoryState.loading());
       try {

@@ -6,6 +6,8 @@ import 'package:swapify/presentation/blocs/language/language_state.dart';
 
 class LanguageBloc extends Bloc<LanguageEvent, LanguageState> {
   LanguageBloc() : super(LanguageState(const Locale('es'))) {
+
+    //actualiza el idioma de la aplicacion
     on<ChangeLanguageEvent>((event, emit) async {
       emit(state.copyWith(isLoading: true));
       final SharedPreferences prefs = await SharedPreferences.getInstance();

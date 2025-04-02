@@ -4,6 +4,8 @@ import 'package:swapify/core/failure.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class QRDataSource {
+
+  //obtiene la ruta(imagen) del qr para el pago de los productos
   Future<String> getQRProductPayment({
     required String userId,
     required int productId,
@@ -29,6 +31,7 @@ class QRDataSource {
     }
   }
 
+  //obtiene la ruta(imagen) del qr para el intercambio de dos productos
   Future<String> getQRProductExchange({
     required String userId,
     required int productId,

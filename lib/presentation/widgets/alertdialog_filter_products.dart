@@ -10,6 +10,7 @@ import 'package:swapify/presentation/blocs/product_category/product_category_eve
 import 'package:swapify/presentation/blocs/product_category/product_category_state.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 
+//widget para filtrar o ordenar productos
 class FiltrarProductosWidget extends StatefulWidget {
   final Function(String? searchTerm, double? minPrice, double? maxPrice, double? proximity, int? categoryId, String criteria, String direction, bool isFree) onApplyFilters;
 
@@ -195,7 +196,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
             DropdownButtonFormField<String>(
               value: selectedOrder,
               items: [
-                DropdownMenuItem(value: "sinOrden", child: Text("Sin orden")),
+                DropdownMenuItem(value: "sinOrden", child: Text(AppLocalizations.of(context)!.noOrder)),
                 DropdownMenuItem(value: "fecha", child: Text(AppLocalizations.of(context)!.dateUpload)),
                 DropdownMenuItem(value: "distancia", child: Text(AppLocalizations.of(context)!.distance)),
                 DropdownMenuItem(value: "precio", child: Text(AppLocalizations.of(context)!.price)),
@@ -271,15 +272,16 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                       });
                       return;
                     }
-                    if (double.tryParse(proximityController.text) == 0) {
+                    final parsedProximity = double.tryParse(proximityController.text);
+                    if (parsedProximity != null && parsedProximity == 0) {
                       setState(() {
-                        errorMessage = "No puedes poner la proximidad en 0 Km";
+                        errorMessage = AppLocalizations.of(context)!.errorProximityCero;
                       });
                       return;
                     }
-                    if (double.tryParse(proximityController.text)! > (40075 / 2)) {
+                    if (parsedProximity != null && parsedProximity > (40075 / 2)) {
                       setState(() {
-                        errorMessage = "La proximidad no puede superar los ${40075 / 2} Km";
+                        errorMessage = AppLocalizations.of(context)!.errorProximityOverpassed;
                       });
                       return;
                     }

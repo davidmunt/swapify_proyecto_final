@@ -8,6 +8,7 @@ class RecomendationPriceBloc extends Bloc<RecomendationPriceEvent, Recomendation
   final GetRecomendationPriceUseCase getRecomendationPriceUseCase;
 
   RecomendationPriceBloc(this.getRecomendationPriceUseCase) : super(RecomendationPriceState.initial()) {
+    //obtiene la recomendacion del precio de la IA antes de crearlo
     on<GetRecomendationPriceButtonPressed>((event, emit) async {
       emit(RecomendationPriceState.loading());
       try {

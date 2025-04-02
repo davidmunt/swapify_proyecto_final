@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+//widget para seleccionar una fecha
 class WidgetFechaNacimiento extends StatefulWidget {
   final DateTime? selectedDate;
   final Function(DateTime?) onDateSelected;

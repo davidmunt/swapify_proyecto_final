@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+//widget para seleccionar la iamgen
 class WidgetImagesSelector extends StatefulWidget {
   final List<File> selectedImages;
   final String baseUrl;
@@ -22,6 +23,7 @@ class WidgetImagesSelector extends StatefulWidget {
 class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
   final ImagePicker _imagePicker = ImagePicker();
 
+  //funcion para seleccionar imagenes desde la camara o galeria(maximo 7 imagenes)
   Future<void> _pickImage(ImageSource source) async {
     try {
       if (source == ImageSource.gallery) {
@@ -35,7 +37,6 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
           }
           final updatedImages = List<File>.from(widget.selectedImages)
             ..addAll(pickedFiles.map((file) => File(file.path)));
-
           setState(() {
             widget.onImagesUpdated(updatedImages);
           });
@@ -69,6 +70,7 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
     return Column(
       children: [
         Wrap(
+          //muestra las imagenes seleccionadas y se pueden eliminar al clicar la X encima de cada iamgen
           spacing: 8.0,
           runSpacing: 8.0,
           children: widget.selectedImages.map((image) {
@@ -77,10 +79,9 @@ class _WidgetImagesSelectorState extends State<WidgetImagesSelector> {
             return Stack(
               children: [
                 isLocalFile
-                    ? Image.file(File(image.path), width: 100, height: 100, fit: BoxFit.cover)
-                    : isWebBlob
-                        ? Image.network(image.path, width: 100, height: 100, fit: BoxFit.cover) 
-                        : Image.network('${widget.baseUrl}${image.path}', width: 100, height: 100, fit: BoxFit.cover),
+                  ? Image.file(File(image.path), width: 100, height: 100, fit: BoxFit.cover) : isWebBlob
+                    ? Image.network(image.path, width: 100, height: 100, fit: BoxFit.cover) 
+                    : Image.network('${widget.baseUrl}${image.path}', width: 100, height: 100, fit: BoxFit.cover),
                 Positioned(
                   top: 0,
                   right: 0,

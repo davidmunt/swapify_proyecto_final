@@ -59,51 +59,56 @@ class GetProductButtonPressed extends ProductEvent {
 
 class GetYoureProductsButtonPressed extends ProductEvent {
   final String userId;
+  final String token;
 
-  GetYoureProductsButtonPressed({required this.userId});
+  GetYoureProductsButtonPressed({required this.userId, required this.token});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId, token];
 }
 
 class GetYoureLikedProductsButtonPressed extends ProductEvent {
   final String userId;
+  final String token;
 
-  GetYoureLikedProductsButtonPressed({required this.userId});
+  GetYoureLikedProductsButtonPressed({required this.userId, required this.token});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId, token];
 }
 
 class GetYoureEnvolvmentProductsButtonPressed extends ProductEvent {
   final String userId;
+  final String token;
 
-  GetYoureEnvolvmentProductsButtonPressed({required this.userId});
+  GetYoureEnvolvmentProductsButtonPressed({required this.userId, required this.token});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId, token];
 }
 
 class DeleteProductButtonPressed extends ProductEvent {
   final int id;
   final String userId;
+  final String token;
 
-  DeleteProductButtonPressed({required this.id, required this.userId});
+  DeleteProductButtonPressed({required this.id, required this.userId, required this.token});
 
   @override
-  List<Object?> get props => [id, userId];
+  List<Object?> get props => [id, userId, token];
 }
 
 class LikeProductButtonPressed extends ProductEvent {
   final String userId;
+  final String token;
   final int productId;
   final double userLatitude;
   final double userLongitude;
 
-  LikeProductButtonPressed({required this.userId, required this.productId, required this.userLatitude, required this.userLongitude});
+  LikeProductButtonPressed({required this.userId, required this.productId, required this.userLatitude, required this.userLongitude, required this.token});
 
   @override
-  List<Object?> get props => [userId, productId];
+  List<Object?> get props => [userId, productId, token];
 }
 
 class ResetFiltersButtonPressed extends ProductEvent {
@@ -120,22 +125,24 @@ class UnlikeProductButtonPressed extends ProductEvent {
   final int productId;
   final double userLatitude;
   final double userLongitude;
+  final String token;
 
-  UnlikeProductButtonPressed({required this.userId, required this.productId, required this.userLatitude, required this.userLongitude});
+  UnlikeProductButtonPressed({required this.userId, required this.productId, required this.userLatitude, required this.userLongitude, required this.token});
 
   @override
-  List<Object?> get props => [userId, productId];
+  List<Object?> get props => [userId, productId, token];
 }
 
 class BuyProductButtonPressed extends ProductEvent {
   final int productId;
   final String userId; 
   final String sellerId;
+  final String token;
 
-  BuyProductButtonPressed({required this.productId, required this.userId, required this.sellerId});
+  BuyProductButtonPressed({required this.productId, required this.userId, required this.sellerId, required this.token});
 
   @override
-  List<Object?> get props => [productId, userId];
+  List<Object?> get props => [productId, userId, token];
 }
 
 class ExchangeProductButtonPressed extends ProductEvent {
@@ -143,11 +150,12 @@ class ExchangeProductButtonPressed extends ProductEvent {
   final int producExchangedtId;
   final String userId; 
   final String sellerId;
+  final String token;
 
-  ExchangeProductButtonPressed({required this.productId, required this.userId, required this.sellerId, required this.producExchangedtId});
+  ExchangeProductButtonPressed({required this.productId, required this.userId, required this.sellerId, required this.producExchangedtId, required this.token});
 
   @override
-  List<Object?> get props => [productId, producExchangedtId, userId, sellerId];
+  List<Object?> get props => [productId, producExchangedtId, userId, sellerId, token];
 }
 
 class CreateProductButtonPressed extends ProductEvent {
@@ -162,6 +170,7 @@ class CreateProductButtonPressed extends ProductEvent {
   final int idCategoryProduct;
   final int idStateProduct;
   final List<XFile> images;
+  final String token;
 
   CreateProductButtonPressed({
     required this.productModel,
@@ -175,10 +184,11 @@ class CreateProductButtonPressed extends ProductEvent {
     required this.idCategoryProduct,
     required this.idStateProduct,
     required this.images,
+    required this.token
   });
 
   @override
-  List<Object?> get props => [productModel, productBrand, price, description, latitudeCreated, longitudeCreated, nameCityCreated, userId, images];
+  List<Object?> get props => [productModel, productBrand, price, description, latitudeCreated, longitudeCreated, nameCityCreated, userId, images, token];
 }
 
 class UpdateProductButtonPressed extends ProductEvent {
@@ -192,6 +202,7 @@ class UpdateProductButtonPressed extends ProductEvent {
   final int idSaleStateProduct;
   final List<XFile> images;
   final String userId;
+  final String token;
 
   UpdateProductButtonPressed({
     required this.productModel,
@@ -204,8 +215,9 @@ class UpdateProductButtonPressed extends ProductEvent {
     required this.idSaleStateProduct,
     required this.images,
     required this.userId,
+    required this.token
   });
 
   @override
-  List<Object?> get props => [productModel, productBrand, price, description, productId, images];
+  List<Object?> get props => [productModel, productBrand, price, description, productId, images, token];
 }

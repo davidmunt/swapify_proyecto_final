@@ -5,11 +5,11 @@ import 'package:image_picker/image_picker.dart';
 
 abstract class ProductRepository {
   Future<Either<Failure, List<ProductEntity>>> getProducts();
-  Future<Either<Failure, List<ProductEntity>>> getYoureLikedProducts(String userId);
-  Future<Either<Failure, List<ProductEntity>>> getYoureEnvolvmentProducts(String userId);
-  Future<Either<Failure, List<ProductEntity>>> getYoureProducts(String userId);
+  Future<Either<Failure, List<ProductEntity>>> getYoureLikedProducts(String userId, String token);
+  Future<Either<Failure, List<ProductEntity>>> getYoureEnvolvmentProducts(String userId, String token);
+  Future<Either<Failure, List<ProductEntity>>> getYoureProducts(String userId, String token);
   Future<Either<Failure, ProductEntity>> getProduct(int productId);
-  Future<Either<Failure, void>> deleteProduct(int id);
+  Future<Either<Failure, void>> deleteProduct(int id, String token);
   Future<int> createProduct({
     required String productModel,
     required String productBrand,
@@ -21,6 +21,7 @@ abstract class ProductRepository {
     required String userId,
     required int idCategoryProduct,
     required int idStateProduct,
+    required String token,
   });
   Future<void> uploadProductImages({
     required int productId,
@@ -35,6 +36,7 @@ abstract class ProductRepository {
     required int idStateProduct,
     required int idSaleStateProduct,
     required int productId,
+    required String token,
   });
   Future<void> updateProductImages({
     required int productId,
@@ -44,14 +46,16 @@ abstract class ProductRepository {
     required int productId,
     required String userId, 
     required String sellerId,
+    required String token,
   });
   Future<void> exchangeProduct({
     required int productId,
     required int producExchangedtId,
     required String userId, 
     required String sellerId,
+    required String token,
   });
   Future<Either<Failure, List<ProductEntity>>> getFilteredProducts({Map<String, dynamic>? filters});
-  Future<Either<Failure, void>> likeProduct({required int productId, required String userId});
-  Future<Either<Failure, void>> unlikeProduct({required int productId, required String userId});  
+  Future<Either<Failure, void>> likeProduct({required int productId, required String userId, required String token,});
+  Future<Either<Failure, void>> unlikeProduct({required int productId, required String userId, required String token,});  
 }

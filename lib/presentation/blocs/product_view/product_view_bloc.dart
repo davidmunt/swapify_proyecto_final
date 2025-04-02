@@ -7,12 +7,14 @@ class ProductViewBloc extends Bloc<ProductViewEvent, ProductViewState> {
   final SaveProductViewUsecase saveProductViewUsecase;
 
   ProductViewBloc(this.saveProductViewUsecase) : super(ProductViewState.initial()) {
+    //guarda la visita de un usuario a un producto (lo utilizo para la recomendacio del orden de los productos en mi backend)
     on<SaveProductViewButtonPressed>((event, emit) async {
       emit(ProductViewState.loading());
       try {
         await saveProductViewUsecase(SaveProductViewParams(
           userId: event.userId,
           productId: event.productId,
+          token: event.token,
         ));
         emit(ProductViewState.initial()); 
       } catch (e) {

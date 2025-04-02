@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:swapify/domain/entities/product.dart';
 import 'package:swapify/presentation/blocs/chat/chat_bloc.dart';
 import 'package:swapify/presentation/blocs/chat/chat_event.dart';
@@ -19,6 +18,7 @@ import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/drawer.dart';
 import 'package:go_router/go_router.dart';
 
+//pantalla que muestra los chats que tiene tu usuario
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
 
@@ -50,213 +50,162 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Swapify"),
-      ),
-      body: BlocListener<ChatBloc, ChatState>(
-        listener: (context, chatState) {
-          final userId = context.read<UserBloc>().state.user?.id;
-          if (userId != null && (chatState.chats == null || chatState.chats!.isEmpty)) {
-            context.read<ChatBloc>().add(GetMyChatsButtonPressed(userId: userId));
+      appBar: AppBar(title: const Text("Swapify")),
+      drawer: const DrawerWidget(),
+      body: BlocBuilder<UserBloc, UserState>(
+        builder: (context, userState) {
+          if (userState.isLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
-        },
-        child: BlocBuilder<UserBloc, UserState>(
-          builder: (context, userState) {
-            if (userState.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (userState.user != null && userState.errorMessage == null) {
-              final userId = userState.user!.id;
-              final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
-              return StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('chats').snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
+          if (userState.user == null || userState.errorMessage != null) {
+            return Center(child: Text(AppLocalizations.of(context)!.errorObtainingUserInfoChat));
+          }
+          final userId = userState.user!.id;
+          return BlocBuilder<ChatBloc, ChatState>(
+            builder: (context, chatState) {
+              if (chatState.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (chatState.chats == null || chatState.chats!.isEmpty) {
+                return Center(child: Text(AppLocalizations.of(context)!.errorNoChats, style: const TextStyle(fontSize: 16)));
+              }
+              final chats = chatState.chats!;
+              return BlocBuilder<ProductBloc, ProductState>(
+                builder: (context, productState) {
+                  if (productState.isLoading) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  return BlocBuilder<ChatBloc, ChatState>(
-                    builder: (context, chatState) {
-                      if (chatState.isLoading) {
-                        return const Center(child: CircularProgressIndicator());
-                      } else if (chatState.chats != null) {
-                        final chats = chatState.chats!;
-                        if (chats.isEmpty) {
-                          return Center(
-                            child: Text(AppLocalizations.of(context)!.errorNoChats, style: const TextStyle(fontSize: 16)),
-                          );
-                        }
-                        return BlocBuilder<ProductBloc, ProductState>(
-                          builder: (context, productState) {
-                            if (productState.isLoading) {
-                              return const Center(child: CircularProgressIndicator());
-                            } else if (productState.products != null) {
-                              final products = productState.products!;
-                              return ListView.separated(
-                                separatorBuilder: (context, index) => const Divider(color: Colors.grey, height: 1),
-                                itemCount: chats.length,
-                                itemBuilder: (context, index) {
-                                  final chat = chats[index];
-                                  final isProductOwner = chat.productOwnerId == userId;
-                                  final otherUserId = isProductOwner ? chat.potBuyerId : chat.productOwnerId;
-                                  final otherUser = userState.users?.firstWhere((user) => user.id == otherUserId);
-                                  final otherUserName = otherUser?.name ?? AppLocalizations.of(context)!.unknownUser;
-                                  ProductEntity? product;
-                                  try {
-                                    product = products.firstWhere((p) => p.productId == chat.productId);
-                                  } catch (e) {
-                                    product = null;
-                                  }
-                                  final timestamp = chat.messages.last['dateMessageSent'];
-                                  final dateMessageSent = timestamp?.toDate();
-                                  final formattedDate = dateMessageSent != null ? DateFormat('dd/MM/yyyy HH:mm').format(dateMessageSent) : AppLocalizations.of(context)!.unavailableDate;
-                                  final productImage = product?.images.isNotEmpty == true ? "$baseUrl${product!.images.first.path}" : null;
-                                  final productTitle = product != null ? "${product.productBrand} ${product.productModel}" : AppLocalizations.of(context)!.unknownProduct;
-                                  return GestureDetector(
-                                    onTap: () {
-                                      context.push(
-                                        '/chat',
-                                        extra: {
-                                          'productOwnerId': chat.productOwnerId,
-                                          'potBuyerId': chat.potBuyerId,
-                                          'productId': chat.productId,
-                                        },
-                                      );
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                                      decoration: BoxDecoration(color: isProductOwner ? const Color.fromARGB(255, 200, 230, 201) : const Color.fromARGB(255, 250, 250, 250),
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.2),
-                                            spreadRadius: 2,
-                                            blurRadius: 5,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(8),
-                                            child: Image.network(productImage!, width: 70, height: 70, fit: BoxFit.cover)
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  otherUserName,
-                                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  productTitle,
-                                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                                                  maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Builder(
-  builder: (_) {
-    final lastMessage = chat.messages.last;
-    if (lastMessage['message'] != null && lastMessage['message'].toString().isNotEmpty) {
-      return Text(
-        lastMessage['message'],
-        style: const TextStyle(fontSize: 14),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    } else if (lastMessage['imagePath'] != null && lastMessage['imagePath'].toString().isNotEmpty) {
-      return Text(
-        AppLocalizations.of(context)!.foto,
-        style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    } else if (lastMessage['idProduct'] != null) {
-      return Text(
-        "Propuesta de intercambio", // ✅ Traducción para "Propuesta de intercambio"
-        style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    } else {
-      return Text(
-        "Sin contenido", // Traducción para mensaje vacío o sin reconocer
-        style: const TextStyle(fontSize: 14),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      );
-    }
-  },
-),
-                                              ],
-                                            ),
-                                          ),
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.end,
-                                            children: [
-                                              BlocBuilder<ProductSaleStateBloc, ProductSaleStateState>(
-                                                builder: (context, saleState) {
-                                                  if (saleState.isLoading) {
-                                                    return const SizedBox(); 
-                                                  } else if (saleState.productSaleStates != null) {
-                                                    final saleStates = saleState.productSaleStates!;
-                                                    final saleStateName = saleStates.firstWhere((state) => state.idSaleStateProduct == product?.idSaleStateProduct).name; 
-                                                    if (saleStateName.toLowerCase() == "vendido") {
-                                                      return Chip(
-                                                        label: Text(AppLocalizations.of(context)!.selled),
-                                                        backgroundColor: Colors.green,
-                                                        labelStyle: const TextStyle(color: Colors.white),
-                                                      );
-                                                    } else if (saleStateName.toLowerCase() == "reservado") {
-                                                      return Chip(
-                                                        label: Text(AppLocalizations.of(context)!.reserved),
-                                                        backgroundColor: Colors.orange,
-                                                        labelStyle: const TextStyle(color: Colors.white),
-                                                      );
-                                                    }
-                                                  }
-                                                  return const SizedBox();
-                                                },
-                                              ),
-                                              const SizedBox(height: 5),
-                                              Text(
-                                                formattedDate,
-                                                style: const TextStyle(fontSize: 12),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                  if (productState.products == null) {
+                    return Center(child: Text(AppLocalizations.of(context)!.errorObtainingProducts));
+                  }
+                  final products = productState.products!;
+                  return ListView.separated(
+                    separatorBuilder: (context, index) => const Divider(color: Colors.grey, height: 1),
+                    itemCount: chats.length,
+                    itemBuilder: (context, index) {
+                      final chat = chats[index];
+                      final isProductOwner = chat.productOwnerId == userId;
+                      final otherUserId = isProductOwner ? chat.potBuyerId : chat.productOwnerId;
+                      final otherUser = userState.users?.firstWhere((user) => user.id == otherUserId);
+                      final otherUserName = otherUser?.name ?? AppLocalizations.of(context)!.unknownUser;
+                      ProductEntity? product;
+                      try {
+                        product = products.firstWhere((p) => p.productId == chat.productId);
+                      } catch (_) {}
+                      final timestamp = chat.messages.last['dateMessageSent'];
+                      final dateMessageSent = timestamp?.toDate();
+                      final formattedDate = dateMessageSent != null ? DateFormat('dd/MM/yyyy HH:mm').format(dateMessageSent) : AppLocalizations.of(context)!.unavailableDate;
+                      final productImage = product?.images.isNotEmpty == true ? "$baseUrl${product!.images.first.path}" : null;
+                      final productTitle = product != null ? "${product.productBrand} ${product.productModel}" : AppLocalizations.of(context)!.unknownProduct;
+                      return GestureDetector(
+                        onTap: () {
+                          context.push('/chat', extra: {
+                            'productOwnerId': chat.productOwnerId,
+                            'potBuyerId': chat.potBuyerId,
+                            'productId': chat.productId,
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                          decoration: BoxDecoration(
+                            color: isProductOwner ? const Color.fromARGB(255, 200, 230, 201) : const Color.fromARGB(255, 250, 250, 250),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              if (productImage != null)
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.network(productImage, width: 70, height: 70, fit: BoxFit.cover),
+                                ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(otherUserName,
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis),
+                                    const SizedBox(height: 4),
+                                    Text(productTitle,
+                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis),
+                                    const SizedBox(height: 4),
+                                    Builder(
+                                      builder: (_) {
+                                        final lastMessage = chat.messages.last;
+                                        if (lastMessage['message']?.toString().isNotEmpty ?? false) {
+                                          return Text(lastMessage['message'],
+                                              style: const TextStyle(fontSize: 14),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis);
+                                        } else if (lastMessage['imagePath'] != null) {
+                                          return Text(AppLocalizations.of(context)!.foto, style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
+                                        } else if (lastMessage['idProduct'] != null) {
+                                          return Text(AppLocalizations.of(context)!.exchangeProposal, style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
+                                        } else {
+                                          return Text(AppLocalizations.of(context)!.noContent, style: const TextStyle(fontSize: 14));
+                                        }
+                                      },
                                     ),
-                                  );
-                                },
-                              );
-                            } else {
-                              return Center(child: Text(AppLocalizations.of(context)!.errorObtainingProducts));
-                            }
-                          },
-                        );
-                      } else {
-                        return Center(child: Text(AppLocalizations.of(context)!.errorObtainingChats));
-                      }
+                                  ],
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  BlocBuilder<ProductSaleStateBloc, ProductSaleStateState>(
+                                    builder: (context, saleState) {
+                                      if (saleState.isLoading || saleState.productSaleStates == null) {
+                                        return const SizedBox();
+                                      }
+                                      final saleStates = saleState.productSaleStates!;
+                                      final stateName = saleStates.firstWhere((s) => s.idSaleStateProduct == product?.idSaleStateProduct, orElse: () => saleStates.first).name.toLowerCase();
+                                      if (stateName == "vendido") {
+                                        return Chip(
+                                          label: Text(AppLocalizations.of(context)!.selled),
+                                          backgroundColor: Colors.green,
+                                          labelStyle: const TextStyle(color: Colors.white),
+                                        );
+                                      } else if (stateName == "reservado") {
+                                        return Chip(
+                                          label: Text(AppLocalizations.of(context)!.reserved),
+                                          backgroundColor: Colors.orange,
+                                          labelStyle: const TextStyle(color: Colors.white),
+                                        );
+                                      }
+                                      return const SizedBox();
+                                    },
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(formattedDate, style: const TextStyle(fontSize: 12)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
                     },
                   );
                 },
               );
-            } else {
-              return Center(child: Text(AppLocalizations.of(context)!.errorObtainingUserInfoChat));
-            }
-          },
-        ),
+            },
+          );
+        },
       ),
-      drawer: const DrawerWidget(),
     );
   }
 }

@@ -18,6 +18,7 @@ import 'package:swapify/presentation/widgets/alertdialog_show_image_chat.dart';
 import 'package:swapify/presentation/widgets/alertdialog_show_qr_exchange.dart';
 import 'package:swapify/presentation/widgets/widget_send_message.dart';
 
+//pantalla de un chat en especifico, puedes enviar mensajes, imagenes o propuestas de intercambio.
 class ChatScreen extends StatefulWidget {
   final String productOwnerId;
   final String potBuyerId;
@@ -41,7 +42,10 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
+    //el id del chat se obtiene juntando productOwnerId+potBuyerId+productId
     chatId = "${widget.productOwnerId}${widget.potBuyerId}${widget.productId}";
+    //sirve para que al abrir el chat, este el scroll abajo del todo, sin este apartado, al abrir el chat 
+    //te mostraria tus primeros mensajes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
     });
@@ -108,6 +112,7 @@ class _ChatScreenState extends State<ChatScreen> {
           },
         ),
       ),
+      //escucha en tiempo real los cambios del chat desde Firestore para actualizar la conversacian
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance.collection('chats').doc(chatId).snapshots(),
         builder: (context, snapshot) {
@@ -117,7 +122,10 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Text(AppLocalizations.of(context)!.error),
             );
           }
-          if (!snapshot.hasData || !snapshot.data!.exists) {
+          if (snapshot.connectionState == ConnectionState.waiting || !snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (!snapshot.data!.exists) {
             return Column(
               children: [
                 Expanded(
@@ -126,7 +134,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
                 SendMessageWidget(
-                  userId: userId, 
+                  userId: userId,
                   productOwnerId: widget.productOwnerId,
                   onSendMessage: (message, image, idProduct, productImage) {
                     _sendMessage(message, image, idProduct, productImage);
@@ -151,6 +159,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     final message = messages[index];
                     final isSender = message['senderId'] == userId;
                     Widget messageContent;
+                    //propuesta de intercambio
                     if (message['idProduct'] != null && message['productImage'] != null) {
                       messageContent = Column(
                         mainAxisSize: MainAxisSize.min, 
@@ -172,9 +181,10 @@ class _ChatScreenState extends State<ChatScreen> {
                           const SizedBox(height: 10),
                           if (message['accepted'] == null && widget.productOwnerId != userId) ...[
                             SizedBox(
-                              width: 120, 
+                              width: 160, 
                               child: ElevatedButton(
                                 onPressed: () {
+                                  //muestra el qr de la propuesta de intercambio 
                                   showDialog(
                                       context: context,
                                       builder: (_) => AlertShowQRExchange(productId: widget.productId, userId: userId, productExchangedId: message['idProduct']),
@@ -185,6 +195,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         (state) => state.product != null && state.product!.productId == widget.productId && state.product != previousState.product,
                                       );
                                       final updatedProduct = productState.product; 
+                                      //al clicar fuera del widget que muestra el qr verifica si se ha realizado el intercambio
                                       if (updatedProduct != null && updatedProduct.idSaleStateProduct == 4 && updatedProduct.buyerId == userId) {
                                         context.read<ChatBloc>().add(UpdateExchangeStatusChatButtonPressed(productOwnerId: widget.productOwnerId, potBuyerId: widget.potBuyerId, productId: widget.productId, idProduct: message['idProduct'], accepted: true));
                                         context.read<ProductBloc>().add(GetProductsButtonPressed());
@@ -193,6 +204,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         showDialog(
                                           context: context,
                                           builder: (context) {
+                                            //valora al otro usuario
                                             return Dialog(
                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), 
                                               child: AlertRateUser(
@@ -205,27 +217,32 @@ class _ChatScreenState extends State<ChatScreen> {
                                       }
                                     });
                                 },
-                                child: const Text("Intercambiar"),
+                                child: Text(AppLocalizations.of(context)!.exchange),
                               ),
                             ),
+                            //muestra el estado de la propuesta de intercambio para el usuario dueño del producto
+                            //(en caso de que este en proceso) y si esta aceptada o rechazada se lo mostrara a los dos usuarios
+                            //para intercambiar un producto, el usuario ducño del producto tendra que escanear el qr que lo muestra 
+                            //el otro usuario
                           ] else if (message['accepted'] == null && widget.productOwnerId == userId) ...[
-                            const Chip(
-                              label: Text("Escanea su QR"),
-                              backgroundColor: Color.fromARGB(255, 238, 255, 82),
+                            Chip(
+                              label: Text(AppLocalizations.of(context)!.scanTheirQR),
+                              backgroundColor: const Color.fromARGB(255, 238, 255, 82),
                             ),
                           ] else if (message['accepted'] == false) ...[
-                            const Chip(
-                              label: Text("Intercambio rechazado"),
+                            Chip(
+                              label: Text(AppLocalizations.of(context)!.exchangeRejected),
                               backgroundColor: Colors.redAccent,
                             ),
                           ] else if (message['accepted'] == true) ...[
-                            const Chip(
-                              label: Text("Intercambio acceptado"),
+                            Chip(
+                              label: Text(AppLocalizations.of(context)!.exchangeAccepted),
                               backgroundColor: Colors.greenAccent,
                             ),
                           ],
                         ],
                       );
+                    //imagen
                     } else if (message['imagePath'] != null && message['imagePath'].trim().isNotEmpty) {
                       messageContent = GestureDetector(
                         onTap: () {
@@ -243,6 +260,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           fit: BoxFit.cover,
                         ),
                       );
+                    //texto
                     } else {
                       messageContent = Text(
                         message['message'] ?? '',
@@ -279,6 +297,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               ),
+              //widget que muetra el y apartado para enviat texto, imagenes y propuesta de intercambio
               SendMessageWidget(
                 userId: userId, 
                 productOwnerId: widget.productOwnerId,

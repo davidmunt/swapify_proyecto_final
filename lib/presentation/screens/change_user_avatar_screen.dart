@@ -11,6 +11,7 @@ import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 
+//pantalla que permite al usuario cambiar la imagen de avatar
 class ChangeUserAvatarScreen extends StatefulWidget {
   const ChangeUserAvatarScreen({super.key});
 
@@ -53,6 +54,7 @@ class ChangeUserAvatarScreenState extends State<ChangeUserAvatarScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 30),
+                  //enseña la imagen seleccionada por el usuario o un icono por defecto si no se ha elegido ninguna
                   if (selectedImage != null)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(50),

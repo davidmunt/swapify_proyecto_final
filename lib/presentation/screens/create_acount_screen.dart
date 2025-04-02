@@ -7,7 +7,9 @@ import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/widget_select_date.dart';
 import 'package:swapify/presentation/widgets/widget_text_form.dart';
+import 'package:flutter/services.dart';
 
+//pantalla para crear el usuario
 class CreateAcountScreen extends StatefulWidget {
   const CreateAcountScreen({super.key});
 
@@ -19,6 +21,7 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
   DateTime? selectedDate;
   bool showPass = false;
   bool showPass2 = false;
+  bool _hasNavigated = false;
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController apellidosController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -36,10 +39,14 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
         child: BlocConsumer<UserBloc, UserState>(
           listener: (context, state) {
             if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.error)),
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.errorMessage!)),
               );
-            } else if (state.errorMessage == null && !state.isLoading) {
-              context.push('/home');
+            } else if (!_hasNavigated && !state.isLoading && state.user != null) {
+              _hasNavigated = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                context.pushReplacement('/home');
+              });
             }
           },
           builder: (context, state) {
@@ -53,7 +60,7 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
                 const SizedBox(height: 12),
                 WidgetTextoFormulario(texto: AppLocalizations.of(context)!.email, iconoHint: const Icon(Icons.alternate_email), controller: emailController),
                 const SizedBox(height: 12),
-                WidgetTextoFormulario(texto: AppLocalizations.of(context)!.phone, iconoHint: const Icon(Icons.phone), controller: telefonoController),
+                WidgetTextoFormulario(texto: AppLocalizations.of(context)!.phone, iconoHint: const Icon(Icons.phone), controller: telefonoController, inputFormatters: [FilteringTextInputFormatter.digitsOnly]),
                 const SizedBox(height: 12),
                 WidgetFechaNacimiento(
                   selectedDate: selectedDate,
@@ -165,5 +172,16 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    nombreController.dispose();
+    apellidosController.dispose();
+    emailController.dispose();
+    telefonoController.dispose();
+    contraController.dispose();
+    contra2Controller.dispose();
+    super.dispose();
   }
 }

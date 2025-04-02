@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 
+//alert para recomendar un precio a un producto
 class AlertRecomendationPrice extends StatelessWidget {
   final double recomendedPrice;
   final String marca;
@@ -37,7 +38,6 @@ class AlertRecomendationPrice extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UserBloc, UserState>(
       builder: (context, userState) {
-        final String? userId = userState.user?.id;
         return Container(
           padding: const EdgeInsets.all(20),
           height: 260,
@@ -49,7 +49,7 @@ class AlertRecomendationPrice extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Creemos que el precio \$${recomendedPrice.toStringAsFixed(2)} es más adecuado para este producto. ¿Te parece bien?",
+                AppLocalizations.of(context)!.recommendedPriceSuggestion(recomendedPrice),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 18,
@@ -85,9 +85,9 @@ class AlertRecomendationPrice extends StatelessWidget {
                       if (!Navigator.of(context).mounted) return;
                         Navigator.of(context).pop(true);
                     },
-                    child: const Text(
-                      "Ignorar",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                    child: Text(
+                      AppLocalizations.of(context)!.ignore,
+                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

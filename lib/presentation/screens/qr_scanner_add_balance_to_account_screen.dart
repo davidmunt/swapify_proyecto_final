@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:swapify/presentation/widgets/alertdialog_add_balance_user.dart';
 
+//pagina que añade saldo a tu usuario(escaneando un qr creado por mi)
 class QRScannerScreenAddBalance extends StatefulWidget {
   const QRScannerScreenAddBalance({super.key});
 
@@ -21,6 +22,7 @@ class _QRScannerScreenAddBalanceState extends State<QRScannerScreenAddBalance> {
     _requestCameraPermission();
   }
 
+  //funcion que pide permisos de camara si no se han aceptado
   Future<void> _requestCameraPermission() async {
     final status = await Permission.camera.request();
     setState(() {
@@ -31,6 +33,7 @@ class _QRScannerScreenAddBalanceState extends State<QRScannerScreenAddBalance> {
     }
   }
 
+  //funcion llaamada al escanear
   void _onQRCodeScanned(String? scannedCode) {
     if (_isScanning && scannedCode != null) {
       setState(() {
@@ -38,17 +41,13 @@ class _QRScannerScreenAddBalanceState extends State<QRScannerScreenAddBalance> {
       });
       try {
         int balance = int.tryParse(scannedCode) ?? 0;
-        if (balance != null) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Center(child: Text(AppLocalizations.of(context)!.addBalance)),
-              content: AlertAddBallance(balance: balance),
-            ),
-          );
-        } else {
-          throw Exception(AppLocalizations.of(context)!.qrInvalid);
-        }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Center(child: Text(AppLocalizations.of(context)!.addBalance)),
+            content: AlertAddBallance(balance: balance),
+          ),
+        );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
       }
@@ -66,11 +65,13 @@ class _QRScannerScreenAddBalanceState extends State<QRScannerScreenAddBalance> {
         children: [
           Expanded(
             flex: 5,
+            //si se han aceptado los permisos se abre el scanner
             child: cameraPermissionGranted
                 ? MobileScanner(
                     fit: BoxFit.cover,
                     onDetect: (barcodeCapture) {
                       for (final barcode in barcodeCapture.barcodes) {
+                        //si el qr no esta vacio
                         if (barcode.rawValue != null) {
                           _onQRCodeScanned(barcode.rawValue);
                           break;

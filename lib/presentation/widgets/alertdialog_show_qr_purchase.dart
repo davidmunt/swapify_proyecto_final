@@ -11,6 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swapify/presentation/widgets/alertdialog_rate_user_afther_product_bought.dart';
 
+//alert para mostrar un qr para la compra de un producto
 class AlertShowQRPurchase extends StatefulWidget {
   final int productId;
   final String userId;

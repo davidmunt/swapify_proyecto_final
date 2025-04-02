@@ -17,6 +17,7 @@ import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_filter_products.dart';
 import 'package:swapify/presentation/widgets/drawer.dart';
 
+//pagina que muestra los productos de los otros usuarios, puedes filtrarlos o ordenarlos
 class SearchProductsScreen extends StatefulWidget {
   const SearchProductsScreen({super.key});
 
@@ -28,6 +29,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
     bool _hasCheckedToken = false;
     bool _isFilterOpen = false;
 
+  //funcion para actualizar el token de las notificaciones
   Future<void> _checkAndUpdateFCMToken(UserState userState) async {
     if (_hasCheckedToken || kIsWeb) return; 
     try {
@@ -51,10 +53,6 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
       context.read<PositionBloc>().add(GetPositionButtonPressed());
     }
     final productBloc = context.read<ProductBloc>();
-    // final userId = context.read<UserBloc>().state.user!.id;
-    // if (productBloc.state.products == null) {
-    //   productBloc.add(GetProductsButtonPressed(userId: userId));
-    // }
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     return BlocBuilder<PositionBloc, PositionState>(
   builder: (context, positionState) {
@@ -74,13 +72,15 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
           } else if (userState.errorMessage == null && userState.user != null) {
             _checkAndUpdateFCMToken(userState);
             final userId = userState.user!.id;
+            final token = userState.token;
             productBloc.add(GetProductsButtonPressed(userId: userId));
             return BlocBuilder<ProductBloc, ProductState>(
               builder: (context, productState) {
-                final products = productState.products?.where((p) => p.userId != userId && p.idSaleStateProduct == 1).toList() ?? [];
-                if (productState.isLoading) {
+                if (productState.isLoading || productState.products == null) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (products.isEmpty) {
+                }
+                final products = productState.products!.where((p) => p.userId != userId && p.idSaleStateProduct == 1).toList();
+                if (products.isEmpty) {
                   return Center(
                     child: Text(AppLocalizations.of(context)!.noProductsAvailable),
                   );
@@ -178,9 +178,9 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
                                           icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border, color: Colors.red),
                                           onPressed: () {
                                             if (isLiked) {
-                                              context.read<ProductBloc>().add(UnlikeProductButtonPressed(userId: userId, productId: product.productId, userLatitude: positionState.latitude ?? 0.000000, userLongitude: positionState.longitude ?? 0.000000));
+                                              context.read<ProductBloc>().add(UnlikeProductButtonPressed(userId: userId, productId: product.productId, userLatitude: positionState.latitude ?? 0.000000, userLongitude: positionState.longitude ?? 0.000000, token: token ?? ''));
                                             } else {
-                                              context.read<ProductBloc>().add(LikeProductButtonPressed(userId: userId, productId: product.productId, userLatitude: positionState.latitude ?? 0.000000, userLongitude: positionState.longitude ?? 0.000000));
+                                              context.read<ProductBloc>().add(LikeProductButtonPressed(userId: userId, productId: product.productId, userLatitude: positionState.latitude ?? 0.000000, userLongitude: positionState.longitude ?? 0.000000, token: token ?? ''));
                                             }
                                           },
                                         ),
@@ -221,6 +221,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
           }
         },
       ),
+      //boton para llamar al widget para filtrar y ordenar
       floatingActionButton: Align(
         alignment: Alignment.bottomRight,
         child: Column(
@@ -252,7 +253,7 @@ class _SearchProductsScreenState extends State<SearchProductsScreen> {
                             final userId = userState.user!.id;
                             showModalBottomSheet(
                               context: context,
-                              builder: (context) {
+                              builder: (context) { 
                                 return FiltrarProductosWidget(
                                   onApplyFilters: (searchTerm, minPrice, maxPrice, proximity, categoryId, selectedOrder, selectedDirection, isFree) {
                                     context.read<ProductBloc>().add(FilterProductsButtonPressed(

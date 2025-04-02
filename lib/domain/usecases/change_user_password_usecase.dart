@@ -3,29 +3,29 @@ import 'package:swapify/core/failure.dart';
 import 'package:swapify/core/usecase.dart';
 import 'package:swapify/domain/repositories/user_repository.dart';
 
-class AddBalanceToUserUseCase implements UseCase<void, AddBalanceToUserParams> {
+class ChangeUserPasswordUseCase implements UseCase<void, ChangeUserPasswordParams> {
   final UserRepository repository;
 
-  AddBalanceToUserUseCase(this.repository);
+  ChangeUserPasswordUseCase(this.repository);
 
   @override
-  Future<Either<Failure, void>> call(AddBalanceToUserParams params) {
-    return repository.addBalanceToUser(
+  Future<Either<Failure, void>> call(ChangeUserPasswordParams params) {
+    return repository.changeUserPassword(
       userId: params.userId,
-      balanceToAdd: params.balanceToAdd,
+      password: params.password,
       token: params.token,
     );
   }
 }
 
-class AddBalanceToUserParams {
+class ChangeUserPasswordParams {
   final String userId;
-  final int balanceToAdd;
+  final String password;
   final String token;
 
-  AddBalanceToUserParams({
+  ChangeUserPasswordParams({
     required this.userId,
-    required this.balanceToAdd,
+    required this.password,
     required this.token,
   });
 }

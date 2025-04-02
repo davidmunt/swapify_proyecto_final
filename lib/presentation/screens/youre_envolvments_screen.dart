@@ -8,6 +8,7 @@ import 'package:swapify/presentation/blocs/product/product_state.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 
+//pagina que muestra lus movimientos: productos que has vendido, intercambiado y comprado
 class YoureEnvolvmentScreen extends StatefulWidget {
   const YoureEnvolvmentScreen({super.key});
 
@@ -19,9 +20,10 @@ class _YoureEnvolvmentScreenState extends State<YoureEnvolvmentScreen> {
   @override
   void initState() {
     super.initState();
+    final token = context.read<UserBloc>().state.token;
     final userId = context.read<UserBloc>().state.user!.id;
     final productBloc = context.read<ProductBloc>();
-    productBloc.add(GetYoureEnvolvmentProductsButtonPressed(userId: userId));
+    productBloc.add(GetYoureEnvolvmentProductsButtonPressed(userId: userId, token: token ?? ''));
   }
 
   @override

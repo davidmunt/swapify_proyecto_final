@@ -49,13 +49,6 @@ flutter gen-l10n
 - Valoraciones tras realizar intercambios o compras
 - Geolocalización y filtros por cercanía
 - Sugerencias de productos con IA
-- Diseño limpio y responsive
-
----
-
-### Licencia
-
-Este proyecto es parte de un trabajo académico y no tiene una licencia pública específica.
 
 ---
 

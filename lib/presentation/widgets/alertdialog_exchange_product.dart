@@ -9,6 +9,7 @@ import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/alertdialog_rate_user_afther_product_bought.dart';
 
+//alert para confirmar que quieres inrecambiar tu producto
 class AlertExchange extends StatefulWidget {
   final int productId;
   final int producExchangedtId;
@@ -28,6 +29,7 @@ class _AlertExchangeState extends State<AlertExchange> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, userState) {},
       builder: (context, userState) {
+        final String? token = userState.token;
         final String? sellerId = userState.user?.id;
         return SingleChildScrollView(
           child: BlocConsumer<ProductBloc, ProductState>(
@@ -85,6 +87,7 @@ class _AlertExchangeState extends State<AlertExchange> {
                               producExchangedtId: widget.producExchangedtId,
                               userId: sellerId, 
                               sellerId: widget.userId,
+                              token: token ?? ''
                             ),
                           );
                         } else {

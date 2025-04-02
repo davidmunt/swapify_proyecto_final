@@ -13,6 +13,7 @@ class LikeProductUseCase implements UseCase<void, LikeProductParams> {
     return await repository.likeProduct(
       productId: params.productId, 
       userId: params.userId,
+      token: params.token,
     );
   }
 }
@@ -20,6 +21,7 @@ class LikeProductUseCase implements UseCase<void, LikeProductParams> {
 class LikeProductParams {
   final String userId;
   final int productId;
+  final String token;
 
-  LikeProductParams({required this.userId, required this.productId});
+  LikeProductParams({required this.userId, required this.productId, required this.token});
 }

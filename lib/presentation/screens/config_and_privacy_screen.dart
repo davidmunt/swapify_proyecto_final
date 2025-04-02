@@ -8,6 +8,7 @@ import 'package:swapify/presentation/blocs/language/language_state.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 
+//pantalla para cambiar el idioma y boton para la pantalla del cambio de contraseña
 class ConfigAndPrivacyScreen extends StatefulWidget {
   const ConfigAndPrivacyScreen({super.key});
 
@@ -60,6 +61,7 @@ class _ConfigAndPrivacyScreenState extends State<ConfigAndPrivacyScreen> {
                 const Divider(color: Colors.grey, thickness: 1.0),
                 const SizedBox(height: 12),
                 Text(AppLocalizations.of(context)!.languageOfApp),
+                //apartado para cambiar el idioma
                 BlocBuilder<LanguageBloc, LanguageState>(
                   builder: (context, languageState) {
                     if (languageState.isLoading) {
@@ -92,7 +94,6 @@ class _ConfigAndPrivacyScreenState extends State<ConfigAndPrivacyScreen> {
                 const SizedBox(height: 12),
                 const Divider(color: Colors.grey, thickness: 1.0),
                 const SizedBox(height: 12),
-                Text(AppLocalizations.of(context)!.notifications),
               ],
             );
           } else {

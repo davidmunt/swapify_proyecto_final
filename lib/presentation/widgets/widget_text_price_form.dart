@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+//widget para introducir numeros para los precios en los formularios
 class WidgetTextoPrecio extends StatelessWidget {
   final String texto;
   final TextEditingController controller;

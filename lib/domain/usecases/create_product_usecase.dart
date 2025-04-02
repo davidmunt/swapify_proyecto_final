@@ -19,6 +19,7 @@ class CreateProductUseCase implements UseCase<int, CreateProductParams> {
       userId: params.userId,
       idCategoryProduct: params.idCategoryProduct,
       idStateProduct: params.idStateProduct,
+      token: params.token,
     );
   }
 }
@@ -34,6 +35,7 @@ class CreateProductParams {
   final String userId;
   final int idCategoryProduct;
   final int idStateProduct;
+  final String token;
 
   CreateProductParams({
     required this.productModel,
@@ -46,5 +48,6 @@ class CreateProductParams {
     required this.userId,
     required this.idCategoryProduct,
     required this.idStateProduct,
+    required this.token,
   });
 }

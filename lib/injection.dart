@@ -31,6 +31,7 @@ import 'package:swapify/domain/usecases/buy_product_usecase.dart';
 import 'package:swapify/domain/usecases/change_password_user_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_avatar_usecase.dart';
 import 'package:swapify/domain/usecases/change_user_info_usecase.dart';
+import 'package:swapify/domain/usecases/change_user_password_usecase.dart';
 import 'package:swapify/domain/usecases/create_product_usecase.dart';
 import 'package:swapify/domain/usecases/delete_chat_where_is_product_usecase.dart';
 import 'package:swapify/domain/usecases/delete_product_usecase.dart';
@@ -54,6 +55,7 @@ import 'package:swapify/domain/usecases/get_youre_envolvment_products_usecase.da
 import 'package:swapify/domain/usecases/get_youre_liked_products_usecase.dart';
 import 'package:swapify/domain/usecases/get_youre_products_usecase.dart';
 import 'package:swapify/domain/usecases/like_product_usecase.dart';
+import 'package:swapify/domain/usecases/login_to_get_token_from_backend_usecase.dart';
 import 'package:swapify/domain/usecases/reset_password_user_usecase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:swapify/domain/usecases/save_message_image_usecase.dart';
@@ -91,7 +93,7 @@ final GetIt sl = GetIt.instance;
 Future<void> configureDependencies() async {
 
   sl.registerFactory<UserBloc>(
-    () => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    () => UserBloc(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
   );
 
   sl.registerFactory<ProductCategoryBloc>(
@@ -253,8 +255,11 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton<ChangeUserInfoUseCase>(
     () => ChangeUserInfoUseCase(sl()),
   );
-  sl.registerLazySingleton<AddBalanceToUserUseCase>(
+  sl.registerLazySingleton<AddBalanceToUserUseCase>( 
     () => AddBalanceToUserUseCase(sl()),
+  );
+  sl.registerLazySingleton<ChangeUserPasswordUseCase>(
+    () => ChangeUserPasswordUseCase(sl()),
   );
   sl.registerLazySingleton<SaveUserNotificationTokenUseCase>(
     () => SaveUserNotificationTokenUseCase(sl()),
@@ -349,7 +354,10 @@ Future<void> configureDependencies() async {
   sl.registerLazySingleton<SaveProductViewUsecase>(
     () => SaveProductViewUsecase(sl()),
   );
-  sl.registerLazySingleton<DeleteChatWhereIsProductUsecase>(
+  sl.registerLazySingleton<DeleteChatWhereIsProductUsecase>( 
     () => DeleteChatWhereIsProductUsecase(sl()),
+  );
+  sl.registerLazySingleton<LoginToGetTokenFromBackendUseCase>( 
+    () => LoginToGetTokenFromBackendUseCase(sl()),
   );
 }

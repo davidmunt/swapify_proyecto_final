@@ -5,6 +5,8 @@ import 'package:swapify/presentation/blocs/navigation_bar/navigation_bar_state.d
 class NavigationBarBloc extends Bloc<NavigationBarEvent, NavigationBarState> {
 
   NavigationBarBloc() : super(NavigationBarState.initial()) {
+
+    //actualiza la pantalla que tiene que mostrar home_screen.dart
     on<ChangeNavigationBarButtonPressed>((event, emit) async {
       emit(NavigationBarState.loading());
       try {

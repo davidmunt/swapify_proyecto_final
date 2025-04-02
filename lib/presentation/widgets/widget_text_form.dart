@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+//widget para introducir textos en los formularios
 class WidgetTextoFormulario extends StatelessWidget {
   final String? texto;
   final Icon? iconoHint;
@@ -8,6 +9,7 @@ class WidgetTextoFormulario extends StatelessWidget {
   final void Function()? onPressed;
   final bool obscureText;
   final TextEditingController? controller;
+  final List<TextInputFormatter>? inputFormatters;
 
   const WidgetTextoFormulario({
     super.key,
@@ -17,6 +19,7 @@ class WidgetTextoFormulario extends StatelessWidget {
     this.onPressed,
     this.obscureText = false,
     this.controller,
+    this.inputFormatters,
   });
 
   @override
@@ -40,6 +43,7 @@ class WidgetTextoFormulario extends StatelessWidget {
                 prefixIcon: iconoHint,
               ),
               obscureText: obscureText,
+              inputFormatters: inputFormatters,
             ),
           ),
           IconButton(onPressed: onPressed, icon: Icon(icon))

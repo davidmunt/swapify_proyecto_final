@@ -7,6 +7,7 @@ import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/widget_text_form.dart';
 
+//pantalla para hacer login
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -23,19 +24,22 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: BlocConsumer<UserBloc, UserState>(
-          listener: (context, state) {
-            if (state.isLoading) {
-              const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (state.user?.email != null && state.user?.email != "NO_USER" && state.errorMessage == null) {
-              context.push('/home', extra: state.user?.email);
-            } else if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.unexpectedError)));
-            }
-          },
+        child: BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
+            if (state.user?.email != null &&
+              state.user?.email != "NO_USER" &&
+              state.errorMessage == null) {
+                Future.microtask(() {
+                  context.pushReplacement('/home', extra: state.user?.email);
+                });
+                if (state.errorMessage != null) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.unexpectedError)),
+                    );
+                  });
+                }
+              }
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

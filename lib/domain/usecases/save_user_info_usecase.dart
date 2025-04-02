@@ -12,6 +12,7 @@ class SaveUserInfoUseCase implements UseCase<void, SaveUserInfoParams> {
   Future<Either<Failure, void>> call(SaveUserInfoParams params) {
     return repository.saveUserInfo(
       uid: params.uid,
+      password: params.password,
       name: params.name,
       surname: params.surname,
       email: params.email,
@@ -23,6 +24,7 @@ class SaveUserInfoUseCase implements UseCase<void, SaveUserInfoParams> {
 
 class SaveUserInfoParams {
   final String uid;
+  final String password;
   final String name;
   final String surname;
   final String email;
@@ -31,6 +33,7 @@ class SaveUserInfoParams {
 
   SaveUserInfoParams({
     required this.uid,
+    required this.password,
     required this.name,
     required this.surname,
     required this.email,

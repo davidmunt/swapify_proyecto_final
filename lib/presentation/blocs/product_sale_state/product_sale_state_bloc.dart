@@ -7,7 +7,7 @@ class ProductSaleStateBloc extends Bloc<ProductSaleStateEvent, ProductSaleStateS
   final GetProductSaleStateUseCase getProductSaleStateUseCase;
 
   ProductSaleStateBloc(this.getProductSaleStateUseCase) : super(ProductSaleStateState.initial()) {
-    
+    //obtiene los estados de venta para los productos
     on<GetProductSaleStateButtonPressed>((event, emit) async {
       emit(ProductSaleStateState.loading());
       try {

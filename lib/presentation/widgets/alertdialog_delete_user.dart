@@ -6,6 +6,7 @@ import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 
+//alert para confirmar que quieres eliminar tu usuario
 class AlertDeleteAcount extends StatefulWidget {
   const AlertDeleteAcount({super.key});
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 
+//alert para confirmar que quieres añadirte cerrar la sesion
 class AlertLogout extends StatefulWidget {
   const AlertLogout({super.key});
 
@@ -37,7 +37,6 @@ class _AlertLogoutState extends State<AlertLogout> {
                     }
                     context.read<UserBloc>().add(LogoutButtonPressed());
                     Navigator.of(context).pop();
-                    context.push('/login');
                   },
                   child: Text(AppLocalizations.of(context)!.logout),
                 ),

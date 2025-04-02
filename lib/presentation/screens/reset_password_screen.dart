@@ -7,6 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+//pantalla para enviar al email un correo para cambiar la contraseña
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});
 

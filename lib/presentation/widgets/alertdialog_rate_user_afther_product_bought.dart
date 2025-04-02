@@ -8,6 +8,7 @@ import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:givestarreviews/givestarreviews.dart';
 
+//dialog para valorar un usuario (despues de comprar o intercambiar un producto)
 class AlertRateUser extends StatefulWidget {
   final String userId;
   final int productId;
@@ -63,14 +64,12 @@ class _AlertRateUserState extends State<AlertRateUser> {
                             const SizedBox(height: 16),
                           ],
                         ),
-
                       Text(
                         AppLocalizations.of(context)!.rateUser,
                         textAlign: TextAlign.center,
                         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 16),
-
                       FittedBox(
                         child: GiveStarReviews(
                           starData: [
@@ -87,7 +86,6 @@ class _AlertRateUserState extends State<AlertRateUser> {
                         ),
                       ),
                       const SizedBox(height: 24),
-
                       Row(
                         children: [
                           Expanded(

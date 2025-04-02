@@ -12,6 +12,7 @@ import 'package:swapify/presentation/blocs/user/user_bloc.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/drawer.dart';
 
+//pantalla que muestra los productos que le has dado like
 class LikeProductsScreen extends StatefulWidget {
   const LikeProductsScreen({super.key});
 
@@ -24,9 +25,13 @@ class _LikeProductsScreenState extends State<LikeProductsScreen> {
   @override
   Widget build(BuildContext context) {
     final userId = context.read<UserBloc>().state.user!.id;
+    final token = context.read<UserBloc>().state.token;
     final productBloc = context.read<ProductBloc>();
     if (productBloc.state.youreLikedProducts == null) {
-      productBloc.add(GetYoureLikedProductsButtonPressed(userId: userId));
+        final productBloc = context.read<ProductBloc>();
+        if (productBloc.state.youreLikedProducts == null) {
+          productBloc.add(GetYoureLikedProductsButtonPressed(userId: userId, token: token ?? ''));
+        }
     }
     final baseUrl = dotenv.env['BASE_API_URL'] ?? 'http://localhost:3000';
     return BlocBuilder<PositionBloc, PositionState>(
@@ -46,12 +51,14 @@ class _LikeProductsScreenState extends State<LikeProductsScreen> {
             );
           } else if (userState.errorMessage == null && userState.user != null) {
             final userId = userState.user!.id;
+            final token = userState.token;
             return BlocBuilder<ProductBloc, ProductState>(
               builder: (context, productState) {
-                final products = productState.youreLikedProducts?.where((p) => p.userId != userId && p.idSaleStateProduct == 1 && p.likes.contains(userId)).toList() ?? [];
-                if (productState.isLoading) {
+                if (productState.isLoading || productState.youreLikedProducts == null) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (products.isEmpty) {
+                }
+                final products = productState.youreLikedProducts!.where((p) => p.userId != userId && p.idSaleStateProduct == 1 && p.likes.contains(userId)).toList();
+                if (products.isEmpty) {
                   return Center(
                     child: Text(AppLocalizations.of(context)!.noProductsAvailable),
                   );
@@ -142,9 +149,9 @@ class _LikeProductsScreenState extends State<LikeProductsScreen> {
                                       icon: Icon(isLiked ? Icons.favorite : Icons.favorite_border, color: Colors.red),
                                       onPressed: () {
                                         if (isLiked) {
-                                          context.read<ProductBloc>().add(UnlikeProductButtonPressed(userId: userId, productId: product.productId, userLatitude: positionState.latitude ?? 0.000000, userLongitude: positionState.longitude ?? 0.000000));
+                                          context.read<ProductBloc>().add(UnlikeProductButtonPressed(userId: userId, productId: product.productId, userLatitude: positionState.latitude ?? 0.000000, userLongitude: positionState.longitude ?? 0.000000, token: token ?? ''));
                                         } else {
-                                          context.read<ProductBloc>().add(LikeProductButtonPressed(userId: userId, productId: product.productId, userLatitude: positionState.latitude ?? 0.000000, userLongitude: positionState.longitude ?? 0.000000));
+                                          context.read<ProductBloc>().add(LikeProductButtonPressed(userId: userId, productId: product.productId, userLatitude: positionState.latitude ?? 0.000000, userLongitude: positionState.longitude ?? 0.000000, token: token ?? ''));
                                         }
                                       },
                                     ),

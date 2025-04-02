@@ -12,6 +12,7 @@ class BuyProductUseCase implements UseCase<void, BuyProductParams> {
       productId: params.productId,
       userId: params.userId,
       sellerId: params.sellerId,
+      token: params.token,
     );
   }
 }
@@ -20,10 +21,12 @@ class BuyProductParams {
   final int productId;
   final String userId; 
   final String sellerId;
+  final String token;
 
   BuyProductParams({
     required this.productId,
     required this.userId,
     required this.sellerId,
+    required this.token,
   });
 }

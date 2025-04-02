@@ -4,12 +4,14 @@ class UserState {
   final bool isLoading;
   final UserEntity? user;
   final List<UserEntity>? users;
+  final String? token;
   final String? errorMessage;
 
   const UserState({
     this.isLoading = false,
     this.user,
     this.users,
+    this.token,
     this.errorMessage,
   });
 
@@ -17,12 +19,14 @@ class UserState {
     bool? isLoading,
     UserEntity? user,
     List<UserEntity>? users,
+    String? token,
     String? errorMessage,
   }) {
     return UserState(
       isLoading: isLoading ?? this.isLoading,
       user: user ?? this.user,
       users: users ?? this.users,
+      token: token ?? this.token,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

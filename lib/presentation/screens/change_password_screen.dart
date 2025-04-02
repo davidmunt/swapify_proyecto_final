@@ -7,6 +7,7 @@ import 'package:swapify/presentation/blocs/user/user_event.dart';
 import 'package:swapify/presentation/blocs/user/user_state.dart';
 import 'package:swapify/presentation/widgets/widget_text_form.dart';
 
+//pantalla que permite al usuario cambiar la contraseña directamente
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
 
