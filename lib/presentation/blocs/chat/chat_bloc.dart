@@ -129,6 +129,27 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
             reciver: receiverId,
           ));
         }
+        else if (event.latitudeSent != null && event.latitudeSent != null) {
+          await sendMessageChatUsecase.call(SendMessageParams(
+            productOwnerId: event.productOwnerId,
+            potBuyerId: event.potBuyerId,
+            productId: event.productId,
+            senderId: event.senderId,
+            message: null,
+            imagePath: null,
+            idProduct: null,
+            productImage: null,
+            latitudeSent: event.latitudeSent,
+            longitudeSent: event.longitudeSent,
+            dateMessageSent: event.dateMessageSent,
+          ));
+          await sendNotificationToOtherUserUseCase.call(SendNotificationToOtherUserParams(
+            productId: event.productId,
+            text: null, 
+            sender: event.senderId,
+            reciver: receiverId,
+          ));
+        }
         else if (event.idProduct != null) {
           await sendMessageChatUsecase.call(SendMessageParams(
             productOwnerId: event.productOwnerId,

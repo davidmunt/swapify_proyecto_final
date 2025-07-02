@@ -26,6 +26,11 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         child: BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
             if (state.user?.email != null &&
               state.user?.email != "NO_USER" &&
               state.errorMessage == null) {
@@ -34,9 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 });
                 if (state.errorMessage != null) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.unexpectedError)),
-                    );
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMessage ?? AppLocalizations.of(context)!.unexpectedError)));
                   });
                 }
               }

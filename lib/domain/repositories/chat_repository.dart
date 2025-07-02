@@ -15,6 +15,8 @@ abstract class ChatRepository {
     String? imagePath,
     int? idProduct, 
     String? productImage,
+    double? latitudeSent,
+    double? longitudeSent,
     required DateTime dateMessageSent,
   });
   Future<Either<Failure, String>> uploadMessageImage({

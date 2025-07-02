@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/foundation.dart';
+import 'package:latlong2/latlong.dart';
 import 'dart:typed_data';
-import 'package:swapify/presentation/widgets/dialog_exchange_product.dart'; 
+import 'package:swapify/presentation/widgets/dialog_exchange_product.dart';
+import 'package:swapify/presentation/screens/select_location_chat_screen.dart'; 
 
 //widget que permite al usuario enviar mensajes, imagenes o propuestas de intercambio de producto dentro del chat
 class SendMessageWidget extends StatefulWidget {
-  final Function(String message, XFile? image, int? idProduct, String? productImage) onSendMessage;
+  final Function(String message, XFile? image, int? idProduct, String? productImage, double? latitude, double? longitude) onSendMessage;
   final String productOwnerId;
   final String userId;
 
@@ -31,7 +33,7 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
       builder: (context) => const ExchangeProductDialog(),
     );
     if (result != null) {
-      widget.onSendMessage("", null, result['idProduct'] as int, result['productImage'] as String);
+      widget.onSendMessage("", null, result['idProduct'] as int, result['productImage'] as String, null, null);
     }
   }
 
@@ -58,12 +60,24 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
   void _sendMessage() {
     final message = _messageController.text.trim();
     if (message.isNotEmpty || _selectedImage != null) {
-      widget.onSendMessage(message, _selectedImage, null, null);
+      widget.onSendMessage(message, _selectedImage, null, null, null, null);
       setState(() {
         _messageController.clear();
         _selectedImage = null;
         _webImageBytes = null; 
       });
+    }
+  }
+
+  //envia una ubicacion
+  Future<void> _selectLocationOnMap() async {
+    final LatLng? selectedLocation = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const SelectLocationScreen(),
+      ),
+    );
+    if (selectedLocation != null) {
+      widget.onSendMessage("", null, null, null, selectedLocation.latitude, selectedLocation.longitude);
     }
   }
 
@@ -133,6 +147,10 @@ class _SendMessageWidgetState extends State<SendMessageWidget> {
                   icon: const Icon(Icons.sync_alt),
                   onPressed: _sendExchangeProduct,
                 ),
+              IconButton(
+                icon: const Icon(Icons.location_on_outlined),
+                onPressed: _selectLocationOnMap,
+              ),
               IconButton(
                 icon: const Icon(Icons.send),
                 onPressed: _sendMessage,

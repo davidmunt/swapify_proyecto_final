@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:swapify/domain/entities/user.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:swapify/presentation/blocs/chat/chat_bloc.dart';
@@ -17,6 +19,7 @@ import 'package:swapify/presentation/widgets/alertdialog_rate_user_afther_produc
 import 'package:swapify/presentation/widgets/alertdialog_show_image_chat.dart';
 import 'package:swapify/presentation/widgets/alertdialog_show_qr_exchange.dart';
 import 'package:swapify/presentation/widgets/widget_send_message.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 //pantalla de un chat en especifico, puedes enviar mensajes, imagenes o propuestas de intercambio.
 class ChatScreen extends StatefulWidget {
@@ -57,7 +60,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void _sendMessage(String message, XFile? image, int? idProduct, String? productImage) {
+  void _sendMessage(String message, XFile? image, int? idProduct, String? productImage, [double? latitude, double? longitude]) {
     final userId = context.read<UserBloc>().state.user!.id;
     context.read<ChatBloc>().add(
       SendMessageButtonPressed(
@@ -68,7 +71,9 @@ class _ChatScreenState extends State<ChatScreen> {
         image: image,
         idProduct: idProduct,
         senderId: userId,
-        productImage: productImage, 
+        productImage: productImage,
+        latitudeSent: latitude,
+        longitudeSent: longitude,
         dateMessageSent: DateTime.now(),
       ),
     );
@@ -136,8 +141,8 @@ class _ChatScreenState extends State<ChatScreen> {
                 SendMessageWidget(
                   userId: userId,
                   productOwnerId: widget.productOwnerId,
-                  onSendMessage: (message, image, idProduct, productImage) {
-                    _sendMessage(message, image, idProduct, productImage);
+                  onSendMessage: (message, image, idProduct, productImage, latitude, longitude) {
+                    _sendMessage(message, image, idProduct, productImage, latitude, longitude);
                   },
                 ),
               ],
@@ -260,11 +265,69 @@ class _ChatScreenState extends State<ChatScreen> {
                           fit: BoxFit.cover,
                         ),
                       );
-                    //texto
+                    //ubicacion
+                    } else if (message['latitudeSent'] != null && message['longitudeSent'] != null) {
+                      // ubicación enviada
+                      final double latitude = message['latitudeSent'];
+                      final double longitude = message['longitudeSent'];
+                      messageContent = Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          SizedBox(
+                            width: 250,
+                            height: 300,
+                            child: FlutterMap(
+                              options: MapOptions(
+                                initialCenter: LatLng(latitude, longitude),
+                                initialZoom: 15,
+                                interactionOptions: const InteractionOptions(flags: InteractiveFlag.none),
+                              ),
+                              children: [
+                                TileLayer(
+                                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                                  userAgentPackageName: 'com.example.swapify',
+                                ),
+                                MarkerLayer(
+                                  markers: [
+                                    Marker(
+                                      width: 50,
+                                      height: 50,
+                                      point: LatLng(latitude, longitude),
+                                      child: const Icon(Icons.location_pin, size: 50, color: Colors.red),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          //al clicar este boton abre google maps con esa ubicacion
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: FloatingActionButton.small(
+                              heroTag: 'btnGoogleMaps_$index',
+                              backgroundColor: Colors.white,
+                              elevation: 4,
+                              onPressed: () async {
+                                final url = 'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude';
+                                if (await canLaunchUrl(Uri.parse(url))) {
+                                  await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('No se pudo abrir Google Maps')),
+                                  );
+                                }
+                              },
+                              child: const Icon(Icons.map, color: Colors.black),
+                            ),
+                          ),
+                        ],
+                      );
                     } else {
+                      //texto
                       messageContent = Text(
                         message['message'] ?? '',
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 14), 
                       );
                     }
                     return Align(
@@ -299,10 +362,10 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               //widget que muetra el y apartado para enviat texto, imagenes y propuesta de intercambio
               SendMessageWidget(
-                userId: userId, 
+                userId: userId,
                 productOwnerId: widget.productOwnerId,
-                onSendMessage: (message, image, idProduct, productImage) {
-                  _sendMessage(message, image, idProduct, productImage);
+                onSendMessage: (message, image, idProduct, productImage, latitude, longitude) {
+                  _sendMessage(message, image, idProduct, productImage, latitude, longitude);
                 },
               ),
             ],

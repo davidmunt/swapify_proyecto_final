@@ -52,14 +52,10 @@ class _AlertShowQRExchangeState extends State<AlertShowQRExchange> {
             context.pop();
             showDialog(
               context: context,
-              builder: (context) {
-                return AlertDialog(
-                  content: AlertRateUser(
-                    userId: updatedProduct.userId, 
-                    productId: updatedProduct.productId,
-                  ),
-                );
-              },
+              builder: (context) => AlertRateUser(
+                userId: updatedProduct.userId,
+                productId: updatedProduct.productId,
+              ),
             );
           }
         },

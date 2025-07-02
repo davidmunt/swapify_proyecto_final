@@ -122,6 +122,7 @@
   "createdUser": "Usuario creado",
   "changeUserAvatar": "Cambiar foto de perfil",
   "foto": "Foto", 
+  "ubication": "Ubicación",
   "free": "Gratis", 
   "chatNotYetStarted": "Empezar chat",
   "areYouSureDeleteUserAccount": "¿Estas seguro de eliminar la cuenta?",
@@ -161,7 +162,7 @@
   "balanceAddedSuscesfully": "Saldo añadido correctamente",
   "youHadBoughtTheProduct": "Has comprado el producto", 
   "youHadSoldTheProduct": "Has vendido el producto",  
-  "youreEnvolvment": "Youre envolvment",
+  "youreEnvolvment": "Tu actividad",
   "unavailableDate": "Fecha no disponible",   
   "unknownProduct": "Producto desconocido",
   "rate": "Valorar",
@@ -178,6 +179,8 @@
   "scanTheirQR": "Escanea su QR",
   "exchangeRejected": "Intercambio rechazado",
   "exchangeAccepted": "Intercambio aceptado",
+  "selectUbication": "Elige una ubicación",
+  "empty": "Vacío",
   "userRatingSummary": "{rating} de 5 ({total} valoraciones)",
   "@userRatingSummary": {
     "placeholders": {

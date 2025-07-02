@@ -14,6 +14,8 @@ class SendMessageButtonPressed extends ChatEvent {
   final XFile? image;
   final int? idProduct;
   final String? productImage;
+  final double? latitudeSent;
+  final double? longitudeSent;
   final String senderId;
   final DateTime dateMessageSent;
 
@@ -25,12 +27,14 @@ class SendMessageButtonPressed extends ChatEvent {
     this.image,
     this.idProduct,
     this.productImage,
+    this.latitudeSent,
+    this.longitudeSent,
     required this.senderId,
     required this.dateMessageSent,
   });
 
   @override
-  List<Object?> get props => [productOwnerId, potBuyerId, productId, message, image, idProduct, productImage, senderId, dateMessageSent];
+  List<Object?> get props => [productOwnerId, potBuyerId, productId, message, image, idProduct, productImage, latitudeSent, longitudeSent, senderId, dateMessageSent];
 }
 
 class GetMyChatsButtonPressed extends ChatEvent {

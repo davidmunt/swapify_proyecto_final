@@ -12,7 +12,7 @@ class ChatDataSource {
 
   ChatDataSource({required this.firestore});
 
-  //envia un mensaje, iamgen o propuesta de intercambio a un chat, solo uno a la vez
+  //envia un mensaje, ubicacion iamgen o propuesta de intercambio a un chat, solo uno a la vez
   Future<void> sendMessage({
     required String productOwnerId,
     required String potBuyerId,
@@ -20,6 +20,8 @@ class ChatDataSource {
     String? message,
     String? imagePath,
     int? idProduct, 
+    double? latitudeSent,
+    double? longitudeSent,
     String? productImage,
     required String senderId,
     required DateTime dateMessageSent,
@@ -31,6 +33,8 @@ class ChatDataSource {
         'dateMessageSent': Timestamp.fromDate(dateMessageSent),
         'message': idProduct == null ? message : null, 
         'imagePath': idProduct == null ? imagePath : null, 
+        'latitudeSent': idProduct == null ? latitudeSent : null, 
+        'longitudeSent': idProduct == null ? longitudeSent : null, 
         'idProduct': idProduct, 
         'productImage': productImage, 
         'accepted': null, 

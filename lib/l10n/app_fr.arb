@@ -122,6 +122,7 @@
   "createdUser": "Utilisateur créé",
   "changeUserAvatar": "Changer la photo de profil",
   "foto": "Photo",
+  "ubication": "Emplacement",
   "free": "Gratuit", 
   "chatNotYetStarted": "Démarrer une conversation",
   "areYouSureDeleteUserAccount": "Êtes-vous sûr de vouloir supprimer le compte ?",
@@ -178,6 +179,8 @@
   "scanTheirQR": "Scannez leur QR",
   "exchangeRejected": "Échange refusé",
   "exchangeAccepted": "Échange accepté",
+  "selectUbication": "Sélectionnez une ubication", 
+  "empty": "Vide",
   "userRatingSummary": "{rating} sur 5 ({total} évaluations)",
   "@userRatingSummary": {
     "placeholders": {

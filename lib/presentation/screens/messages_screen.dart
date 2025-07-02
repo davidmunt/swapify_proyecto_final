@@ -154,6 +154,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                               overflow: TextOverflow.ellipsis);
                                         } else if (lastMessage['imagePath'] != null) {
                                           return Text(AppLocalizations.of(context)!.foto, style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
+                                        } else if (lastMessage['latitudeSent'] != null && lastMessage['longitudeSent'] != null) {
+                                          return Text(AppLocalizations.of(context)!.ubication, style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
                                         } else if (lastMessage['idProduct'] != null) {
                                           return Text(AppLocalizations.of(context)!.exchangeProposal, style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic));
                                         } else {

@@ -48,6 +48,7 @@
   "notEqualsPasswords": "Passwords do not match",
   "changeUserAvatar": "Change user avatar",
   "foto": "Photo",
+  "ubication": "Ubication",
   "free": "Free", 
   "chatNotYetStarted": "Start chat",
   "userAvatarChanged": "User avatar updated",
@@ -178,6 +179,8 @@
   "scanTheirQR": "Escanea su QR",
   "exchangeRejected": "Exchange rejected",
   "exchangeAccepted": "Exchange accepted",
+  "selectUbication": "Select a ubication",
+  "empty": "Empty",
   "userRatingSummary": "{rating} out of 5 ({total} ratings)",
   "@userRatingSummary": {
     "placeholders": {

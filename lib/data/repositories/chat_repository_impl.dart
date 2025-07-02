@@ -44,6 +44,8 @@ class ChatRepositoryImpl implements ChatRepository {
     String? imagePath,
     int? idProduct, 
     String? productImage,
+    double? latitudeSent,
+    double? longitudeSent,
     required DateTime dateMessageSent,
   }) async {
     try {
@@ -55,6 +57,8 @@ class ChatRepositoryImpl implements ChatRepository {
         senderId: senderId,
         imagePath: imagePath,
         idProduct: idProduct,
+        latitudeSent: latitudeSent,
+        longitudeSent: longitudeSent,
         productImage: productImage,
         dateMessageSent: dateMessageSent,
       );

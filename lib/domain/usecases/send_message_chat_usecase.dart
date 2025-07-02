@@ -16,6 +16,8 @@ class SendMessageChatUsecase implements UseCase<void, SendMessageParams> {
       senderId: params.senderId,
       imagePath: params.imagePath,
       idProduct: params.idProduct,
+      latitudeSent: params.latitudeSent,
+      longitudeSent: params.longitudeSent,
       productImage: params.productImage,
       dateMessageSent: params.dateMessageSent,
     );
@@ -29,6 +31,8 @@ class SendMessageParams {
   final String senderId;
   final String? message;
   final String? imagePath;
+  final double? latitudeSent;
+  final double? longitudeSent;
   final int? idProduct;
   final String? productImage;
   final DateTime dateMessageSent;
@@ -42,6 +46,8 @@ class SendMessageParams {
     this.imagePath,
     this.idProduct, 
     this.productImage,
+    this.latitudeSent,
+    this.longitudeSent,
     required this.dateMessageSent,
   });
 }

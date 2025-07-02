@@ -50,6 +50,11 @@ class CreateAcountScreenState extends State<CreateAcountScreen> {
             }
           },
           builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

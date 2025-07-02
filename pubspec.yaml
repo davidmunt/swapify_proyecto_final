@@ -26,6 +26,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_map: ^7.0.2
+  flutter_rating_bar: ^4.0.1
   geocoding: ^2.0.0
   geolocator: ^9.0.2
   get_it: ^8.0.2
@@ -41,7 +42,8 @@ dependencies:
   mobile_scanner: ^3.0.0
   permission_handler: ^11.3.0
   shared_preferences: ^2.3.3
-  flutter_rating_bar: ^4.0.1
+  url_launcher: ^6.3.1
+  fl_chart: ^0.66.0
 
 dev_dependencies:
   flutter_lints: ^4.0.0

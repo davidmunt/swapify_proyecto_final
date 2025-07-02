@@ -24,12 +24,13 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
   final TextEditingController searchController = TextEditingController();
   final TextEditingController minPriceController = TextEditingController();
   final TextEditingController maxPriceController = TextEditingController();
-  final TextEditingController proximityController = TextEditingController();
   int? selectedCategoryId;
   String? errorMessage;
   String? selectedOrder;
   String? selectedDirection;
   bool isFree = false;
+  double? selectedProximity;
+
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
     minPriceController.text = productBloc.currentMinPrice?.toString() ?? '';
     maxPriceController.text = productBloc.currentMaxPrice?.toString() ?? '';
     isFree = productBloc.isFree ?? false;
-    proximityController.text = productBloc.currentProximity?.toString() ?? '';
+    selectedProximity = productBloc.currentProximity;
     selectedCategoryId = productBloc.currentCategoryId;
     selectedOrder = productBloc.currentSortCriteria;
     if (selectedOrder == null || selectedOrder!.isEmpty) {
@@ -176,9 +177,22 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
             const SizedBox(height: 15),
             Text(AppLocalizations.of(context)!.rangeProximity),
             const SizedBox(height: 15),
-            TextField(
-              controller: proximityController,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            DropdownButtonFormField<double?>(
+              value: selectedProximity,
+              items: const [
+                DropdownMenuItem(value: 10, child: Text("10 Km")),
+                DropdownMenuItem(value: 20, child: Text("20 Km")),
+                DropdownMenuItem(value: 50, child: Text("50 Km")),
+                DropdownMenuItem(value: 100, child: Text("100 Km")),
+                DropdownMenuItem(value: 200, child: Text("200 Km")),
+                DropdownMenuItem(value: 300, child: Text("300 Km")),
+              ],
+              onChanged: (value) {
+                setState(() {
+                  selectedProximity = value;
+                  errorMessage = null;
+                });
+              },
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
                 labelText: AppLocalizations.of(context)!.proximity,
@@ -208,7 +222,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                 });
               },
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
                 labelText: AppLocalizations.of(context)!.criterion,
               ),
             ),
@@ -266,20 +280,13 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                       });
                       return;
                     }
-                    if (proximityController.text.isNotEmpty && !_esNumero(proximityController.text)) {
-                      setState(() {
-                        errorMessage = AppLocalizations.of(context)!.errorProximityPositive;
-                      });
-                      return;
-                    }
-                    final parsedProximity = double.tryParse(proximityController.text);
-                    if (parsedProximity != null && parsedProximity == 0) {
+                    if (selectedProximity != null && selectedProximity == 0) {
                       setState(() {
                         errorMessage = AppLocalizations.of(context)!.errorProximityCero;
                       });
                       return;
                     }
-                    if (parsedProximity != null && parsedProximity > (40075 / 2)) {
+                    if (selectedProximity != null && selectedProximity! > (40075 / 2)) {
                       setState(() {
                         errorMessage = AppLocalizations.of(context)!.errorProximityOverpassed;
                       });
@@ -287,7 +294,7 @@ class _FiltrarProductosState extends State<FiltrarProductosWidget> {
                     }
                     final double? minPrice = minPriceController.text.isNotEmpty ? double.tryParse(minPriceController.text) : null;
                     final double? maxPrice = maxPriceController.text.isNotEmpty ? double.tryParse(maxPriceController.text) : null;
-                    final double? proximity = proximityController.text.isNotEmpty ? double.tryParse(proximityController.text) : null;
+                    final double? proximity = selectedProximity;
                     if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
                       setState(() {
                         errorMessage = AppLocalizations.of(context)!.errorPriceMinMoreMax;
